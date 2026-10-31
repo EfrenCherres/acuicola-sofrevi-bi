@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "AcuicolaSofrevi"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "b0e77bb3-da79-4bc6-a545-09b67c8345e1"
+  }
+}

@@ -1,4 +1,4 @@
-# [Nombre del caso] — De datos sucios a decisiones
+# Acuícola Sofrevi — De datos sucios a decisiones
 
 > **Caso práctico de Business Intelligence** · ETL en Power Query · Modelado en Power BI · Dashboard ejecutivo
 > Autor: **Efren Cherres Bowen, Mgtr.** · ECHB Consulting & Think Analytics

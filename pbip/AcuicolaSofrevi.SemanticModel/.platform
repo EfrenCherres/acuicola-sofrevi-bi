@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "AcuicolaSofrevi"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "ffecd850-9fcd-492a-a475-ccbba807de09"
+  }
+}
