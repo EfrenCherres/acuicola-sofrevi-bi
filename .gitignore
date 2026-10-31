@@ -1,0 +1,30 @@
+# ---- Power BI (PBIP) ----
+# Configuración local y caché del modelo: no se versionan
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/*.abf
+
+# Archivos binarios de Power BI (usamos PBIP)
+*.pbix
+
+# ---- Solucionario: NUNCA se sube ----
+*solucionario*
+*Solucionario*
+*SOLUCIONARIO*
+solucion/
+
+# ---- Excel / Office: archivos temporales ----
+~$*
+*.tmp
+
+# ---- Python (para casos con automatización) ----
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- Sistema operativo ----
+Thumbs.db
+desktop.ini
+.DS_Store
