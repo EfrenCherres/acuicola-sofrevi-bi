@@ -8,6 +8,19 @@
 
 > ⚠️ **Datos sintéticos.** La empresa y todos los registros son ficticios, creados para practicar. Cualquier parecido con una empresa real es coincidencia.
 
+## Avance del proyecto
+
+| Fase | Estado | Evidencia |
+|---|---|---|
+| 0. Preparación del repo y proyecto | ✅ Terminada | [Diario](bitacora/diario_avance.md) |
+| 1. Entender el negocio y los datos | 🟡 En curso (4 de 8 hojas) | [Exploración de datos](bitacora/exploracion_datos.md) |
+| 2. Conexión y cuadre de carga | ⬜ Pendiente | |
+| 3. Limpieza (staging) | ⬜ Pendiente | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
+| 4. Tablas finales | ⬜ Pendiente | |
+| 5. Modelo y medidas DAX | ⬜ Pendiente | |
+| 6. Dashboard | ⬜ Pendiente | |
+| 7. Insights | ⬜ Pendiente | |
+
 ---
 
 ## 1. El problema del negocio
