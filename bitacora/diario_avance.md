@@ -26,4 +26,54 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 **Pendiente para la próxima sesión:**
 - [ ] Fase 1: entender el negocio y los datos (hojas 1 y 2 del Log)
 
+## 2026-10-31 · Exploración de datos (hojas 1 a 4)
+
+**Objetivo de hoy:** Conocer la base antes de abrir Power Query: qué registra cada hoja, qué es una fila, cuál es la clave y qué problemas se ven a simple vista.
+
+**Lo que hice:**
+- Creé bitacora/exploracion_datos.md con un bloque por hoja: granularidad, filas, columnas, clave y hallazgos
+- Exploré MAESTRO_PISCINAS, CICLOS_PRODUCCION, ALIMENTACION_DIARIA y KARDEX BODEGA
+- Revisé cada columna con cuatro preguntas: escritura, formato de fechas, separador decimal y vacíos o relleno
+- Hice un commit parcial (4 de 8 hojas) para guardar el avance en GitHub
+
+**Lo que encontré:**
+- Piscina viene escrita de varias formas en cada hoja (P-25, P09, p 12, PISC-30), algunas con espacios al final
+- Separador decimal mezclado: 1489,7 en el ciclo C-2021-020 podría leerse como 14897
+- 3 laboratorios escritos de ~9 formas y 3 proveedores de ~10 formas
+- El Kardex solo tiene salidas: sin entradas no se puede calcular stock, solo consumo
+
+**Decisiones y por qué:**
+- No modificar el Excel de data/raw: cualquier corrección se hace en Power Query y queda registrada
+- Corregí la granularidad de CICLOS de "una piscina" a "un ciclo": la misma piscina aparece en varios ciclos, y esa diferencia define la relación del modelo
+- Verifiqué la hipótesis de entradas y salidas en el Kardex con un filtro antes de anotarla
+
+**Pendiente para la próxima sesión:**
+- [ ] Explorar las 4 hojas restantes
+- [ ] Verificar el conteo de MAESTRO_PISCINAS y revisar Kg_Aplicados y Fecha en ALIMENTACION_DIARIA
+
+## 2026-11-01 · Exploración de datos (hojas 5 a 8) y cierre
+
+**Objetivo de hoy:** Terminar la exploración de las 8 hojas y cerrar los pendientes del día anterior.
+
+**Lo que hice:**
+- Exploré COMPRAS_BALANCEADO, PARAMETROS_AGUA, LIQUIDACIONES_EMPACADORAS y GASTOS_OPERATIVOS
+- Sumé dos preguntas al método: si los cálculos cuadran y si hay valores imposibles para el negocio
+- Comparé libras recibidas contra libras de la guía en cuatro liquidaciones
+- Cerré las verificaciones pendientes de MAESTRO_PISCINAS y ALIMENTACION_DIARIA
+
+**Lo que encontré:**
+- pH 14 y temperatura de 0 °C en PARAMETROS_AGUA: números válidos para Power BI, imposibles en una piscina de Guayas. El 0 °C es un vacío disfrazado de dato
+- Tres liquidaciones llegan a planta al ~99 % de la guía (merma normal); la 23101 llega al 87,8 % y le falta la talla 30/40: posible fila faltante
+- MAESTRO_PISCINAS tiene 34 filas pero 33 piscinas: un código duplicado en la tabla que debe ser dimensión
+- Kg_Aplicados tiene valores "S/D" mezclados con números
+- Los gastos vienen por mes y por sector, no por piscina: el costo por ciclo requerirá repartirlos
+
+**Decisiones y por qué:**
+- IVA 0 en compras de balanceado: lo anoté como observación por confirmar, no como error, porque el balanceado tiene tarifa 0 %
+- Anoté "revisado, sin hallazgos" en las columnas limpias, para que se vea que se revisaron y no que se saltaron
+- Cuando dos conteos no coincidieron (Recuento contra Ctrl + Fin), investigué la diferencia en vez de elegir uno
+
+**Pendiente para la próxima sesión:**
+- [ ] Llenar las hojas 1 y 2 de Log_Calidad.xlsx (tablas del modelo e inventario de fuentes)
+
 ---
