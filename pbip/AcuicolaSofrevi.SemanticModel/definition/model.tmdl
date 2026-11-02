@@ -31,7 +31,9 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["RutaArchivo","src_SofreviBD","src_MaestroPiscinas","src_Ciclos","src_Alimentacion","src_Kardex","src_Compras","src_ParametrosAgua","src_Liquidaciones","src_Gastos","QA_Inventario"]
+annotation PBI_QueryOrder = ["RutaArchivo","src_SofreviBD","src_MaestroPiscinas","src_Ciclos","src_Alimentacion","src_Kardex","src_Compras","src_ParametrosAgua","src_Liquidaciones","src_Gastos","QA_Inventario","stg_Piscina","dim_Piscina"]
+
+ref table dim_Piscina
 
 ref cultureInfo es-EC
 

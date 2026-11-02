@@ -122,3 +122,20 @@ expression QA_Inventario =
 
 	annotation PBI_ResultType = Table
 
+expression stg_Piscina =
+		let
+		  Origen = src_MaestroPiscinas,
+		  #"Quitar P-12 duplicado (área 8,8 no cuadra con ciclos)" = Table.SelectRows(Origen, each not ([Codigo] = "P-12" and [Area_ha] = 8.8)),
+		  #"Codigo y Sector: tipo texto" = Table.TransformColumnTypes(#"Quitar P-12 duplicado (área 8,8 no cuadra con ciclos)", {{"Codigo", type text}, {"Sector", type text}}),
+		  #"Sector: quitar prefijo ""Sector """ = Table.ReplaceValue(#"Codigo y Sector: tipo texto", "Sector ", "", Replacer.ReplaceText, {"Codigo", "Sector"}),
+		  #"Codigo y Sector: recortar espacios" = Table.TransformColumns(#"Sector: quitar prefijo ""Sector """, {{"Codigo", each Text.Trim(_), type nullable text}, {"Sector", each Text.Trim(_), type nullable text}}),
+		  #"Codigo y Sector: mayúsculas" = Table.TransformColumns(#"Codigo y Sector: recortar espacios", {{"Codigo", each Text.Upper(_), type nullable text}, {"Sector", each Text.Upper(_), type nullable text}}),
+		  #"Area_ha: coma decimal a número (independiente de la región)" = Table.TransformColumns(#"Codigo y Sector: mayúsculas", {{"Area_ha", each if _ is number then _ else Number.From(Text.Replace(Text.Trim(_), ",", "."), "en-US"), type number}}),
+		  #"Aireadores y Año: número entero y Estado: tipo texto" = Table.TransformColumnTypes(#"Area_ha: coma decimal a número (independiente de la región)", {{"Aireadores_HP", Int64.Type}, {"Anio_Construccion", Int64.Type}, {"Estado", type text}})
+		in
+		  #"Aireadores y Año: número entero y Estado: tipo texto"
+	lineageTag: 37f8fb60-d8e3-47ce-9db5-264ccf354414
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+

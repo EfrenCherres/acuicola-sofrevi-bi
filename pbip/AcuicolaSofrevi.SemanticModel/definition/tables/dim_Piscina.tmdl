@@ -1,0 +1,67 @@
+table dim_Piscina
+	lineageTag: f8025974-8fcd-4131-a24b-92d280b3d25f
+
+	column Piscina
+		dataType: string
+		lineageTag: a17a0173-7650-4491-9a32-acfef0b35cf2
+		summarizeBy: none
+		sourceColumn: Piscina
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		lineageTag: 58aec5e8-001d-4255-b86c-628cca7bff9b
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column Area_ha
+		dataType: double
+		lineageTag: a08bfd21-c16a-41a9-9d98-d955d4737942
+		summarizeBy: sum
+		sourceColumn: Area_ha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Aireadores_HP
+		dataType: int64
+		formatString: 0
+		lineageTag: 5fc459fc-21b3-4250-be55-2397941a7e2c
+		summarizeBy: sum
+		sourceColumn: Aireadores_HP
+
+		annotation SummarizationSetBy = Automatic
+
+	column Anio_Construccion
+		dataType: int64
+		formatString: 0
+		lineageTag: 5047756e-a27c-4db5-8bab-2b091e7af1ff
+		summarizeBy: sum
+		sourceColumn: Anio_Construccion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: 204c2dc5-f1d0-4eac-9696-13938d94f514
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Piscina = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Piscina,
+				  #"Codigo a Piscina" = Table.RenameColumns(Origen, {{"Codigo", "Piscina"}})
+				in
+				  #"Codigo a Piscina"
+
+	annotation PBI_ResultType = Table
+
