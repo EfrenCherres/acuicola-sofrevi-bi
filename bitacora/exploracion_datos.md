@@ -34,7 +34,7 @@
 	- Turno: son 2, Mañana escrito de dos formas p. ej Mañana / MAÑANA
 	- Fecha: un solo formato, con hora 00:00:00 sin valor
 
-## KARDEX BODEGA
+## KARDEX_BODEGA
 - Qué es una fila: una salida de bodega de un producto
 - Filas: 56690
 - Columnas (9): N_Documento, Fecha, Hora, Tipo_Mov, Codigo_Producto, Piscina, Sacos, Entregado_A,	Registrado_Por
@@ -46,7 +46,7 @@
 
 ## COMPRAS_BALANCEADO
 - Qué es una fila: una compra de balanceado 
-- Filas: 7489
+- Filas: 748
 - Columnas (10): Fecha_Factura,	N_Factura, Proveedor,	Producto, Presentación,	Cantidad_Sacos,	Precio_Saco_USD,	Subtotal_USD,	IVA_USD, Total_USD
 - Clave: N_Factura (verificado: no se repite) 
 - Me llamó la atención:
@@ -72,7 +72,7 @@
  
 ## LIQUIDACIONES_EMPACADORAS
 - Qué es una fila: una línea de liquidación (una clase y talla dentro de la liquidación de una cosecha)
-- Filas: 3300
+- Filas: 3438
 - Columnas (11): N_Liquidacion, Fecha_Liquidacion, Fecha_Cosecha, Empacadora, Piscina, Lbs_Guia_Remision,	Clase, Talla, Lbs_Recibidas, Precio_USD_lb, Total_USD
 - Clave: N_Liquidacion + Clase + Talla
 - Conexión con CICLOS: no tiene ID_Ciclo; se une por Piscina + Fecha_Cosecha
@@ -95,6 +95,6 @@
         - Centro_Costo usa los Sectores de MAESTRO_PISCINAS; el costo por piscina requerirá repartir el gasto del sector (p. ej. por Area_ha). ADMINISTRACION es gasto general
 - Me llamó la atención:
         - Periodo trae dos formatos: p. ej. ene-21 y 2023-07
-        - Centro_Costo: 3 sectores escritos de ~2 formas, p. ej. A / Sector A, además de ADMINISTRACION
+        - Centro_Costo: 4 sectores escritos de ~2 formas, p. ej. A / Sector A, además de ADMINISTRACION
         - Rubro: revisado, sin hallazgos
           - Monto_USD: revisado (negativos, ceros, extremos), sin hallazgos

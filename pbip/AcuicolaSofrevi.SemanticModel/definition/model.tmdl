@@ -7,9 +7,31 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
+queryGroup 00_Parametros
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup 01_Origen
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup 02_Staging
+
+	annotation PBI_QueryGroupOrder = 2
+
+queryGroup 03_Final
+
+	annotation PBI_QueryGroupOrder = 3
+
+queryGroup QA
+
+	annotation PBI_QueryGroupOrder = 4
+
 annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
+
+annotation PBI_QueryOrder = ["RutaArchivo","src_SofreviBD","src_MaestroPiscinas","src_Ciclos","src_Alimentacion","src_Kardex","src_Compras","src_ParametrosAgua","src_Liquidaciones","src_Gastos","QA_Inventario"]
 
 ref cultureInfo es-EC
 

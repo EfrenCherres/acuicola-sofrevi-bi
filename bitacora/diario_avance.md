@@ -76,4 +76,26 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 **Pendiente para la próxima sesión:**
 - [ ] Llenar las hojas 1 y 2 de Log_Calidad.xlsx (tablas del modelo e inventario de fuentes)
 
----
+## 2026-11-01 · Fase 2: conexión en Power Query y cuadre de carga
+
+**Objetivo de hoy:** Conectar el Excel en Power Query sin escribir rutas fijas y comprobar que se cargaron todas las filas.
+
+**Lo que hice:**
+- Creé el parámetro RutaArchivo y los grupos 00_Parametros, 01_Origen, 02_Staging, 03_Final y QA
+- Conecté el libro con src_SofreviBD y creé una consulta de origen por hoja (8), sin cambiar tipos y sin carga al modelo
+- Creé QA_Inventario para comparar las filas cargadas contra el inventario
+- Registré el cuadre en la hoja 5. Totales de control del Log
+
+**Lo que encontré:**
+- COMPRAS_BALANCEADO tiene 748 filas, no 7.489: error de digitación en el conteo manual
+- LIQUIDACIONES_EMPACADORAS tiene 3.438 filas, no 3.300: conté con un filtro activo en Excel, y el Recuento solo cuenta filas visibles
+- La hoja se llama KARDEX_BODEGA (con guion bajo); en Power Query el nombre tiene que ser exacto
+
+**Decisiones y por qué:**
+- En Origen no se cambian tipos: los datos entran tal como llegaron y se corrigen en Staging, donde quedan documentados
+- No corregí las diferencias de QA_Inventario hasta encontrar la causa de cada una
+
+**Pendiente para la próxima sesión:**
+- [ ] Fase 3: staging tabla por tabla, con la matriz de controles y el log de novedades
+
+----

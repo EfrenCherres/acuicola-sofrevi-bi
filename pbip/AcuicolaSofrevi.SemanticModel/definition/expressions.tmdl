@@ -1,0 +1,124 @@
+expression RutaArchivo =
+		let
+		    Origen = "C:\Portafolio\acuicola-sofrevi-bi\data\raw\" meta [IsParameterQuery = true, IsParameterQueryRequired = false, Type = type text]
+		in
+		    Origen
+	lineageTag: ceff9cd2-8e74-4bda-95ba-0c29d0cd7050
+	queryGroup: 00_Parametros
+
+	annotation PBI_ResultType = Text
+
+expression src_SofreviBD =
+		let
+		  Origen = Excel.Workbook(File.Contents(RutaArchivo & "AcuicolaSofrevi_BD_2021-2026.xlsx"), null, true)
+		in
+		  Origen
+	lineageTag: ba99a7c7-2617-41b4-af1b-36c2af807436
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_MaestroPiscinas =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="MAESTRO_PISCINAS",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: c59ea574-18a7-489d-9310-8602862b7d6a
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Ciclos =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="CICLOS_PRODUCCION",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 43ef9471-be31-4d7c-9574-6b78224e86c1
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Alimentacion =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="ALIMENTACION_DIARIA",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: d8e49a08-56a3-4a27-9734-09d44882f9ab
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Kardex =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="KARDEX_BODEGA",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 3c76fab2-05c5-4c97-870d-7d5e18ca0b8e
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Compras =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="COMPRAS_BALANCEADO",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 0b4f732e-6885-47d4-8fba-31ac8c1e480f
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_ParametrosAgua =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="PARAMETROS_AGUA",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 451f4bd3-3ce1-4c74-8204-71bd02bb795e
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Liquidaciones =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="LIQUIDACIONES_EMPACADORAS",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 2e480543-35fa-49c5-9409-bed441e9573e
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression src_Gastos =
+		let
+		  Origen = Table.PromoteHeaders(src_SofreviBD{[Item="GASTOS_OPERATIVOS",Kind="Sheet"]}[Data], [PromoteAllScalars=true])
+		in
+		  Origen
+	lineageTag: 81a551ef-25fb-4797-8d71-3d05bd13e24f
+	queryGroup: 01_Origen
+
+	annotation PBI_ResultType = Table
+
+expression QA_Inventario =
+		let
+		    Conteo = #table(
+		        {"Hoja", "Filas_Inventario", "Filas_Cargadas", "Columnas"},
+		        {
+		            {"MAESTRO_PISCINAS",          34,    Table.RowCount(src_MaestroPiscinas), Table.ColumnCount(src_MaestroPiscinas)},
+		            {"CICLOS_PRODUCCION",         550,   Table.RowCount(src_Ciclos),          Table.ColumnCount(src_Ciclos)},
+		            {"ALIMENTACION_DIARIA",       57480, Table.RowCount(src_Alimentacion),    Table.ColumnCount(src_Alimentacion)},
+		            {"KARDEX_BODEGA",             56690, Table.RowCount(src_Kardex),          Table.ColumnCount(src_Kardex)},
+		            {"COMPRAS_BALANCEADO",        748,  Table.RowCount(src_Compras),         Table.ColumnCount(src_Compras)},
+		            {"PARAMETROS_AGUA",           24462, Table.RowCount(src_ParametrosAgua),  Table.ColumnCount(src_ParametrosAgua)},
+		            {"LIQUIDACIONES_EMPACADORAS", 3438,  Table.RowCount(src_Liquidaciones),   Table.ColumnCount(src_Liquidaciones)},
+		            {"GASTOS_OPERATIVOS",         1863,  Table.RowCount(src_Gastos),          Table.ColumnCount(src_Gastos)}
+		        }
+		    ),
+		    Diferencia = Table.AddColumn(Conteo, "Diferencia", each [Filas_Cargadas] - [Filas_Inventario], Int64.Type),
+		    Cuadra = Table.AddColumn(Diferencia, "Cuadra", each if [Diferencia] = 0 then "Sí" else "No", type text)
+		in
+		    Cuadra
+	lineageTag: 2f23bb70-2d44-4f89-9f70-d27135d150c6
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
