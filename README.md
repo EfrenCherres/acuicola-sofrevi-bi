@@ -13,8 +13,8 @@
 | Fase | Estado | Evidencia |
 |---|---|---|
 | 0. Preparación del repo y proyecto | ✅ Terminada | [Diario](bitacora/diario_avance.md) |
-| 1. Entender el negocio y los datos | 🟡 En curso (exploración completa: 8 hojas) | [Exploración de datos](bitacora/exploracion_datos.md) |
-| 2. Conexión y cuadre de carga | ⬜ Pendiente | |
+| 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
+| 2. Conexión y cuadre de carga | 🟡 Siguiente | |
 | 3. Limpieza (staging) | ⬜ Pendiente | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
 | 4. Tablas finales | ⬜ Pendiente | |
 | 5. Modelo y medidas DAX | ⬜ Pendiente | |
