@@ -98,4 +98,20 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 **Pendiente para la próxima sesión:**
 - [ ] Fase 3: staging tabla por tabla, con la matriz de controles y el log de novedades
 
+## 2-nov-2026 · Fase 3: dim_Piscina
+
+**Qué hice**
+- Creé stg_Piscina (Referencia de src_MaestroPiscinas) y dim_Piscina (03_Final, 33 filas).
+- Encontré P-12 duplicado (7,5 y 8,8 ha). Lo resolví con evidencia de otra tabla: en los 17 ciclos de P-12, larvas / (densidad × 10) da entre 7,48 y 7,53 ha. Me quedé con 7,5. El año (2018 o 2011) queda como pregunta para el cliente.
+- Limpié Sector (prefijo "Sector ", espacios, mayúsculas) y Area_ha (texto con coma a número, sin depender de la configuración regional).
+- Registré 3 novedades en el Log y llené la Matriz con 24 controles.
+
+**Qué aprendí**
+- En tipo Any, Reemplazar valores no cambia texto parcial: primero se pone el tipo texto.
+- Un cambio de tipo por sí solo no es novedad. El Log es para problemas de los datos.
+- Un 0 no siempre es error: P-33 tiene 0 aireadores porque está en construcción y no tiene ciclos.
+- Un duplicado se decide con evidencia de otra tabla, no a ojo.
+
+**Siguiente:** stg_Ciclos (fechas como número de serie, IDs C- y SIG-, kg vs lb, formatos de piscina).
+
 ----

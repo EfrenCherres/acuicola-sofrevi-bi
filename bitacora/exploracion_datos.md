@@ -4,7 +4,7 @@
 - Columnas (6): Codigo, Sector, Area_ha, Aireadores_HP,	Anio_Construccion, Estado
 - Clave: Codigo
 - Me llamó la atención:
-    - Sector viene escrito de varias formas: p. ej A, B, Sector B
+    - Sector viene escrito de varias formas: p. ej A, B, Sector B 4 sectores (A, B, C y D). El D apareció al revisar la columna en Power Query.
     - Area_ha mezcla separador decimal: unos valores con punto y otros con coma (algunos se leen como texto)
     - Codigo duplicado: P-12 aparece 2 veces (idénticas / con datos distintos) → 34 filas, 33 piscinas. La clave de una dimensión debe ser única
 
