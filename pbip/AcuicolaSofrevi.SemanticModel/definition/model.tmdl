@@ -31,7 +31,7 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_ProTooling = ["DevMode"]
 
-annotation PBI_QueryOrder = ["RutaArchivo","src_SofreviBD","src_MaestroPiscinas","src_Ciclos","src_Alimentacion","src_Kardex","src_Compras","src_ParametrosAgua","src_Liquidaciones","src_Gastos","QA_Inventario","stg_Piscina","dim_Piscina"]
+annotation PBI_QueryOrder = ["RutaArchivo","src_SofreviBD","src_MaestroPiscinas","src_Ciclos","src_Alimentacion","src_Kardex","src_Compras","src_ParametrosAgua","src_Liquidaciones","src_Gastos","QA_Piscinas_Ciclos","QA_Inventario","stg_Piscina","dim_Piscina","stg_Ciclos","QA_Piscinas_Ciclos_Despues","QA_Piscinas_Huerfanas","QA_Fechas_Ciclos","QA_Fechas_DiaMes","QA_Fechas_Errores","QA_Duracion_Ciclos","QA_Rango_Fechas","fnTextoAFecha","QA_TipoCosecha","QA_TipoCosecha_Duracion"]
 
 ref table dim_Piscina
 

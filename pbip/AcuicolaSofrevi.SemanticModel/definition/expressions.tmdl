@@ -139,3 +139,205 @@ expression stg_Piscina =
 
 	annotation PBI_ResultType = Table
 
+expression QA_Piscinas_Ciclos =
+		let
+		    Origen = src_Ciclos,
+		    Agrupado = Table.Group(Origen, {"Piscina"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Piscina", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: d5d1e814-9e58-4c15-b735-46498cb8466b
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression stg_Ciclos =
+		let
+		  Origen = src_Ciclos,
+		  #"Piscina: solo el número, formato P-00" = Table.TransformColumns(Origen, {{"Piscina", each "P-" & Text.PadStart(Text.Select(Text.From(_), {"0".."9"}), 2, "0"), type text}}),
+		  #"Fechas: 4 formatos a fecha (fnTextoAFecha)" = Table.TransformColumns(#"Piscina: solo el número, formato P-00", {{"Fecha_Siembra", fnTextoAFecha, type date}, {"Fecha_Cosecha", fnTextoAFecha, type date}}),
+		  #"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)" =  Table.AddColumn(#"Fechas: 4 formatos a fecha (fnTextoAFecha)", "Cosecha_Estimada", each if [ID_Ciclo] = "C-2021-013" then "Sí" else "No", type text),
+		  #"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)" = let
+		    t = Table.AddColumn(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)", "FC", each if [Cosecha_Estimada] = "Sí" then Date.AddDays([Fecha_Siembra], 106) else [Fecha_Cosecha], type date),
+		    q = Table.RemoveColumns(t, {"Fecha_Cosecha"}),
+		    r = Table.RenameColumns(q, {{"FC", "Fecha_Cosecha"}})
+		  in
+		    Table.ReorderColumns(r, Table.ColumnNames(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)")),
+		  #"ipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)" = Table.TransformColumns(#"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)", {{"Tipo_Cosecha", each
+		    let t = Text.Upper(Text.Trim(_)) in
+		    if t = "N" or t = "NORMAL" then "NORMAL"
+		    else if Text.StartsWith(t, "EMERG") then "EMERGENCIA"
+		    else t, type text}})
+		in
+		  #"ipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)"
+	lineageTag: 4e0ecb89-8c41-4be4-b268-6d3bd36844f7
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+
+expression QA_Piscinas_Ciclos_Despues =
+		let
+		    Origen = stg_Ciclos,
+		    Agrupado = Table.Group(Origen, {"Piscina"}, {{"Filas", each Table.RowCount(_), Int64.Type}})
+		in
+		    Agrupado
+	lineageTag: 595a89d2-8f12-4551-a00c-76c2509e53bf
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Piscinas_Huerfanas =
+		let
+		    EnCiclos = List.Distinct(stg_Ciclos[Piscina]),
+		    EnDimension = dim_Piscina[Piscina],
+		    Huerfanas = List.Difference(EnCiclos, EnDimension)
+		in
+		    Huerfanas
+	lineageTag: fcbfaaf7-9a76-4df8-adab-0ca003186e0b
+	queryGroup: QA
+
+	annotation PBI_ResultType = List
+
+expression QA_Fechas_Ciclos =
+		let
+		    Formato = (v) =>
+		        if v = null then "vacío"
+		        else if v is number then "número serial"
+		        else if v is date or v is datetime then "fecha real"
+		        else let t = Text.Trim(Text.From(v)) in
+		            if Text.Contains(t, "/") then "dd/mm/aaaa"
+		            else if Text.Length(t) = 10 and Text.Middle(t, 4, 1) = "-" then "aaaa-mm-dd"
+		            else if Text.Contains(t, "-") then "dd-mmm-aa"
+		            else "otro: " & t,
+		    Siembra = Table.Group(Table.AddColumn(src_Ciclos, "Formato", each Formato([Fecha_Siembra])), {"Formato"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Cosecha = Table.Group(Table.AddColumn(src_Ciclos, "Formato", each Formato([Fecha_Cosecha])), {"Formato"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Resultado = Table.Combine({
+		        Table.AddColumn(Siembra, "Columna", each "Fecha_Siembra"),
+		        Table.AddColumn(Cosecha, "Columna", each "Fecha_Cosecha")})
+		in
+		    Resultado
+	lineageTag: 8b513917-22ab-4747-8a4f-e05fdca200fc
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Fechas_DiaMes =
+		let
+		    Valores = List.Select(
+		        List.Combine({src_Ciclos[Fecha_Siembra], src_Ciclos[Fecha_Cosecha]}),
+		        each _ is text and Text.Contains(_, "/")),
+		    Partes = List.Transform(Valores, each Text.Split(Text.Trim(_), "/")),
+		    PrimeraMayor12 = List.Count(List.Select(Partes, each Number.From(_{0}) > 12)),
+		    SegundaMayor12 = List.Count(List.Select(Partes, each Number.From(_{1}) > 12)),
+		    Resultado = #table({"Prueba", "Valores"}, {
+		        {"Total en formato dd/mm/aaaa", List.Count(Valores)},
+		        {"Primera parte > 12 (solo puede ser día)", PrimeraMayor12},
+		        {"Segunda parte > 12 (sería mes/día)", SegundaMayor12}})
+		in
+		    Resultado
+	lineageTag: 70300877-aaa6-474d-b640-b428060d4183
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Fechas_Errores =
+		let
+		    Origen = src_Ciclos,
+		    Prueba = Table.AddColumn(Origen, "Resultado", each try fnTextoAFecha([Fecha_Cosecha]) otherwise "ERROR"),
+		    Errores = Table.SelectRows(Prueba, each [Resultado] = "ERROR"),
+		    Columnas = Table.SelectColumns(Errores, {"ID_Ciclo", "Piscina", "Fecha_Siembra", "Fecha_Cosecha", "Tipo_Cosecha"})
+		in
+		    Columnas
+	lineageTag: a1adf3d8-43b5-4122-af9f-8e114855aa43
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Duracion_Ciclos =
+		let
+		    Origen = stg_Ciclos,
+		    SinError = Table.RemoveRowsWithErrors(Origen, {"Fecha_Cosecha"}),
+		    ConCosecha = Table.SelectRows(SinError, each [Fecha_Cosecha] <> null),
+		    Dias = Table.AddColumn(ConCosecha, "Dias", each Duration.Days([Fecha_Cosecha] - [Fecha_Siembra]), Int64.Type),
+		    PorPiscina = Table.Group(Dias, {"Piscina"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Promedio", each Number.Round(List.Average([Dias]), 0), type number},
+		        {"Minimo", each List.Min([Dias]), Int64.Type},
+		        {"Maximo", each List.Max([Dias]), Int64.Type}}),
+		    Ordenado = Table.Sort(PorPiscina, {{"Piscina", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: 11c65be9-df60-4001-b996-29db3d11d1dc
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Rango_Fechas =
+		let
+		    s = stg_Ciclos,
+		    Resultado = #table({"Columna", "Minima", "Maxima"}, {
+		        {"Fecha_Siembra", List.Min(s[Fecha_Siembra]), List.Max(s[Fecha_Siembra])},
+		        {"Fecha_Cosecha", List.Min(s[Fecha_Cosecha]), List.Max(s[Fecha_Cosecha])}})
+		in
+		    Resultado
+	lineageTag: 62b88d4a-e02d-4824-aee6-602ce672577d
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression fnTextoAFecha =
+		let
+		    Origen = (v as any) as nullable date =>
+		let
+		    Meses = [ene=1, feb=2, mar=3, abr=4, may=5, jun=6, jul=7, ago=8, sep=9, set=9, oct=10, nov=11, dic=12],
+		    Resultado =
+		        if v = null then null
+		        else if v is number then Date.From(v)
+		        else if v is date then v
+		        else if v is datetime then Date.From(v)
+		        else
+		            let
+		                t = Text.Lower(Text.Trim(Text.From(v))),
+		                p = Text.SplitAny(t, "/-")
+		            in
+		                if Text.Contains(t, "/") then #date(Number.From(p{2}), Number.From(p{1}), Number.From(p{0}))
+		                else if Text.Length(p{0}) = 4 then #date(Number.From(p{0}), Number.From(p{1}), Number.From(p{2}))
+		                else #date(2000 + Number.From(p{2}), Record.Field(Meses, p{1}), Number.From(p{0}))
+		in
+		    Resultado
+		in
+		    Origen
+	lineageTag: 87d75ca7-1aff-4e26-b3f0-74cf87a44e40
+	queryGroup: 00_Parametros
+
+	annotation PBI_ResultType = Function
+
+expression QA_TipoCosecha =
+		let
+		    Origen = src_Ciclos,
+		    Agrupado = Table.Group(Origen, {"Tipo_Cosecha"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Tipo_Cosecha", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: c6f81600-6f8b-481a-b77f-f521a0667c77
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_TipoCosecha_Duracion =
+		let
+		    s = stg_Ciclos,
+		    Dias = Table.AddColumn(s, "Dias", each if [Fecha_Cosecha] = null then null else Duration.Days([Fecha_Cosecha] - [Fecha_Siembra]), Int64.Type),
+		    Resumen = Table.Group(Dias, {"Tipo_Cosecha"}, {
+		        {"Filas", each Table.RowCount(_), Int64.Type},
+		        {"Sin_cosecha", each List.Count(List.Select([Fecha_Cosecha], each _ = null)), Int64.Type},
+		        {"Dias_prom", each Number.Round(List.Average([Dias]), 0), type number},
+		        {"Dias_min", each List.Min([Dias]), Int64.Type},
+		        {"Dias_max", each List.Max([Dias]), Int64.Type}})
+		in
+		    Resumen
+	lineageTag: b11286ee-2df1-4397-9f4e-1e08887ccd24
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
