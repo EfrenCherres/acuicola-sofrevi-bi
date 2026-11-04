@@ -114,4 +114,28 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 
 **Siguiente:** stg_Ciclos (fechas como número de serie, IDs C- y SIG-, kg vs lb, formatos de piscina).
 
-----
+## 2-nov (tarde) y 3-nov-2026 · Fase 3: stg_Ciclos
+
+**Qué hice**
+- Piscina: 135 formas para 32 piscinas (P-01, P01, PISC-01, p 1). Regla: solo los dígitos y formato P-00. 493 de 550 filas estaban mal escritas; QA de huérfanas vacía.
+- Fechas: 4 formatos en la misma columna (número de serie, dd/mm/aaaa, dd-mmm-aa, ISO). Probé que es día/mes (162 contra 0) y creé la función fnTextoAFecha. Una fecha imposible (30/02/2021 en C-2021-013): la estimé con la duración promedio de P-12, la marqué con Cosecha_Estimada y la escalé.
+- Tipo_Cosecha: 7 formas a 3. N = NORMAL, probado por la duración del ciclo. EMERGENCIA explica los ciclos cortos y EN CURSO explica los 26 vacíos de cosecha.
+- Cantidades: texto con coma decimal en 4 columnas, convertido con la función fnTextoANumero. Dos valores imposibles: larvas 1.150.300 (en unidades) y peso 245 g (sin coma).
+- Laboratorio: 10 formas a 3 por palabra clave; 4 vacíos pasan a Desconocido.
+- ID_Ciclo: 3 ciclos cargados dos veces (550 filas, 547 distintos). Quité solo las filas idénticas.
+- Observaciones: 109 vacíos disfrazados ("-", "s/n", "ok"). Las 7 observaciones reales son mancha blanca y están todas en EMERGENCIA.
+- Biomasa: el sistema anterior (C-, hasta marzo de 2023) registraba en libras y el nuevo (SIG-) en kilos. Unificada en libras (Biomasa_lb).
+- Log: novedades 4 a 16.
+
+**Qué aprendí**
+- Distintos vs. únicos en el perfil: es la forma rápida de ver si una clave tiene duplicados.
+- Un filtro mal escrito no da error, da otro número creíble (524 en vez de 57).
+- Cuando la evidencia contradice la hipótesis, se busca otra columna que desempate.
+- Los problemas más caros no dan error: sin unificar la biomasa, la producción habría parecido caer a la mitad.
+- Un dato mal escrito se corrige; uno que nunca se registró se deja vacío y se explica.
+
+**Tiempo:** unas 9 horas en total para CICLOS, la tabla más sucia de la base.
+
+**Siguiente:** Matriz de fact_Ciclos, fact_Ciclos y dim_Laboratorio en 03_Final.
+
+-------
