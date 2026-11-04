@@ -15,7 +15,7 @@
 | 0. Preparación del repo y proyecto | ✅ Terminada | [Diario](bitacora/diario_avance.md) |
 | 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
 | 2. Conexión y cuadre de carga | ✅ Terminada | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
-| 3. Limpieza (staging) | 🔄 En curso: dim_Piscina lista; stg_Ciclos limpia, falta cerrar fact_Ciclos (1 de 13 tablas) | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
+| 3. Limpieza (staging) | 🔄 En curso: dim_Piscina lista; stg_Ciclos limpia, falta cerrar fact_Ciclos (3 de 13 tablas) | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
 | 4. Tablas finales | ⬜ Pendiente | |
 | 5. Modelo y medidas DAX | ⬜ Pendiente | |
 | 6. Dashboard | ⬜ Pendiente | |
