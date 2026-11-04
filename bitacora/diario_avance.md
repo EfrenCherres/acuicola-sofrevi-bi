@@ -138,4 +138,20 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 
 **Siguiente:** Matriz de fact_Ciclos, fact_Ciclos y dim_Laboratorio en 03_Final.
 
--------
+## 4-nov-2026 · Fase 3: fact_Ciclos, dim_Laboratorio, fact_Compras y dim_Proveedor
+
+**Qué hice**
+- fact_Ciclos en 03_Final con dos columnas calculadas: Sistema (C o SIG) y Dias_Cultivo.
+- dim_Laboratorio desde los ciclos: 4 miembros, incluido Desconocido. QA de huérfanos vacía.
+- COMPRAS: proveedor de 13 formas a 3 razones sociales; 4 facturas duplicadas (82.279 USD); Subtotal ≠ Cantidad × Precio por redondeo del precio (no se corrige: el Subtotal es el monto oficial).
+- fact_Compras con Kg_Por_Saco, Kg_Comprados y Precio_Kg_USD: Aquafeed vende en saco de 40 kg y es el más barato por kilo, aunque parece el más caro por saco.
+- dim_Proveedor: 3 proveedores; QA de huérfanos vacía y probada.
+- Gráfico en Power BI para el Reel 17 (producción sin corregir vs corregida), sobre el lienzo ECHB.
+
+**Qué aprendí**
+- No todo lo que no cuadra se corrige: hay que saber cuál columna manda.
+- El número de factura lo pone el proveedor; la clave es N_Factura + Proveedor.
+- Comparar precios por unidad real (kg), no por presentación (saco).
+- Un control se prueba en los dos sentidos: que diga OK cuando todo está bien y que avise cuando algo falla.
+
+**Siguiente:** fact_Liquidaciones y dim_Empacadora. Reels 17 y 18 con mi voz.

@@ -1,0 +1,24 @@
+table 'Medidas DAX'
+	lineageTag: 6fc95ce6-81e6-4abd-9dd1-b252e11ff183
+
+	measure 'Biomasa sin corregir' = SUMX(fact_Ciclos, IF(fact_Ciclos[Sistema] = "SIG", fact_Ciclos[Biomasa_lb] / 2.20462, fact_Ciclos[Biomasa_lb]))
+		lineageTag: 5d399aa1-f33b-4815-91b2-9c68cdeafc14
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Biomasa corregida (lb)' = SUM(fact_Ciclos[Biomasa_lb])
+		lineageTag: 5571c003-99d5-4146-8892-7a651a4cf4dd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Medidas DAX' = m
+		mode: import
+		source =
+				let
+				  Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Columna 1" = _t]),
+				    #"Columnas quitadas" = Table.RemoveColumns(Origen,{"Columna 1"})
+				in
+				  #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+

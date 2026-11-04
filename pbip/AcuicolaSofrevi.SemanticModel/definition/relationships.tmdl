@@ -6,3 +6,13 @@ relationship AutoDetected_a2b17a99-d602-4b6b-9890-210b246fea6b
 	fromColumn: fact_Ciclos.Laboratorio
 	toColumn: dim_Laboratorio.Laboratorio
 
+relationship 6d5a9949-3a67-47e0-b39e-000f456e956d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_Ciclos.Fecha_Siembra
+	toColumn: LocalDateTable_afe04411-6dbf-429d-b60d-2087de2aef50.Date
+
+relationship b87f649b-6c4e-4e6c-a7f5-f8bead619db2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_Ciclos.Fecha_Cosecha
+	toColumn: LocalDateTable_f582b73c-bb51-4b3b-8c7a-9e447845a109.Date
+
