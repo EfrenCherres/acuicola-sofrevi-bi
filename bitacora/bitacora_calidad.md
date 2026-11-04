@@ -50,8 +50,37 @@ Archivo: `data/raw/AcuicolaSofrevi_BD_2021-2026.xlsx`. Sistema de origen y respo
 
 ## Log de novedades
 
-Se llena en la Fase 3, una fila por cada problema encontrado al limpiar cada tabla.
+Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de cada novedad (evidencia, impacto y paso en Power Query) está en el Excel.
 
-| N° | Tabla | Columna | Categoría | Problema detectado | Cómo lo detecté (evidencia) | Filas afectadas | % de la tabla | Severidad | Impacto en el análisis | Decisión / tratamiento | Paso en Power Query | Validar con cliente | Pregunta al cliente | Respuesta del cliente | Estado | Fecha |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | | | | | | | | | | | | | | | | |
+| N° | Tabla | Columna | Categoría | Problema | Filas | Severidad | Decisión | Estado |
+|---|---|---|---|---|---|---|---|---|
+| 1 | dim_Piscina | Codigo | Duplicados | P-12 aparece dos veces (área 7,5 vs 8,8 ha) | 2 | Alta | Se conserva 7,5 ha: cuadra con sus 17 ciclos | Escalado |
+| 2 | dim_Piscina | Sector | Consistencia | Prefijo "Sector " mezclado con la letra sola | 6 | Media | Quitar prefijo, recortar, mayúsculas | Resuelto |
+| 3 | dim_Piscina | Area_ha | Tipos | Texto con coma decimal | 5 | Alta | Coma a número, independiente de la región | Resuelto |
+| 4 | fact_Ciclos | Piscina | Consistencia | 135 formas para 32 piscinas | 493 | Alta | Solo los dígitos, formato P-00 | Resuelto |
+| 5 | fact_Ciclos | Fecha_Siembra, Fecha_Cosecha | Tipos | 4 formatos de fecha en la misma columna | 550 | Alta | fnTextoAFecha (día/mes probado) | Resuelto |
+| 6 | fact_Ciclos | Fecha_Cosecha | Validez | 30/02/2021 en C-2021-013 | 1 | Media | Estimada (siembra + 106 días) y marcada | Escalado |
+| 7 | fact_Ciclos | Tipo_Cosecha | Consistencia | 7 formas para 3 tipos | 160 | Media | N = NORMAL, probado por duración | Resuelto |
+| 8 | fact_Ciclos | 4 columnas de cantidades | Tipos | Números como texto con coma decimal | 323 | Alta | fnTextoANumero | Resuelto |
+| 9 | fact_Ciclos | Larvas_Sembradas_miles | Validez | C-2022-104 escrito en unidades | 1 | Alta | Dividido entre 1.000; la densidad no cuadra | Escalado |
+| 10 | fact_Ciclos | Peso_Muestreo_g | Validez | SIG-000441 con 245 g | 1 | Media | Corregido a 24,5 g, confirmado con biomasa | Resuelto |
+| 11 | fact_Ciclos | Laboratorio | Consistencia | 10 formas para 3 laboratorios y 4 vacíos | 364 | Alta | Palabra clave; vacío = Desconocido | Escalado |
+| 12 | fact_Ciclos | ID_Ciclo | Duplicados | 3 ciclos cargados dos veces | 3 | Alta | Quitar solo filas idénticas | Resuelto |
+| 13 | fact_Ciclos | Observaciones | Completitud | "-", "s/n" y "ok" como vacíos disfrazados | 109 | Media | Pasados a vacío | Resuelto |
+| 14 | fact_Ciclos | Observaciones | Completitud | 8 emergencias sin causa registrada | 8 | Media | No se infiere la causa | Escalado |
+| 15 | fact_Ciclos | Biomasa | Consistencia | Kilos en SIG y libras en C- | 326 | Alta | Unificada en libras (Biomasa_lb) | Escalado |
+| 16 | fact_Ciclos | Sobrevivencia_pct | Completitud | El sistema anterior no la registraba | 221 | Media | Se deja vacía | Escalado |
+
+**Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
+
+## Preguntas para el cliente
+
+| N° | Pregunta |
+|---|---|
+| 1 | P-12: ¿el área es 7,5 ha? ¿El año de construcción es 2018 o 2011? |
+| 6 | ¿La cosecha del ciclo C-2021-013 fue el 30/04/2021? |
+| 9 | En C-2022-104, ¿se sembraron 1.150,3 mil larvas o 793,6 mil? ¿Cuál es la densidad real? |
+| 11 | ¿Cuál es el nombre oficial de cada laboratorio? |
+| 14 | ¿Cuál fue la causa de las 8 cosechas de emergencia sin observación? |
+| 15 | ¿Confirman libras en el sistema anterior y kilos en SIG? ¿El dashboard debe mostrar libras? |
+| 16 | ¿Quieren una sobrevivencia estimada para 2021–2023, marcada como estimada? |
