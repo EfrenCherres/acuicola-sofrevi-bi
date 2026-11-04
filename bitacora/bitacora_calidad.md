@@ -70,6 +70,9 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 14 | fact_Ciclos | Observaciones | Completitud | 8 emergencias sin causa registrada | 8 | Media | No se infiere la causa | Escalado |
 | 15 | fact_Ciclos | Biomasa | Consistencia | Kilos en SIG y libras en C- | 326 | Alta | Unificada en libras (Biomasa_lb) | Escalado |
 | 16 | fact_Ciclos | Sobrevivencia_pct | Completitud | El sistema anterior no la registraba | 221 | Media | Se deja vacía | Escalado |
+| 17 | fact_Compras | Subtotal_USD / Precio_Saco_USD | Consistencia | Subtotal ≠ Cantidad × Precio por redondeo del precio | 655 | Baja | Sin cambios: Subtotal es el monto oficial | Resuelto |
+| 18 | fact_Compras | N_Factura | Duplicados | 4 facturas cargadas dos veces (82.279 USD) | 4 | Alta | Quitar solo filas idénticas | Resuelto |
+| 19 | fact_Compras | Proveedor | Consistencia | 13 formas para 3 proveedores | 154 | Alta | Palabra clave sin espacios ni puntos | Resuelto |
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 
