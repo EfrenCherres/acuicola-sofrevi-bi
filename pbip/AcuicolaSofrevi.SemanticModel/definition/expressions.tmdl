@@ -570,3 +570,93 @@ expression QA_Laboratorio_Huerfanos =
 
 	annotation PBI_ResultType = List
 
+expression stg_Compras =
+		let
+		  Origen = src_Compras,
+		  #"Tipos: fecha, texto y números" = Table.TransformColumnTypes(Origen, {{"Fecha_Factura", type date}, {"N_Factura", type text}, {"Producto", type text}, {"Presentacion", type text}, {"Precio_Saco_USD", type number}, {"Subtotal_USD", type number}, {"IVA_USD", type number}, {"Total_USD", type number}, {"Cantidad_Sacos", type number}}),
+		  #"Proveedor: 13 formas a 3 (sin espacios ni puntos + palabra clave)" = Table.TransformColumns(#"Tipos: fecha, texto y números", {{"Proveedor", each
+		    let t = if _ = null then "" else Text.Remove(Text.Upper(Text.From(_)), {" ", "."}) in
+		    if t = "" then "Desconocido"
+		    else if Text.Contains(t, "FEED") then "AQUAFEED LITORAL S.A."
+		    else if Text.Contains(t, "ANDINOS") then "BALANCEADOS ANDINOS CIA. LTDA."
+		    else if Text.Contains(t, "NUTRIACUA") then "NUTRIACUA S.A."
+		    else _, type text}}),
+		  #"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)" = Table.Distinct(#"Proveedor: 13 formas a 3 (sin espacios ni puntos + palabra clave)")
+		in
+		  #"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)"
+	lineageTag: 9b5ed758-10b7-465e-932a-41c803d0611f
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+
+expression QA_Proveedor =
+		let
+		    Origen = src_Compras,
+		    Agrupado = Table.Group(Origen, {"Proveedor"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Proveedor", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: bc31d395-2657-43fd-901c-a1a21fb0a9ce
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Numeros_Compras =
+		let
+		    s = src_Compras,
+		  Cols = {"Cantidad_Sacos", "Precio_Saco_USD", "Subtotal_USD", "IVA_USD", "Total_USD"},
+		    Fila = (c) =>
+		        let
+		            v = Table.Column(s, c),
+		            t = List.Select(v, each _ is text)
+		        in
+		            {c,
+		             List.Count(List.Select(v, each _ is number)),
+		             List.Count(t),
+		             List.Count(List.Select(v, each _ = null)),
+		             List.Count(List.Select(t, each Text.Contains(_, ",") and Text.Contains(_, "."))),
+		             Text.Combine(List.FirstN(List.Distinct(t), 6), "  |  ")},
+		    Resultado = #table(
+		        {"Columna", "Numeros", "Textos", "Vacios", "Con_punto_y_coma", "Ejemplos_texto"},
+		        List.Transform(Cols, Fila))
+		in
+		    Resultado
+	lineageTag: c5aaeb69-620f-493e-a936-858b9c60bf0f
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Calculos_Compras =
+		let
+		    s = src_Compras,
+		    D = Table.AddColumn(s, "Dif_Subtotal", each Number.Round([Subtotal_USD] - [Cantidad_Sacos] * [Precio_Saco_USD], 2), type number),
+		    T = Table.AddColumn(D, "Dif_Total", each Number.Round([Total_USD] - [Subtotal_USD] - [IVA_USD], 2), type number),
+		    Fila = (nombre, lista) => {nombre,
+		        List.Count(List.Select(lista, each Number.Abs(_) > 0.01)),
+		        List.Min(lista), List.Max(lista), Number.Round(List.Sum(lista), 2)},
+		    Resultado = #table({"Control", "Filas_con_diferencia", "Dif_min", "Dif_max", "Suma_dif"}, {
+		        Fila("Subtotal = Cantidad × Precio", T[Dif_Subtotal]),
+		        Fila("Total = Subtotal + IVA", T[Dif_Total]),
+		        {"Diferencia por saco", List.Count(List.Select(Table.ToRecords(T), each Number.Abs([Dif_Subtotal] / [Cantidad_Sacos]) > 0.005)), List.Min(List.Transform(Table.ToRecords(T), each [Dif_Subtotal] / [Cantidad_Sacos])), List.Max(List.Transform(Table.ToRecords(T), each [Dif_Subtotal] / [Cantidad_Sacos])), null},
+		        {"IVA distinto de 0", List.Count(List.Select(T[IVA_USD], each _ <> 0)), List.Min(T[IVA_USD]), List.Max(T[IVA_USD]), List.Sum(T[IVA_USD])}})
+		in
+		    Resultado
+	lineageTag: 5b05ac5b-7b8c-41c4-abda-5ff236b2dea4
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Facturas_Repetidas =
+		let
+		    s = stg_Compras,
+		    Conteo = Table.Group(s, {"N_Factura"}, {{"Veces", each Table.RowCount(_), Int64.Type}}),
+		    Repetidas = Table.SelectRows(Conteo, each [Veces] > 1),
+		    Filas = Table.SelectRows(s, each List.Contains(Repetidas[N_Factura], [N_Factura])),
+		    Ordenado = Table.Sort(Filas, {{"N_Factura", Order.Ascending}, {"Proveedor", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: bdcebd3d-6dd1-4d15-aed2-6455cbdd2f63
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
