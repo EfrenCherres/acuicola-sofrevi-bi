@@ -1,0 +1,163 @@
+table fact_Ciclos
+	lineageTag: 263d572f-2748-459d-afa3-598126338ea4
+
+	column ID_Ciclo
+		dataType: string
+		lineageTag: cca60490-8d34-43f5-b96f-203914d5199b
+		summarizeBy: none
+		sourceColumn: ID_Ciclo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Piscina
+		dataType: string
+		lineageTag: f2319f56-df44-43bf-8a3f-efc3d908b4c9
+		summarizeBy: none
+		sourceColumn: Piscina
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha_Siembra
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 619959de-d267-4478-9255-e809dbf43f2e
+		summarizeBy: none
+		sourceColumn: Fecha_Siembra
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Fecha_Cosecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5470ec55-1103-4677-929e-d42e5ab17a86
+		summarizeBy: none
+		sourceColumn: Fecha_Cosecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Laboratorio
+		dataType: string
+		lineageTag: 73b0ec29-f232-40a1-8564-9226b38689ad
+		summarizeBy: none
+		sourceColumn: Laboratorio
+
+		annotation SummarizationSetBy = Automatic
+
+	column Larvas_Sembradas_miles
+		dataType: double
+		lineageTag: 8170e25b-a122-47dc-87a3-a63ce427e669
+		summarizeBy: sum
+		sourceColumn: Larvas_Sembradas_miles
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Costo_Larva_USD_mil
+		dataType: double
+		lineageTag: 1c2291a6-d982-4edd-af71-289e5fbded1c
+		summarizeBy: sum
+		sourceColumn: Costo_Larva_USD_mil
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Densidad_m2
+		dataType: double
+		lineageTag: f4e53fba-c596-4ec0-82f8-f9e5f44b3d43
+		summarizeBy: sum
+		sourceColumn: Densidad_m2
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Peso_Muestreo_g
+		dataType: double
+		lineageTag: 4466d8da-d9bd-4dd9-bdd8-3fe9a21bfd1f
+		summarizeBy: sum
+		sourceColumn: Peso_Muestreo_g
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Biomasa_lb
+		dataType: double
+		lineageTag: b5240455-1833-4382-be6f-9afc9a453a3c
+		summarizeBy: sum
+		sourceColumn: Biomasa_lb
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sobrevivencia_pct
+		dataType: double
+		lineageTag: 657d6962-4777-44a4-bc6e-5e0c3d356cb7
+		summarizeBy: sum
+		sourceColumn: Sobrevivencia_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Tipo_Cosecha
+		dataType: string
+		lineageTag: aa92addc-7733-40eb-a350-bec3160802ba
+		summarizeBy: none
+		sourceColumn: Tipo_Cosecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column Observaciones
+		dataType: string
+		lineageTag: 127448f8-5efa-4a3e-8fe1-8dc101e6c3fb
+		summarizeBy: none
+		sourceColumn: Observaciones
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cosecha_Estimada
+		dataType: string
+		lineageTag: 09c57656-0db8-45a6-9b2f-4a2179b73252
+		summarizeBy: none
+		sourceColumn: Cosecha_Estimada
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sistema
+		dataType: string
+		lineageTag: adea4803-8cce-43e3-9fbc-aa4a22323bbb
+		summarizeBy: none
+		sourceColumn: Sistema
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dias_Cultivo
+		dataType: int64
+		formatString: 0
+		lineageTag: 4df962e2-4ab2-4611-ba05-084250579ae5
+		summarizeBy: sum
+		sourceColumn: Dias_Cultivo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_Ciclos = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Ciclos,
+				  #"Sistema: C (anterior, hasta mar-2023) o SIG (desde mar-2023)" = Table.AddColumn(Origen, "Sistema", each Text.BeforeDelimiter([ID_Ciclo], "-"), type text),
+				  #"Dias_Cultivo: cosecha menos siembra (vacío si EN CURSO)" = Table.AddColumn(#"Sistema: C (anterior, hasta mar-2023) o SIG (desde mar-2023)", "Dias_Cultivo", each if [Fecha_Cosecha] = null then null else Duration.Days([Fecha_Cosecha] - [Fecha_Siembra]), Int64.Type)
+				in
+				  #"Dias_Cultivo: cosecha menos siembra (vacío si EN CURSO)"
+
+	annotation PBI_ResultType = Table
+

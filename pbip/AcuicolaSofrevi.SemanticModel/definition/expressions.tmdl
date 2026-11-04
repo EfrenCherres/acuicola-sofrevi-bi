@@ -163,13 +163,37 @@ expression stg_Ciclos =
 		    r = Table.RenameColumns(q, {{"FC", "Fecha_Cosecha"}})
 		  in
 		    Table.ReorderColumns(r, Table.ColumnNames(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)")),
-		  #"ipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)" = Table.TransformColumns(#"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)", {{"Tipo_Cosecha", each
+		  #"Tipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)" = Table.TransformColumns(#"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)", {{"Tipo_Cosecha", each
 		    let t = Text.Upper(Text.Trim(_)) in
 		    if t = "N" or t = "NORMAL" then "NORMAL"
 		    else if Text.StartsWith(t, "EMERG") then "EMERGENCIA"
-		    else t, type text}})
+		    else t, type text}}),
+		  #"Cantidades: coma decimal a número (fnTextoANumero)" =  Table.TransformColumns(#"Tipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)", {
+		    {"Larvas_Sembradas_miles", fnTextoANumero, type number},
+		    {"Costo_Larva_USD_mil", fnTextoANumero, type number},
+		    {"Densidad_m2", fnTextoANumero, type number},
+		    {"Peso_Muestreo_g", fnTextoANumero, type number},
+		    {"Biomasa_Cosechada", fnTextoANumero, type number},
+		    {"Sobrevivencia_pct", fnTextoANumero, type number}}),
+		  #"Larvas: C-2022-104 en unidades a miles (/1000)" = Table.ReplaceValue(#"Cantidades: coma decimal a número (fnTextoANumero)", each [Larvas_Sembradas_miles], each if [ID_Ciclo] = "C-2022-104" then [Larvas_Sembradas_miles] / 1000 else [Larvas_Sembradas_miles], Replacer.ReplaceValue, {"Larvas_Sembradas_miles"}),
+		  #"Peso: SIG-000441 sin coma decimal (245 a 24,5)" = Table.ReplaceValue(#"Larvas: C-2022-104 en unidades a miles (/1000)", each [Peso_Muestreo_g], each if [ID_Ciclo] = "SIG-000441" then [Peso_Muestreo_g] / 10 else [Peso_Muestreo_g], Replacer.ReplaceValue, {"Peso_Muestreo_g"}),
+		  #"Larvas y Peso: tipo número (ReplaceValue lo pierde)" = Table.TransformColumnTypes(#"Peso: SIG-000441 sin coma decimal (245 a 24,5)", {{"Larvas_Sembradas_miles", type number}, {"Peso_Muestreo_g", type number}}),
+		  #"ID_Ciclo: tipo texto" = Table.TransformColumnTypes(#"Larvas y Peso: tipo número (ReplaceValue lo pierde)", {{"ID_Ciclo", type text}}),
+		  #"Laboratorio: 10 formas a 3 por palabra clave; vacío = Desconocido" = Table.TransformColumns(#"ID_Ciclo: tipo texto", {{"Laboratorio", each
+		    let t = if _ = null then "" else Text.Upper(Text.Trim(Text.From(_))) in
+		    if t = "" then "Desconocido"
+		    else if Text.Contains(t, "BIOGEN") then "Biogenética del Pacífico"
+		    else if Text.Contains(t, "PUNTA BLANCA") then "Larvas Punta Blanca"
+		    else if Text.Contains(t, "SANTA ELENA") then "Santa Elena Larvas"
+		    else _, type text}}),
+		  #"Filas duplicadas exactas: quitar (3 ciclos cargados dos veces)" = Table.Distinct(#"Laboratorio: 10 formas a 3 por palabra clave; vacío = Desconocido"),
+		  #"Observaciones: -, s/n y ok a vacío (vacíos disfrazados)" = Table.TransformColumns(#"Filas duplicadas exactas: quitar (3 ciclos cargados dos veces)", {{"Observaciones", each
+		    let t = if _ = null then "" else Text.Trim(Text.From(_)) in
+		    if List.Contains({"", "-", "s/n", "ok"}, Text.Lower(t)) then null else t, type text}}),
+		  #"Biomasa: SIG de kg a lb (× 2,20462)" = Table.ReplaceValue(#"Observaciones: -, s/n y ok a vacío (vacíos disfrazados)", each [Biomasa_Cosechada], each if Text.StartsWith([ID_Ciclo], "SIG-") and [Biomasa_Cosechada] <> null then [Biomasa_Cosechada] * 2.20462 else [Biomasa_Cosechada], Replacer.ReplaceValue, {"Biomasa_Cosechada"}),
+		  #"Biomasa_lb: nombre con unidad y tipo número" = Table.TransformColumnTypes(Table.RenameColumns(#"Biomasa: SIG de kg a lb (× 2,20462)", {{"Biomasa_Cosechada", "Biomasa_lb"}}), {{"Biomasa_lb", type number}})
 		in
-		  #"ipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)"
+		  #"Biomasa_lb: nombre con unidad y tipo número"
 	lineageTag: 4e0ecb89-8c41-4be4-b268-6d3bd36844f7
 	queryGroup: 02_Staging
 
@@ -340,4 +364,209 @@ expression QA_TipoCosecha_Duracion =
 	queryGroup: QA
 
 	annotation PBI_ResultType = Table
+
+expression QA_Numeros_Ciclos =
+		let
+		    s = src_Ciclos,
+		    Cols = {"Larvas_Sembradas_miles", "Costo_Larva_USD_mil", "Densidad_m2", "Peso_Muestreo_g", "Biomasa_Cosechada", "Sobrevivencia_pct"},
+		    Fila = (c) =>
+		        let
+		            v = Table.Column(s, c),
+		            t = List.Select(v, each _ is text)
+		        in
+		            {c,
+		             List.Count(List.Select(v, each _ is number)),
+		             List.Count(t),
+		             List.Count(List.Select(v, each _ = null)),
+		             List.Count(List.Select(t, each Text.Contains(_, ",") and Text.Contains(_, "."))),
+		             Text.Combine(List.FirstN(List.Distinct(t), 6), "  |  ")},
+		    Resultado = #table(
+		        {"Columna", "Numeros", "Textos", "Vacios", "Con_punto_y_coma", "Ejemplos_texto"},
+		        List.Transform(Cols, Fila))
+		in
+		    Resultado
+	lineageTag: 395ca187-3ec3-448b-a0e7-f72497ba8ebd
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Rango_Numeros =
+		let
+		    s = stg_Ciclos,
+		    Cols = {"Larvas_Sembradas_miles", "Costo_Larva_USD_mil", "Densidad_m2", "Peso_Muestreo_g", "Biomasa_Cosechada", "Sobrevivencia_pct"},
+		    Filas = Table.ToRecords(s),
+		    Fila = (c) =>
+		        let v = List.RemoveNulls(Table.Column(s, c)) in
+		        {c,
+		         List.Min(v),
+		         Number.Round(List.Average(v), 2),
+		         List.Max(v),
+		         List.Count(List.Select(Filas, each Record.Field(_, c) = null)),
+		         List.Count(List.Select(Filas, each Record.Field(_, c) = null and _[Tipo_Cosecha] = "EN CURSO"))},
+		    Resultado = #table(
+		        {"Columna", "Minimo", "Promedio", "Maximo", "Vacios", "Vacios_EN_CURSO"},
+		        List.Transform(Cols, Fila))
+		in
+		    Resultado
+	lineageTag: f873dfc0-e354-49c0-a1b3-3173e27a93c0
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Atipicos_Ciclos =
+		let
+		    s = stg_Ciclos,
+		    Cols = {"ID_Ciclo", "Piscina", "Larvas_Sembradas_miles", "Densidad_m2", "Peso_Muestreo_g", "Biomasa_lb", "Sobrevivencia_pct", "Tipo_Cosecha"},
+		    L = Table.AddColumn(Table.SelectColumns(Table.SelectRows(s, each [Larvas_Sembradas_miles] > 5000), Cols), "Motivo", each "Larvas > 5000"),
+		    P = Table.AddColumn(Table.SelectColumns(Table.SelectRows(s, each [Peso_Muestreo_g] <> null and [Peso_Muestreo_g] > 60), Cols), "Motivo", each "Peso > 60 g"),
+		    Juntas = Table.Combine({L, P}),
+		    ConArea = Table.ExpandTableColumn(Table.NestedJoin(Juntas, {"Piscina"}, dim_Piscina, {"Piscina"}, "dim", JoinKind.LeftOuter), "dim", {"Area_ha"}),
+		    Esperadas = Table.AddColumn(ConArea, "Larvas_esperadas_miles", each Number.Round([Area_ha] * [Densidad_m2] * 10, 1), type number)
+		in
+		    Esperadas
+	lineageTag: 9155b6fc-e415-4c0b-9af5-4304ffec4d81
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Larvas_vs_Area =
+		let
+		    s = stg_Ciclos,
+		    ConArea = Table.ExpandTableColumn(Table.NestedJoin(s, {"Piscina"}, dim_Piscina, {"Piscina"}, "dim", JoinKind.LeftOuter), "dim", {"Area_ha"}),
+		    Esperadas = Table.AddColumn(ConArea, "Esperadas", each Number.Round([Area_ha] * [Densidad_m2] * 10, 1), type number),
+		    Desvio = Table.AddColumn(Esperadas, "Desvio_pct", each Number.Round(([Larvas_Sembradas_miles] - [Esperadas]) / [Esperadas] * 100, 1), type number),
+		    Fuera = Table.SelectRows(Desvio, each Number.Abs([Desvio_pct]) > 5),
+		    Resultado = Table.SelectColumns(Fuera, {"ID_Ciclo", "Piscina", "Area_ha", "Densidad_m2", "Larvas_Sembradas_miles", "Esperadas", "Desvio_pct"})
+		in
+		    Resultado
+	lineageTag: f4bf8ea8-ea03-4592-bf17-38cf40d1d7b9
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression fnTextoANumero =
+		let
+		  Origen = (v as any) as nullable number =>
+		    if v = null then null
+		    else if v is number then v
+		    else Number.From(Text.Replace(Text.Trim(Text.From(v)), ",", "."), "en-US")
+		in
+		  Origen
+	lineageTag: 34af6e43-8d61-431f-ae3b-3d2f73ed21ef
+	queryGroup: 00_Parametros
+
+	annotation PBI_ResultType = Function
+
+expression QA_Laboratorio =
+		let
+		    Origen = src_Ciclos,
+		    Agrupado = Table.Group(Origen, {"Laboratorio"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Laboratorio", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: 95548cc0-1c17-4912-bb41-4e0838842f7a
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_IDs_Duplicados =
+		let
+		    s = stg_Ciclos,
+		    Conteo = Table.Group(s, {"ID_Ciclo"}, {{"Veces", each Table.RowCount(_), Int64.Type}}),
+		    Repetidos = Table.SelectRows(Conteo, each [Veces] > 1),
+		    Filas = Table.SelectRows(s, each List.Contains(Repetidos[ID_Ciclo], [ID_Ciclo])),
+		    Ordenado = Table.Sort(Filas, {{"ID_Ciclo", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: 2524cae9-98cb-4987-95f6-8f1c1f54781a
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Observaciones =
+		let
+		    Origen = src_Ciclos,
+		    Agrupado = Table.Group(Origen, {"Observaciones"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Observaciones", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: 83068734-f74e-4950-95cc-7fc2c375ac6d
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Obs_vs_Tipo =
+		let
+		    s = stg_Ciclos,
+		    Resumen = Table.Group(s, {"Tipo_Cosecha", "Observaciones"}, {{"Filas", each Table.RowCount(_), Int64.Type}})
+		in
+		    Resumen
+	lineageTag: de86c669-e81c-4dfe-9cb8-a0ea8de5d160
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Biomasa_Unidad =
+		let
+		    s = stg_Ciclos,
+		    ConDatos = Table.SelectRows(s, each [Biomasa_lb] <> null and [Sobrevivencia_pct] <> null and [Peso_Muestreo_g] <> null),
+		    Sistema = Table.AddColumn(ConDatos, "Sistema", each Text.BeforeDelimiter([ID_Ciclo], "-"), type text),
+		    Esperada = Table.AddColumn(Sistema, "Bio_esperada_kg", each [Larvas_Sembradas_miles] * [Sobrevivencia_pct] / 100 * [Peso_Muestreo_g], type number),
+		    Razon = Table.AddColumn(Esperada, "Razon", each [Biomasa_lb] / [Bio_esperada_kg], type number),
+		    Resumen = Table.Group(Razon, {"Sistema"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Razon_prom", each Number.Round(List.Average([Razon]), 2), type number},
+		        {"Razon_min", each Number.Round(List.Min([Razon]), 2), type number},
+		        {"Razon_max", each Number.Round(List.Max([Razon]), 2), type number}})
+		in
+		    Resumen
+	lineageTag: f03ea532-ff74-471e-a8eb-5dcd18e7168b
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Sistemas =
+		let
+		    s = stg_Ciclos,
+		    Sis = Table.AddColumn(s, "Sistema", each Text.BeforeDelimiter([ID_Ciclo], "-"), type text),
+		    Resumen = Table.Group(Sis, {"Sistema"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Sin_sobrevivencia", each List.Count(List.Select([Sobrevivencia_pct], each _ = null)), Int64.Type},
+		        {"Siembra_desde", each List.Min([Fecha_Siembra]), type date},
+		        {"Siembra_hasta", each List.Max([Fecha_Siembra]), type date}})
+		in
+		    Resumen
+	lineageTag: 14d4bc22-d88a-4ca6-a5e9-eb6d50460eb2
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Biomasa_C =
+		let
+		    s = stg_Ciclos,
+		    C = Table.SelectRows(s, each Text.StartsWith([ID_Ciclo], "C-") and [Biomasa_Cosechada] <> null and [Peso_Muestreo_g] <> null),
+		    Kg = Table.AddColumn(C, "Sobrev_si_kg", each [Biomasa_Cosechada] / ([Larvas_Sembradas_miles] * [Peso_Muestreo_g]) * 100, type number),
+		    Lb = Table.AddColumn(Kg, "Sobrev_si_lb", each [Sobrev_si_kg] / 2.20462, type number),
+		    Fila = (nombre, lista) => {nombre, List.Count(lista), Number.Round(List.Average(lista), 1), Number.Round(List.Min(lista), 1), Number.Round(List.Max(lista), 1), List.Count(List.Select(lista, each _ > 100))},
+		    Resultado = #table({"Supuesto", "Ciclos", "Sobrev_prom", "Sobrev_min", "Sobrev_max", "Mayor_a_100"}, {
+		        Fila("Si la biomasa fuera kg", Lb[Sobrev_si_kg]),
+		        Fila("Si la biomasa fuera lb", Lb[Sobrev_si_lb])})
+		in
+		    Resultado
+	lineageTag: d8055c1d-0dbe-459f-930c-20676f1ad46e
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Laboratorio_Huerfanos =
+		let
+		    EnCiclos = List.Distinct(stg_Ciclos[Laboratorio]),
+		    EnDimension = dim_Laboratorio[Laboratorio],
+		    Huerfanos = List.Difference(EnCiclos, EnDimension)
+		in
+		    Huerfanos
+	lineageTag: 7a76b167-4f6e-443e-a410-2453d314737e
+	queryGroup: QA
+
+	annotation PBI_ResultType = List
 

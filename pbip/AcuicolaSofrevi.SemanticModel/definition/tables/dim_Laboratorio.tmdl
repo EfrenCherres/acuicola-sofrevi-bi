@@ -1,0 +1,24 @@
+table dim_Laboratorio
+	lineageTag: 9ca09e94-be6e-4d90-abe0-770bb9a3b2d1
+
+	column Laboratorio
+		dataType: string
+		lineageTag: c403610c-1118-477c-a830-fbd40754a8c1
+		summarizeBy: none
+		sourceColumn: Laboratorio
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Laboratorio = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Ciclos,
+				  #"Solo Laboratorio" = Table.SelectColumns(Origen, {"Laboratorio"}),
+				  #"Duplicados quitados" = Table.Distinct(#"Solo Laboratorio", {"Laboratorio"})
+				in
+				  #"Duplicados quitados"
+
+	annotation PBI_ResultType = Table
+

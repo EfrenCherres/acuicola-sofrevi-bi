@@ -20,7 +20,7 @@ table dim_Piscina
 	column Area_ha
 		dataType: double
 		lineageTag: a08bfd21-c16a-41a9-9d98-d955d4737942
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Area_ha
 
 		annotation SummarizationSetBy = Automatic
@@ -31,7 +31,7 @@ table dim_Piscina
 		dataType: int64
 		formatString: 0
 		lineageTag: 5fc459fc-21b3-4250-be55-2397941a7e2c
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Aireadores_HP
 
 		annotation SummarizationSetBy = Automatic
@@ -40,7 +40,7 @@ table dim_Piscina
 		dataType: int64
 		formatString: 0
 		lineageTag: 5047756e-a27c-4db5-8bab-2b091e7af1ff
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Anio_Construccion
 
 		annotation SummarizationSetBy = Automatic

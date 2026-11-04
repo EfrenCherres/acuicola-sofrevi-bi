@@ -1,0 +1,8 @@
+relationship AutoDetected_efc5d1ca-c1f1-44fc-822a-342a57adbbbc
+	fromColumn: fact_Ciclos.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship AutoDetected_a2b17a99-d602-4b6b-9890-210b246fea6b
+	fromColumn: fact_Ciclos.Laboratorio
+	toColumn: dim_Laboratorio.Laboratorio
+
