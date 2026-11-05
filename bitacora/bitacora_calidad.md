@@ -45,7 +45,7 @@ Archivo: `data/raw/AcuicolaSofrevi_BD_2021-2026.xlsx`. Sistema de origen y respo
 | KARDEX_BODEGA | fact_Kardex | 56.690 | Solo salidas; hora en columna aparte |
 | COMPRAS_BALANCEADO | fact_Compras | 748 | IVA 0; diferencias de centavos en Subtotal |
 | PARAMETROS_AGUA | fact_ParametrosAgua | 24.462 | pH 14 y 0 °C imposibles; vacíos |
-| LIQUIDACIONES_EMPACADORAS | fact_Liquidaciones | 3.438 | Precio como texto con $; liquidación 23101 incompleta |
+| LIQUIDACIONES_EMPACADORAS | fact_Liquidaciones | 3.438 | Precio como texto con $; Precio como texto con $; 6 liquidaciones duplicadas |
 | GASTOS_OPERATIVOS | fact_Gastos | 1.863 | Mensual, por sector; Periodo en 2 formatos |
 
 ## Log de novedades

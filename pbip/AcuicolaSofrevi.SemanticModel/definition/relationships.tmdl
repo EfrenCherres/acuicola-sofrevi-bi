@@ -16,3 +16,12 @@ relationship b87f649b-6c4e-4e6c-a7f5-f8bead619db2
 	fromColumn: fact_Ciclos.Fecha_Cosecha
 	toColumn: LocalDateTable_f582b73c-bb51-4b3b-8c7a-9e447845a109.Date
 
+relationship b47733ec-8e4b-4e2e-a982-1b83135e3c93
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_Compras.Fecha_Factura
+	toColumn: LocalDateTable_45370e8e-7929-47fc-90c3-031630192e85.Date
+
+relationship AutoDetected_d9373245-a51d-4ba1-9f99-c7357bb47dc3
+	fromColumn: fact_Compras.Proveedor
+	toColumn: dim_Proveedor.Proveedor
+

@@ -81,7 +81,7 @@
         - Empacadora: 3 empacadoras escritas de ~9 formas, p. ej. GOLFO AZUL / Exportadora Golfo Azul S.A.
         - Piscina con formatos distintos (PISC 18, P-15) y con vacíos: esas liquidaciones no se podrán unir a su ciclo
         - Clase y Talla: revisadas, sin hallazgos (S/T en COLA/DESCARTE es legítimo)
-        - Libras recibidas vs guía: en 3 liquidaciones llega ~99 % (merma normal ~1 %); la 23101 llega solo 87,8 % y le falta la talla 30/40 → posible fila faltante. Revisar todas en la Fase 3
+        - Libras recibidas vs guía: en 3 liquidaciones llega ~99 % (merma normal ~1 %); la 23101 llega solo 87,8 % y le falta la talla 30/40 → posible fila faltante. Verificado en Fase 3 (QA_Rendimiento_Liquidaciones): 7 filas, rendimiento 99,8 %. La sospecha era un error del conteo manual.
 	 - Precio_USD_lb mezcla números y texto con $ (p. ej. $2.52)
          - Total_USD = Lbs_Recibidas × Precio_USD_lb: cuadra en las filas revisadas
 

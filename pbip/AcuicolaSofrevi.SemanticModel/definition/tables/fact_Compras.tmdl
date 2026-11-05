@@ -1,0 +1,112 @@
+table fact_Compras
+	lineageTag: e5f5d9e0-71d2-42a5-a912-0afb37f3b036
+
+	column Fecha_Factura
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 7909e093-4da9-4362-8b3b-ec473cb8a307
+		summarizeBy: none
+		sourceColumn: Fecha_Factura
+
+		variation Variation
+			isDefault
+			relationship: b47733ec-8e4b-4e2e-a982-1b83135e3c93
+			defaultHierarchy: LocalDateTable_45370e8e-7929-47fc-90c3-031630192e85.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column N_Factura
+		dataType: string
+		lineageTag: fc1ab301-831c-477d-91a6-53462bea321c
+		summarizeBy: none
+		sourceColumn: N_Factura
+
+		annotation SummarizationSetBy = Automatic
+
+	column Proveedor
+		dataType: string
+		lineageTag: 8a4da9fd-aeeb-4f45-9fc3-7565d40d1f8b
+		summarizeBy: none
+		sourceColumn: Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: e7e6c863-d967-48ff-9ccd-4af49991e196
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Presentacion
+		dataType: string
+		lineageTag: 9f0d8ce2-7757-4522-a479-95219329e39e
+		summarizeBy: none
+		sourceColumn: Presentacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cantidad_Sacos
+		dataType: double
+		lineageTag: 6a553de8-1c8a-4014-80c8-df6ca8c1a422
+		summarizeBy: sum
+		sourceColumn: Cantidad_Sacos
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Precio_Saco_USD
+		dataType: double
+		lineageTag: 7bb0c8b8-24bc-44c6-a7c2-ee2f8555612e
+		summarizeBy: sum
+		sourceColumn: Precio_Saco_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Subtotal_USD
+		dataType: double
+		lineageTag: 0045006c-7399-41c7-812b-ad8dcd1bf697
+		summarizeBy: sum
+		sourceColumn: Subtotal_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column IVA_USD
+		dataType: double
+		lineageTag: 7aa864cf-8c9c-49c9-9a5a-a12bc0844d9d
+		summarizeBy: sum
+		sourceColumn: IVA_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_USD
+		dataType: double
+		lineageTag: 37b61917-edd0-4f4d-9f30-473fe894dcc5
+		summarizeBy: sum
+		sourceColumn: Total_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_Compras = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Compras
+				in
+				  Origen
+
+	annotation PBI_ResultType = Table
+

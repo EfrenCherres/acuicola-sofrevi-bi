@@ -155,3 +155,17 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 - Un control se prueba en los dos sentidos: que diga OK cuando todo está bien y que avise cuando algo falla.
 
 **Siguiente:** fact_Liquidaciones y dim_Empacadora. Reels 17 y 18 con mi voz.
+
+## 5 de noviembre de 2026
+
+**Tablas trabajadas:** fact_Liquidaciones y dim_Empacadora (limpias y validadas; falta completar el Log).
+
+- Empacadora: 10 formas de escritura reducidas a 3 razones sociales.
+- Precio con signo $: se amplió fnTextoANumero y se probó que ciclos y compras siguen sin errores.
+- 6 liquidaciones cargadas dos veces (38 filas, 489.902,56 USD): quitadas (3.438 → 3.400).
+- Piscina vacía en 22 liquidaciones: inferida por fecha de cosecha y libras, validado 499 de 499; marcada en Piscina_Origen.
+- La liquidación 21908 confirmó la fecha de cosecha de C-2021-013 (10/05/2021).
+- fact_Liquidaciones enlazada a fact_Ciclos con ID_Ciclo: 522 ciclos cosechados = 522 liquidaciones.
+- Controles: 0 liquidaciones antes de la cosecha, precios 0,88–3,96 USD/lb, Total = Lbs × Precio en todas las filas.
+
+**Pendiente:** novedades 22–24 en el Log, matrices, bitácora de calidad y cierre de la tabla.

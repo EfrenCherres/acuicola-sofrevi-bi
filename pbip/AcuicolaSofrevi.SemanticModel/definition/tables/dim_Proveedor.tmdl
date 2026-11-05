@@ -1,0 +1,24 @@
+table dim_Proveedor
+	lineageTag: 680f1bbc-29ab-42be-b8a8-212869637d2c
+
+	column Proveedor
+		dataType: string
+		lineageTag: 173f30ce-1968-475f-9a96-4595375510b2
+		summarizeBy: none
+		sourceColumn: Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Proveedor = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Compras,
+				  #"Solo Proveedor" = Table.SelectColumns(Origen, {"Proveedor"}),
+				  #"Un proveedor por fila" = Table.Distinct(#"Solo Proveedor", {"Proveedor"})
+				in
+				  #"Un proveedor por fila"
+
+	annotation PBI_ResultType = Table
+
