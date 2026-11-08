@@ -99,7 +99,6 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 14 | ¿Cuál fue la causa de las 8 cosechas de emergencia sin observación? |
 | 15 | ¿Confirman libras en el sistema anterior y kilos en SIG? ¿El dashboard debe mostrar libras? |
 | 16 | ¿Quieren una sobrevivencia estimada para 2021–2023, marcada como estimada? |
-- (las preguntas que ya tenías…)
 - ¿Por qué Empacadora Costa Dorada liquida en promedio 97,1 % de las libras de la guía, contra 99,0 % de las otras dos (209 liquidaciones)?
 - ¿Las ventas totales por año y por empacadora coinciden con contabilidad?
 - ¿Los registros de alimentación con 0 kg dentro del ciclo son días sin alimentar (oxígeno bajo, muda, lluvia) o falta de registro?
