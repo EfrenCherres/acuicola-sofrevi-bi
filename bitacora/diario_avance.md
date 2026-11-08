@@ -180,3 +180,22 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 - Hallazgo de negocio para el dashboard: Costa Dorada rinde 97,1 % contra 99,0 % de las otras empacadoras.
 
 **Siguiente:** fact_Alimentacion y dim_Sector.
+
+## 8 de noviembre de 2026
+
+**Tablas cerradas:** fact_Alimentacion y dim_Sector (9 de 13).
+
+**fact_Alimentacion (57.480 → 57.137 filas)**
+- Reglas reusadas: Piscina (96 formas → 32) y Proveedor (11 → 3) se resolvieron con las reglas de ciclos y compras, pero antes se probaron en esta tabla: 0 piscinas huérfanas y 57.480 filas conservadas.
+- Kg_Aplicados tenía cinco problemas distintos; cada uno se trató por separado: "S/D" → vacío, negativos → sin signo (error de digitación), ceros previos a cosecha = ayuno (se quedan), ceros dentro del ciclo = escalados al cliente.
+- 343 duplicados exactos quitados; Fecha + Piscina + Turno queda como clave única.
+- Evidencia cruzada: 0 raciones con Aquafeed antes de su primera compra (feb-2024).
+- Cada ración recibió su ID_Ciclo con una búsqueda por rango (siembra ≤ fecha ≤ cosecha): 100 % válido, 547 ciclos enlazados; QA_Ciclos_Solapados confirmó que ningún ciclo se cruza con otro en la misma piscina.
+- Lección: supuse un rango "normal" de 15 a 80 kg mirando solo las primeras filas; la mediana real es 222 kg. Un valor se juzga con la distribución completa, no con una muestra.
+
+**dim_Sector (5 filas)**
+- Los gastos se registran por sector (Centro_Costo), no por piscina; por eso el sector necesita su propia dimensión, compartida por gastos y piscinas.
+- Clave corta (A–D) igual a stg_Piscina; "Sector A" va solo como nombre para mostrar.
+- ADMINISTRACION entra como miembro de tipo "Administrativo", para que el costo total cuadre sin mezclarlo con el costo productivo. El criterio de prorrateo queda como pregunta para el cliente.
+
+**Siguiente:** fact_Kardex y fact_ParametrosAgua.

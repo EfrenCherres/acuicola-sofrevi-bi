@@ -78,6 +78,13 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 22 | fact_Liquidaciones | (toda la fila) | Duplicados | 6 liquidaciones cargadas dos veces: 38 filas, 489.902,56 USD | 38 | Alta | Table.Distinct sin columnas: 3.438 → 3.400; clave N_Liquidacion + Clase + Talla única | Resuelto |
 | 23 | fact_Liquidaciones | Piscina | Consistencia | Piscina en dos formatos: P-01 y PISC n | 1.699 | Media | Solo dígitos → P-00, igual que en ciclos | Resuelto |
 | 24 | fact_Liquidaciones | Piscina | Completitud | Piscina vacía en 22 liquidaciones | 138 | Alta | Deducida por fecha de cosecha + libras más cercanas; validado 499/499; marcada en Piscina_Origen | Resuelto |
+| 25 | fact_Alimentacion | Piscina | Consistencia | 96 formas (P-01, P01, PISC-01) para 32 piscinas | 50.479 | Media | Regla de ciclos: dígitos → P-00; probada: 32 piscinas, 0 huérfanas | Resuelto |
+| 26 | fact_Alimentacion | Proveedor | Consistencia | 11 formas para 3 proveedores (incluye "Acuafeed" con C) | 46.146 | Media | Regla de compras sin cambios: palabra clave FEED / ANDINOS / NUTRIACUA | Resuelto |
+| 27 | fact_Alimentacion | Kg_Aplicados | Completitud | 289 sin dato: 174 vacíos y 115 "S/D" | 289 | Baja | "S/D" → vacío; no se inventa ni se pone 0 | Resuelto |
+| 28 | fact_Alimentacion | Kg_Aplicados | Validez | 226 raciones con kilos negativos | 226 | Alta | Error de signo: Number.Abs (sin signo se parecen a los positivos; repartidas entre los 4 registradores) | Resuelto |
+| 29 | fact_Alimentacion | Kg_Aplicados | Plausibilidad | 1.645 raciones en 0 kg dentro del ciclo (los 56 de los 3 días previos a cosecha son ayuno normal) | 1.645 | Media | Sin cambios; validar con fact_ParametrosAgua y con el cliente | Escalado |
+| 30 | fact_Alimentacion | (toda la fila) | Duplicados | 343 raciones cargadas dos veces | 343 | Alta | Table.Distinct: 57.480 → 57.137; clave Fecha + Piscina + Turno única | Resuelto |
+| 31 | fact_Alimentacion | Turno | Consistencia | "mañana" en minúsculas junto a "MAÑANA" | 2.837 | Baja | Text.Upper | Resuelto |
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 
@@ -92,3 +99,8 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 14 | ¿Cuál fue la causa de las 8 cosechas de emergencia sin observación? |
 | 15 | ¿Confirman libras en el sistema anterior y kilos en SIG? ¿El dashboard debe mostrar libras? |
 | 16 | ¿Quieren una sobrevivencia estimada para 2021–2023, marcada como estimada? |
+- (las preguntas que ya tenías…)
+- ¿Por qué Empacadora Costa Dorada liquida en promedio 97,1 % de las libras de la guía, contra 99,0 % de las otras dos (209 liquidaciones)?
+- ¿Las ventas totales por año y por empacadora coinciden con contabilidad?
+- ¿Los registros de alimentación con 0 kg dentro del ciclo son días sin alimentar (oxígeno bajo, muda, lluvia) o falta de registro?
+- ¿Con qué criterio se reparten los gastos de ADMINISTRACION entre los sectores (área, número de piscinas, producción)?
