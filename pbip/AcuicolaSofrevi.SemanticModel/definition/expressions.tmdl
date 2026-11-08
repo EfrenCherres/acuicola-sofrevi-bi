@@ -157,13 +157,13 @@ expression stg_Ciclos =
 		  #"Piscina: solo el número, formato P-00" = Table.TransformColumns(Origen, {{"Piscina", each "P-" & Text.PadStart(Text.Select(Text.From(_), {"0".."9"}), 2, "0"), type text}}),
 		  #"Fechas: 4 formatos a fecha (fnTextoAFecha)" = Table.TransformColumns(#"Piscina: solo el número, formato P-00", {{"Fecha_Siembra", fnTextoAFecha, type date}, {"Fecha_Cosecha", fnTextoAFecha, type date}}),
 		  #"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)" =  Table.AddColumn(#"Fechas: 4 formatos a fecha (fnTextoAFecha)", "Cosecha_Estimada", each if [ID_Ciclo] = "C-2021-013" then "Sí" else "No", type text),
-		  #"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)" = let
-		    t = Table.AddColumn(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)", "FC", each if [Cosecha_Estimada] = "Sí" then Date.AddDays([Fecha_Siembra], 106) else [Fecha_Cosecha], type date),
+		  #"Fecha_Cosecha: C-2021-013 = 10/05/2021 según liquidación 21908" = let
+		    t = Table.AddColumn(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)", "FC", each if [Cosecha_Estimada] = "Sí" then #date(2021, 5, 10) else [Fecha_Cosecha], type date),
 		    q = Table.RemoveColumns(t, {"Fecha_Cosecha"}),
 		    r = Table.RenameColumns(q, {{"FC", "Fecha_Cosecha"}})
 		  in
 		    Table.ReorderColumns(r, Table.ColumnNames(#"Cosecha_Estimada: marca C-2021-013 (30/02 no existe)")),
-		  #"Tipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)" = Table.TransformColumns(#"Fecha_Cosecha: estimada siembra + 106 días (promedio P-12)", {{"Tipo_Cosecha", each
+		  #"Tipo_Cosecha: 7 formas a 3 (N = NORMAL por duración, Emerg. = EMERGENCIA)" = Table.TransformColumns(#"Fecha_Cosecha: C-2021-013 = 10/05/2021 según liquidación 21908", {{"Tipo_Cosecha", each
 		    let t = Text.Upper(Text.Trim(_)) in
 		    if t = "N" or t = "NORMAL" then "NORMAL"
 		    else if Text.StartsWith(t, "EMERG") then "EMERGENCIA"
@@ -673,9 +673,20 @@ expression stg_Liquidaciones =
 		    else "P-" & Text.PadStart(Text.Select(Text.From(_), {"0".."9"}), 2, "0"), type text}}),
 		  #"Cantidades: texto con $ a número (fnTextoANumero)" = Table.TransformColumns(#"Piscina: solo el número, formato P-00 (vacíos se mantienen)", {{"Lbs_Guia_Remision", fnTextoANumero, type number}, {"Lbs_Recibidas", fnTextoANumero, type number}, {"Precio_USD_lb", fnTextoANumero, type number}, {"Total_USD", fnTextoANumero, type number}}),
 		  #"Tipos: N_Liquidacion, Clase y Talla como texto" = Table.TransformColumnTypes(#"Cantidades: texto con $ a número (fnTextoANumero)", {{"N_Liquidacion", type text}, {"Clase", type text}, {"Talla", type text}}),
-		  #"Filas duplicadas exactas: quitar (6 liquidaciones cargadas dos veces)" = Table.Distinct(#"Tipos: N_Liquidacion, Clase y Talla como texto")
+		  #"Filas duplicadas exactas: quitar (6 liquidaciones cargadas dos veces)" = Table.Distinct(#"Tipos: N_Liquidacion, Clase y Talla como texto"),
+		  #"Piscina: 22 liquidaciones sin piscina inferidas por fecha y libras (validado 499" = let
+		    base = #"Filas duplicadas exactas: quitar (6 liquidaciones cargadas dos veces)",
+		    C = Table.SelectColumns(fact_Ciclos, {"Piscina", "Fecha_Cosecha", "Biomasa_lb"}),
+		    Buscar = (fecha, lbs) =>
+		        let t = Table.SelectRows(C, each [Fecha_Cosecha] = fecha) in
+		        if Table.IsEmpty(t) then null
+		        else Table.First(Table.Sort(Table.AddColumn(t, "Dif", each Number.Abs([Biomasa_lb] - lbs)), {{"Dif", Order.Ascending}}))[Piscina],
+		    ConOrigen = Table.AddColumn(base, "Piscina_Origen", each if [Piscina] = null then "Inferida por fecha de cosecha" else "Liquidación", type text),
+		    Relleno = Table.ReplaceValue(ConOrigen, each [Piscina], each if [Piscina] = null then Buscar([Fecha_Cosecha], [Lbs_Guia_Remision]) else [Piscina], Replacer.ReplaceValue, {"Piscina"})
+		  in
+		    Table.TransformColumnTypes(Relleno, {{"Piscina", type text}})
 		in
-		  #"Filas duplicadas exactas: quitar (6 liquidaciones cargadas dos veces)"
+		  #"Piscina: 22 liquidaciones sin piscina inferidas por fecha y libras (validado 499"
 	lineageTag: cce37c54-b6e3-405b-a88a-dd04f0800afd
 	queryGroup: 02_Staging
 
@@ -772,6 +783,70 @@ expression QA_Rendimiento_Liquidaciones =
 		in
 		    Personalizado
 	lineageTag: 5681acfd-56e0-4423-8f69-38de0c469b7a
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Liq_vs_Ciclos =
+		let
+		    L = Table.Distinct(Table.SelectColumns(stg_Liquidaciones, {"N_Liquidacion", "Piscina", "Fecha_Cosecha", "Lbs_Guia_Remision"})),
+		    C = Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Cosecha", "Biomasa_lb"}),
+		    J = Table.NestedJoin(L, {"Fecha_Cosecha"}, C, {"Fecha_Cosecha"}, "Ciclos", JoinKind.LeftOuter),
+		    N = Table.AddColumn(J, "Ciclos_esa_fecha", each Table.RowCount([Ciclos]), Int64.Type),
+		    Coincide = Table.AddColumn(N, "Piscina_coincide", each if [Piscina] = null then null else List.Contains([Ciclos][Piscina], [Piscina]), type logical),
+		    Resumen = Table.Group(Coincide, {"Ciclos_esa_fecha"}, {
+		        {"Liquidaciones", each Table.RowCount(_), Int64.Type},
+		        {"Con_piscina", each List.Count(List.Select([Piscina], each _ <> null)), Int64.Type},
+		        {"Piscina_coincide", each List.Count(List.Select([Piscina_coincide], each _ = true)), Int64.Type},
+		        {"Sin_piscina", each List.Count(List.Select([Piscina], each _ = null)), Int64.Type}})
+		in
+		    Resumen
+	lineageTag: 442728fb-fad6-48fa-a7b0-edbc99b252a0
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Relleno_Piscina =
+		let
+		    L = Table.Distinct(Table.SelectColumns(stg_Liquidaciones, {"N_Liquidacion", "Piscina", "Fecha_Cosecha", "Lbs_Guia_Remision"})),
+		    C = Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Cosecha", "Biomasa_lb"}),
+		    J = Table.NestedJoin(L, {"Fecha_Cosecha"}, C, {"Fecha_Cosecha"}, "Ciclos", JoinKind.LeftOuter),
+		    Mejor = Table.AddColumn(J, "Candidato", (fila) =>
+		        let t = fila[Ciclos] in
+		        if Table.IsEmpty(t) then null
+		        else Table.First(Table.Sort(Table.AddColumn(t, "Dif", (r) => Number.Abs(r[Biomasa_lb] - fila[Lbs_Guia_Remision])), {{"Dif", Order.Ascending}}))),
+		    Est = Table.AddColumn(Mejor, "Piscina_estimada", each if [Candidato] = null then null else [Candidato][Piscina], type text),
+		    Dif = Table.AddColumn(Est, "Dif_lb", each if [Candidato] = null then null else Number.Round([Candidato][Dif], 0), type number),
+		    Ciclos_dia = Table.AddColumn(Dif, "Ciclos_esa_fecha", each Table.RowCount([Ciclos]), Int64.Type),
+		    Acierta = Table.AddColumn(Ciclos_dia, "Acierta", each if [Piscina] = null then null else [Piscina] = [Piscina_estimada], type logical),
+		    Salida = Table.RemoveColumns(Acierta, {"Ciclos", "Candidato"})
+		in
+		    Salida
+	lineageTag: be4fd14a-a05f-4ab4-83f6-017b56087d63
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Controles_Liquidaciones =
+		let
+		    s = fact_Liquidaciones,
+		    Filas = Table.ToRecords(s),
+		    Dif = List.Transform(Filas, each Number.Round([Total_USD] - [Lbs_Recibidas] * [Precio_USD_lb], 2)),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Filas", Table.RowCount(s)},
+		        {"Fecha_Liquidacion mínima", List.Min(s[Fecha_Liquidacion])},
+		        {"Fecha_Liquidacion máxima", List.Max(s[Fecha_Liquidacion])},
+		        {"Liquidación antes de la cosecha", List.Count(List.Select(Filas, each [Fecha_Liquidacion] < [Fecha_Cosecha]))},
+		        {"Días máx. de cosecha a liquidación", List.Max(List.Transform(Filas, each Duration.Days([Fecha_Liquidacion] - [Fecha_Cosecha])))},
+		        {"Precio mínimo", List.Min(s[Precio_USD_lb])},
+		        {"Precio máximo", List.Max(s[Precio_USD_lb])},
+		        {"Lbs_Recibidas en cero o negativas", List.Count(List.Select(s[Lbs_Recibidas], each _ <= 0))},
+		        {"Total distinto de Lbs × Precio (> 1 centavo)", List.Count(List.Select(Dif, each Number.Abs(_) > 0.01))},
+		        {"Diferencia mínima", List.Min(Dif)},
+		        {"Diferencia máxima", List.Max(Dif)}})
+		in
+		    Resultado
+	lineageTag: e6cc0fdd-af92-4ec0-8546-0655259bd8f1
 	queryGroup: QA
 
 	annotation PBI_ResultType = Table

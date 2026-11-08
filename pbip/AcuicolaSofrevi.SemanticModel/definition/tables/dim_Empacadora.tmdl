@@ -1,0 +1,24 @@
+table dim_Empacadora
+	lineageTag: afda7cd3-b8cd-4723-a283-42e8de987e0e
+
+	column Empacadora
+		dataType: string
+		lineageTag: 14c46023-a885-4ca2-b4bd-8c9dba1287a8
+		summarizeBy: none
+		sourceColumn: Empacadora
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Empacadora = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = fact_Liquidaciones,
+				  #"Solo Empacadora" = Table.SelectColumns(Origen, {"Empacadora"}),
+				  #"Una empacadora por fila" = Table.Distinct(#"Solo Empacadora", {"Empacadora"})
+				in
+				  #"Una empacadora por fila"
+
+	annotation PBI_ResultType = Table
+

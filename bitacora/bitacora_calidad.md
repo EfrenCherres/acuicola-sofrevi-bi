@@ -73,6 +73,11 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 17 | fact_Compras | Subtotal_USD / Precio_Saco_USD | Consistencia | Subtotal ≠ Cantidad × Precio por redondeo del precio | 655 | Baja | Sin cambios: Subtotal es el monto oficial | Resuelto |
 | 18 | fact_Compras | N_Factura | Duplicados | 4 facturas cargadas dos veces (82.279 USD) | 4 | Alta | Quitar solo filas idénticas | Resuelto |
 | 19 | fact_Compras | Proveedor | Consistencia | 13 formas para 3 proveedores | 154 | Alta | Palabra clave sin espacios ni puntos | Resuelto |
+| 20 | fact_Liquidaciones | Empacadora | Consistencia | Empacadora escrita de 10 formas para 3 empresas | 2.328 | Media | Sin espacios ni puntos + palabra clave → razón social oficial | Resuelto |
+| 21 | fact_Liquidaciones | Precio_USD_lb | Tipos | 172 precios como texto con signo $ | 172 | Alta | fnTextoANumero ampliada para quitar $ y espacios; prueba de regresión en ciclos y compras | Resuelto |
+| 22 | fact_Liquidaciones | (toda la fila) | Duplicados | 6 liquidaciones cargadas dos veces: 38 filas, 489.902,56 USD | 38 | Alta | Table.Distinct sin columnas: 3.438 → 3.400; clave N_Liquidacion + Clase + Talla única | Resuelto |
+| 23 | fact_Liquidaciones | Piscina | Consistencia | Piscina en dos formatos: P-01 y PISC n | 1.699 | Media | Solo dígitos → P-00, igual que en ciclos | Resuelto |
+| 24 | fact_Liquidaciones | Piscina | Completitud | Piscina vacía en 22 liquidaciones | 138 | Alta | Deducida por fecha de cosecha + libras más cercanas; validado 499/499; marcada en Piscina_Origen | Resuelto |
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 

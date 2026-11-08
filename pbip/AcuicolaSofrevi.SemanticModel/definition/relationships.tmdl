@@ -25,3 +25,26 @@ relationship AutoDetected_d9373245-a51d-4ba1-9f99-c7357bb47dc3
 	fromColumn: fact_Compras.Proveedor
 	toColumn: dim_Proveedor.Proveedor
 
+relationship f051bd27-2265-427e-ae73-fb8fd29b5eb1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_Liquidaciones.Fecha_Liquidacion
+	toColumn: LocalDateTable_d371475b-4f01-4702-9ce3-5ec3f0f9bf00.Date
+
+relationship 96087c11-3d47-41a0-83ed-955a33ff1ffd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: fact_Liquidaciones.Fecha_Cosecha
+	toColumn: LocalDateTable_d5ca94f9-d969-427b-95dc-e63b00f5754f.Date
+
+relationship AutoDetected_db2ecc5b-2546-4df4-8844-d9d8245c909e
+	fromColumn: fact_Liquidaciones.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship AutoDetected_1dff4b5d-85bd-4ef6-9fd5-a9305c09b0c4
+	isActive: false
+	fromColumn: fact_Liquidaciones.ID_Ciclo
+	toColumn: fact_Ciclos.ID_Ciclo
+
+relationship AutoDetected_f59629aa-4cf9-4991-a6d2-e10486d41a17
+	fromColumn: fact_Liquidaciones.Empacadora
+	toColumn: dim_Empacadora.Empacadora
+

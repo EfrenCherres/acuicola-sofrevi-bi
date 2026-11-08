@@ -1,0 +1,156 @@
+table fact_Liquidaciones
+	lineageTag: 5a43e367-3a22-4e62-a922-64a087f0811b
+
+	column N_Liquidacion
+		dataType: string
+		lineageTag: bf8f9d64-8906-4ed8-9a6f-45a00d40f7fa
+		summarizeBy: none
+		sourceColumn: N_Liquidacion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha_Liquidacion
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: da1a8243-7e4d-4772-a2a6-2a37f434e401
+		summarizeBy: none
+		sourceColumn: Fecha_Liquidacion
+
+		variation Variation
+			isDefault
+			relationship: f051bd27-2265-427e-ae73-fb8fd29b5eb1
+			defaultHierarchy: LocalDateTable_d371475b-4f01-4702-9ce3-5ec3f0f9bf00.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Fecha_Cosecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 77dbd7a4-ea5d-468f-8d07-bc1bd5cace4b
+		summarizeBy: none
+		sourceColumn: Fecha_Cosecha
+
+		variation Variation
+			isDefault
+			relationship: 96087c11-3d47-41a0-83ed-955a33ff1ffd
+			defaultHierarchy: LocalDateTable_d5ca94f9-d969-427b-95dc-e63b00f5754f.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Empacadora
+		dataType: string
+		lineageTag: 0d7af06d-def6-4b99-88d6-87c969dd4e4b
+		summarizeBy: none
+		sourceColumn: Empacadora
+
+		annotation SummarizationSetBy = Automatic
+
+	column Piscina
+		dataType: string
+		lineageTag: aadb027e-15a1-4f0b-878e-fada5aa546b1
+		summarizeBy: none
+		sourceColumn: Piscina
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lbs_Guia_Remision
+		dataType: double
+		lineageTag: 22c80331-cf27-4570-a6c2-5a1086168ad6
+		summarizeBy: sum
+		sourceColumn: Lbs_Guia_Remision
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Clase
+		dataType: string
+		lineageTag: dbae0039-7f06-4717-b8a7-d0e72aa9b8e7
+		summarizeBy: none
+		sourceColumn: Clase
+
+		annotation SummarizationSetBy = Automatic
+
+	column Talla
+		dataType: string
+		lineageTag: a0cd00ca-62b7-430c-939d-085a86c33b3a
+		summarizeBy: none
+		sourceColumn: Talla
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lbs_Recibidas
+		dataType: double
+		lineageTag: 9c330dfb-43d1-41d9-be1c-db7517a5ff5c
+		summarizeBy: sum
+		sourceColumn: Lbs_Recibidas
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Precio_USD_lb
+		dataType: double
+		lineageTag: 408d1617-66e5-4b06-928d-fdf83a22e99f
+		summarizeBy: sum
+		sourceColumn: Precio_USD_lb
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Total_USD
+		dataType: double
+		lineageTag: 5333a7e0-12fb-4a84-9071-e54a6135aa91
+		summarizeBy: sum
+		sourceColumn: Total_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Piscina_Origen
+		dataType: string
+		lineageTag: 6f7b4613-72b1-4f43-a18b-7b392772eb16
+		summarizeBy: none
+		sourceColumn: Piscina_Origen
+
+		annotation SummarizationSetBy = Automatic
+
+	column Orden_Talla
+		dataType: int64
+		formatString: 0
+		lineageTag: 9d1a8af8-61a0-4fb9-9ecd-75d58477e105
+		summarizeBy: sum
+		sourceColumn: Orden_Talla
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID_Ciclo
+		dataType: string
+		lineageTag: d007f918-5eee-416a-abab-6c2aed1b3690
+		summarizeBy: none
+		sourceColumn: ID_Ciclo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_Liquidaciones = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Liquidaciones,
+				  #"Orden_Talla: primer número de la talla (S/T al final)" = Table.AddColumn(Origen, "Orden_Talla", each if [Talla] = "S/T" then 999 else Number.From(Text.BeforeDelimiter([Talla], "/")), Int64.Type),
+				  #"ID_Ciclo: ciclo de la cosecha (piscina + fecha de cosecha)" = let
+				    J = Table.NestedJoin(#"Orden_Talla: primer número de la talla (S/T al final)", {"Piscina", "Fecha_Cosecha"}, Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Cosecha"}), {"Piscina", "Fecha_Cosecha"}, "Ciclo", JoinKind.LeftOuter)
+				  in
+				    Table.ExpandTableColumn(J, "Ciclo", {"ID_Ciclo"})
+				in
+				  #"ID_Ciclo: ciclo de la cosecha (piscina + fecha de cosecha)"
+
+	annotation PBI_ResultType = Table
+

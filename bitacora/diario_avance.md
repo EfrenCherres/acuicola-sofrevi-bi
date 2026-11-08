@@ -169,3 +169,14 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 - Controles: 0 liquidaciones antes de la cosecha, precios 0,88–3,96 USD/lb, Total = Lbs × Precio en todas las filas.
 
 **Pendiente:** novedades 22–24 en el Log, matrices, bitácora de calidad y cierre de la tabla.
+
+## 7 de noviembre de 2026
+
+**Tablas cerradas:** fact_Liquidaciones y dim_Empacadora (7 de 13).
+
+- Novedades 20–24 registradas en el Log; matrices de control pegadas.
+- La novedad 6 queda Resuelta: la liquidación 21908 confirmó la cosecha de C-2021-013 (10/05/2021).
+- Controles finales: 3.400 filas, 0 liquidaciones antes de la cosecha, Total = Lbs × Precio en todas las filas, 522 ciclos = 522 liquidaciones.
+- Hallazgo de negocio para el dashboard: Costa Dorada rinde 97,1 % contra 99,0 % de las otras empacadoras.
+
+**Siguiente:** fact_Alimentacion y dim_Sector.
