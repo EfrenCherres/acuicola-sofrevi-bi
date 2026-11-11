@@ -199,3 +199,24 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 - ADMINISTRACION entra como miembro de tipo "Administrativo", para que el costo total cuadre sin mezclarlo con el costo productivo. El criterio de prorrateo queda como pregunta para el cliente.
 
 **Siguiente:** fact_Kardex y fact_ParametrosAgua.
+
+## 9 y 10 de noviembre de 2026
+
+**Tabla cerrada:** fact_Kardex (10 de 13).
+
+**Regresión detectada y corregida**
+- fact_Compras había perdido sus 3 columnas calculadas (Kg_Por_Saco, Kg_Comprados, Precio_Kg_USD), probablemente por un archivo no guardado. Se restauraron y se creó QA_Columnas_Esperadas: revisa que cada tabla de hechos conserve sus columnas calculadas.
+
+**fact_Kardex (56.690 egresos)**
+- La tabla más limpia del caso: 0 errores de fecha y hora, 0 sacos inválidos, 0 duplicados, N_Documento único, piscinas ya en formato P-00. La stg solo fija tipos: cada paso responde a un problema que una QA encontró.
+- Enriquecimiento en fact: Proveedor y Kg_Por_Saco salen del código del producto (NA-PL35-25 → Nutriacua, 25 kg); Kg_Despachados = sacos × kg; ID_Ciclo por rango de fechas (100 % válido, 547 ciclos).
+- Novedad 32: el kardex solo tiene salidas; no se puede calcular el saldo de bodega.
+
+**Cruce bodega contra piscina (hallazgo principal del caso)**
+- A nivel diario el cruce no sirve: bodega despacha sacos enteros y lo que sobra se usa al día siguiente. Por eso se midió por ciclo completo.
+- Bodega despachó 13.153.630 kg y se registraron 12.909.874 kg como ración: 243.757 kg de diferencia (1,9 %).
+- Cuatro supervisores tienen una merma de 0,4–0,6 %. En las piscinas P-17 a P-24, desde 2024, la diferencia es del 12 % cada año (12,11 / 12,30 / 12,02 %): 185.687 kg, el 76 % de toda la diferencia.
+- Experimento natural: en las mismas piscinas, entre 2021 y 2023 y con otro supervisor, la diferencia fue de 0,3–0,6 %. La diferencia sigue al supervisor, no a la piscina.
+- Novedad 33 (Alta, Escalado, confidencial): no prueba causa ni intención; se entrega al cliente para investigar con guías e inventario físico.
+
+**Siguiente:** fact_ParametrosAgua (y el cruce de los ceros de alimentación con el oxígeno bajo).

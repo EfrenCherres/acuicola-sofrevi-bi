@@ -85,6 +85,8 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 29 | fact_Alimentacion | Kg_Aplicados | Plausibilidad | 1.645 raciones en 0 kg dentro del ciclo (los 56 de los 3 días previos a cosecha son ayuno normal) | 1.645 | Media | Sin cambios; validar con fact_ParametrosAgua y con el cliente | Escalado |
 | 30 | fact_Alimentacion | (toda la fila) | Duplicados | 343 raciones cargadas dos veces | 343 | Alta | Table.Distinct: 57.480 → 57.137; clave Fecha + Piscina + Turno única | Resuelto |
 | 31 | fact_Alimentacion | Turno | Consistencia | "mañana" en minúsculas junto a "MAÑANA" | 2.837 | Baja | Text.Upper | Resuelto |
+| 32 | fact_Kardex | Tipo_Mov | Completitud | El kardex solo trae SALIDAS: no tiene entradas ni saldos de bodega | 56.690 | Media | Usar fact_Compras como entradas; no se calcula saldo de inventario | Escalado |
+| 33 | fact_Kardex | Kg_Despachados | Consistencia entre tablas | Desde 2024, en P-17 a P-24 (Sector C), el 12 % del alimento despachado no aparece como ración: 185.687 kg ≈ 204.000 USD. Mismas piscinas 2021–2023: 0,3–0,6 % | 6.788 | Alta | Sin cambios en los datos; hallazgo confidencial para el cliente (en un caso real no se publicaría) | Escalado 
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 
@@ -93,14 +95,16 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | N° | Pregunta |
 |---|---|
 | 1 | P-12: ¿el área es 7,5 ha? ¿El año de construcción es 2018 o 2011? |
-| 6 | ¿La cosecha del ciclo C-2021-013 fue el 30/04/2021? |
 | 9 | En C-2022-104, ¿se sembraron 1.150,3 mil larvas o 793,6 mil? ¿Cuál es la densidad real? |
 | 11 | ¿Cuál es el nombre oficial de cada laboratorio? |
 | 14 | ¿Cuál fue la causa de las 8 cosechas de emergencia sin observación? |
 | 15 | ¿Confirman libras en el sistema anterior y kilos en SIG? ¿El dashboard debe mostrar libras? |
 | 16 | ¿Quieren una sobrevivencia estimada para 2021–2023, marcada como estimada? |
-- (las preguntas que ya tenías…)
-- ¿Por qué Empacadora Costa Dorada liquida en promedio 97,1 % de las libras de la guía, contra 99,0 % de las otras dos (209 liquidaciones)?
-- ¿Las ventas totales por año y por empacadora coinciden con contabilidad?
-- ¿Los registros de alimentación con 0 kg dentro del ciclo son días sin alimentar (oxígeno bajo, muda, lluvia) o falta de registro?
-- ¿Con qué criterio se reparten los gastos de ADMINISTRACION entre los sectores (área, número de piscinas, producción)?
+| 29 | ¿Los registros de alimentación con 0 kg dentro del ciclo son días sin alimentar (oxígeno bajo, muda, lluvia) o falta de registro? |
+| 32 | ¿Existe un registro de entradas y saldos de bodega? El kardex recibido solo tiene salidas. |
+| 33 | (Confidencial) Desde 2024, en las piscinas P-17 a P-24, el 12 % del alimento despachado por bodega no aparece como ración (185.687 kg). En las mismas piscinas, entre 2021 y 2023, la diferencia fue de 0,3–0,6 %. ¿Se puede revisar con guías de despacho e inventario físico? |
+| — | ¿Por qué Empacadora Costa Dorada liquida en promedio 97,1 % de las libras de la guía, contra 99,0 % de las otras dos (209 liquidaciones)? |
+| — | ¿Las ventas totales por año y por empacadora coinciden con contabilidad? |
+| — | ¿Con qué criterio se reparten los gastos de ADMINISTRACION entre los sectores (área, número de piscinas, producción)? |
+
+*La pregunta de la novedad 6 (fecha de cosecha de C-2021-013) se retiró: la liquidación 21908 confirmó el 10/05/2021.*
