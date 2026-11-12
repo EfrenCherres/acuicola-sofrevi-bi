@@ -16,7 +16,7 @@
 | 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
 | 2. Conexión y cuadre de carga | ✅ Terminada | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
 | 3. Limpieza (staging) | ✅ Fase 3 terminada: 13 de 13 tablas limpias y validadas (40 novedades en el Log). Siguiente: Fase 4, modelo y relaciones. | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
-| 4. Tablas finales | ⬜ Pendiente | |
+| 4. Tablas finales | ✅ Fase 4 terminada: modelo en estrella, 26 relaciones validadas.| |
 | 5. Modelo y medidas DAX | ⬜ Pendiente | |
 | 6. Dashboard | ⬜ Pendiente | |
 | 7. Insights | ⬜ Pendiente | |

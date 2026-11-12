@@ -264,3 +264,24 @@ falta antes que cualquier gráfico.
 
 **Siguiente:** Fase 4, el modelo: relaciones, Dim_Calendario y las fechas activas
 e inactivas.
+
+## 12 nov 2026 — Fase 4: el modelo
+
+Power BI había creado unas 30 relaciones solo, por nombres iguales: algunas entre
+tablas de hechos y otras desactivadas por ambigüedad. Las borré todas y construí
+26 desde el diseño.
+
+Decisión principal: fact_Ciclos hace de fact y de dimensión a la vez. Separé dim_Ciclo
+(solo atributos) para que el filtro de piscina tenga un solo camino. Power BI propuso
+1:1 y bidireccional: lo declaré varios a uno con filtro único. La cardinalidad decide
+quién filtra a quién.
+
+Validé con DAX en lugar de mirar el diagrama: INFO.VIEW.RELATIONSHIPS encontró una
+relación bidireccional y 4 tablas de fechas ocultas (la fecha/hora automática seguía
+encendida). RELATED encontró 0 huérfanas, salvo los 25 ciclos EN CURSO.
+INFO.VIEW.COLUMNS dejó visibles solo 16 columnas que se suman.
+
+Lección: el diagrama se ve bien aunque esté mal. Las consultas al propio modelo no
+engañan.
+
+Siguiente: Fase 5, medidas DAX.
