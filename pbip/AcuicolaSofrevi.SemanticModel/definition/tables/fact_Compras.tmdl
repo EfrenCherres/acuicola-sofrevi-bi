@@ -8,11 +8,6 @@ table fact_Compras
 		summarizeBy: none
 		sourceColumn: Fecha_Factura
 
-		variation Variation
-			isDefault
-			relationship: b47733ec-8e4b-4e2e-a982-1b83135e3c93
-			defaultHierarchy: LocalDateTable_45370e8e-7929-47fc-90c3-031630192e85.'Jerarquía de fechas'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -94,6 +89,35 @@ table fact_Compras
 		lineageTag: 37b61917-edd0-4f4d-9f30-473fe894dcc5
 		summarizeBy: sum
 		sourceColumn: Total_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Kg_Por_Saco
+		dataType: int64
+		formatString: 0
+		lineageTag: f5da9f2a-42d0-4bc4-a2bd-6a444697ec98
+		summarizeBy: sum
+		sourceColumn: Kg_Por_Saco
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kg_Comprados
+		dataType: double
+		lineageTag: 69ace659-a3b6-4d61-88b4-441e856055c7
+		summarizeBy: sum
+		sourceColumn: Kg_Comprados
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Precio_Kg_USD
+		dataType: double
+		lineageTag: 9b83a89a-d698-4ef1-b109-a1af51329c39
+		summarizeBy: sum
+		sourceColumn: Precio_Kg_USD
 
 		annotation SummarizationSetBy = Automatic
 

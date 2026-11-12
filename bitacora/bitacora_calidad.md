@@ -91,6 +91,9 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 35 | fact_ParametrosAgua | OD_Madrugada_mgL | Validez | 245 vacíos + 96 con el centinela 99,9 (máximo físico ~15 mg/L) | 341 | Media | Centinela → vacío. No se estima | Resuelto |
 | 36 | fact_ParametrosAgua | Temperatura_C | Validez | 245 vacíos + 98 con 0 °C (imposible en Ecuador) | 343 | Media | Centinela → vacío | Resuelto |
 | 37 | fact_ParametrosAgua | pH | Validez | 245 vacíos + 98 con pH 14 (tope de la escala) | 343 | Media | Centinela → vacío (pH > 10 imposible) | Resuelto |
+| 38 | fact_Gastos | Periodo | Tipos | Periodo en dos formatos: "ene-21" (hasta jun-23) y "2023-07" (desde jul-23) | 1863 | Media | Fecha_Mes = primer día del mes; abreviatura desconocida da error visible | Resuelto |
+| 39 | fact_Gastos | Centro_Costo | Consistencia | Sector escrito corto ("A") en lugar de "Sector A" | 84 | Baja | Quitar "SECTOR " → clave A–D | Resuelto |
+| 40 | fact_Gastos | Fecha_Mes | Completitud | Octubre 2026 sin gastos (mes no cerrado) | 27 | Media | No se estima; medidas de costo solo para meses con gastos | Escalado |
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 
@@ -110,5 +113,6 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | — | ¿Por qué Empacadora Costa Dorada liquida en promedio 97,1 % de las libras de la guía, contra 99,0 % de las otras dos (209 liquidaciones)? |
 | — | ¿Las ventas totales por año y por empacadora coinciden con contabilidad? |
 | — | ¿Con qué criterio se reparten los gastos de ADMINISTRACION entre los sectores (área, número de piscinas, producción)? |
+| 40 | ¿Confirman que octubre 2026 no estaba cerrado contablemente al generar el archivo? | Pendiente |
 
 *La pregunta de la novedad 6 (fecha de cosecha de C-2021-013) se retiró: la liquidación 21908 confirmó el 10/05/2021.*

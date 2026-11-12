@@ -24,11 +24,6 @@ table fact_Ciclos
 		summarizeBy: none
 		sourceColumn: Fecha_Siembra
 
-		variation Variation
-			isDefault
-			relationship: 6d5a9949-3a67-47e0-b39e-000f456e956d
-			defaultHierarchy: LocalDateTable_afe04411-6dbf-429d-b60d-2087de2aef50.'Jerarquía de fechas'
-
 		annotation SummarizationSetBy = Automatic
 
 		annotation UnderlyingDateTimeDataType = Date
@@ -39,11 +34,6 @@ table fact_Ciclos
 		lineageTag: 5470ec55-1103-4677-929e-d42e5ab17a86
 		summarizeBy: none
 		sourceColumn: Fecha_Cosecha
-
-		variation Variation
-			isDefault
-			relationship: b87f649b-6c4e-4e6c-a7f5-f8bead619db2
-			defaultHierarchy: LocalDateTable_f582b73c-bb51-4b3b-8c7a-9e447845a109.'Jerarquía de fechas'
 
 		annotation SummarizationSetBy = Automatic
 

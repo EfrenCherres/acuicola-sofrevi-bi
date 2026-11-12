@@ -17,55 +17,18 @@
           "projections": [
             {
               "field": {
-                "HierarchyLevel": {
+                "Column": {
                   "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "PropertyVariationSource": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "fact_Ciclos"
-                            }
-                          },
-                          "Name": "Variation",
-                          "Property": "Fecha_Cosecha"
-                        }
-                      },
-                      "Hierarchy": "Jerarquía de fechas"
+                    "SourceRef": {
+                      "Entity": "fact_Ciclos"
                     }
                   },
-                  "Level": "Año"
+                  "Property": "Fecha_Cosecha"
                 }
               },
               "queryRef": "fact_Ciclos.Fecha_Cosecha.Variation.Jerarquía de fechas.Año",
               "nativeQueryRef": "Fecha_Cosecha Año",
               "active": true
-            },
-            {
-              "field": {
-                "HierarchyLevel": {
-                  "Expression": {
-                    "Hierarchy": {
-                      "Expression": {
-                        "PropertyVariationSource": {
-                          "Expression": {
-                            "SourceRef": {
-                              "Entity": "fact_Ciclos"
-                            }
-                          },
-                          "Name": "Variation",
-                          "Property": "Fecha_Cosecha"
-                        }
-                      },
-                      "Hierarchy": "Jerarquía de fechas"
-                    }
-                  },
-                  "Level": "Trimestre"
-                }
-              },
-              "queryRef": "fact_Ciclos.Fecha_Cosecha.Variation.Jerarquía de fechas.Trimestre",
-              "nativeQueryRef": "Fecha_Cosecha Trimestre",
-              "active": false
             }
           ]
         },
@@ -323,24 +286,13 @@
       {
         "name": "2955fc1993c90233e59e",
         "field": {
-          "HierarchyLevel": {
+          "Column": {
             "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "PropertyVariationSource": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "fact_Ciclos"
-                      }
-                    },
-                    "Name": "Variation",
-                    "Property": "Fecha_Cosecha"
-                  }
-                },
-                "Hierarchy": "Jerarquía de fechas"
+              "SourceRef": {
+                "Entity": "fact_Ciclos"
               }
             },
-            "Level": "Año"
+            "Property": "Fecha_Cosecha"
           }
         },
         "type": "Categorical",
@@ -395,24 +347,13 @@
                 "filterExpressionMetadata": {
                   "expressions": [
                     {
-                      "HierarchyLevel": {
+                      "Column": {
                         "Expression": {
-                          "Hierarchy": {
-                            "Expression": {
-                              "PropertyVariationSource": {
-                                "Expression": {
-                                  "SourceRef": {
-                                    "Entity": "fact_Ciclos"
-                                  }
-                                },
-                                "Name": "Variation",
-                                "Property": "Fecha_Cosecha"
-                              }
-                            },
-                            "Hierarchy": "Jerarquía de fechas"
+                          "SourceRef": {
+                            "Entity": "fact_Ciclos"
                           }
                         },
-                        "Level": "Año"
+                        "Property": "Fecha_Cosecha"
                       }
                     }
                   ],
@@ -488,24 +429,13 @@
       {
         "name": "039b9cf125db14c25326",
         "field": {
-          "HierarchyLevel": {
+          "Column": {
             "Expression": {
-              "Hierarchy": {
-                "Expression": {
-                  "PropertyVariationSource": {
-                    "Expression": {
-                      "SourceRef": {
-                        "Entity": "fact_Ciclos"
-                      }
-                    },
-                    "Name": "Variation",
-                    "Property": "Fecha_Cosecha"
-                  }
-                },
-                "Hierarchy": "Jerarquía de fechas"
+              "SourceRef": {
+                "Entity": "fact_Ciclos"
               }
             },
-            "Level": "Trimestre"
+            "Property": "Fecha_Cosecha"
           }
         },
         "type": "Advanced",

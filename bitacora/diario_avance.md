@@ -241,3 +241,26 @@ No cambié la columna Hora, porque es un dato bueno.
 la herramienta lee los datos.
 
 **Siguiente:** fact_Gastos, la última tabla de Power Query.
+
+## 12 nov 2026 — fact_Gastos: cierre de la Fase 3
+
+**La tabla.** 1,863 filas de gastos mensuales: 4 sectores × 6 rubros + 3 rubros de
+administración = 27 filas por mes.
+
+**Lo que encontré.** Table.Profile salió vacío porque las columnas no tenían tipo:
+primero se cuentan las formas y después se perfila. El Periodo venía en dos formatos
+(cambio de sistema en julio de 2023) y el sector, a veces, solo como letra.
+La cuenta 1,863 ÷ 27 = 69 meses, pero el periodo tiene 70: faltaba un mes, y era
+octubre 2026, el mes sin cerrar. No es un error, pero haría que el costo por libra
+de octubre saliera falsamente bajo. No se estima nada: se resolverá en DAX.
+
+**Lo que confirmé.** 0 duplicados, 0 negativos, montos dentro de escala por rubro
+(máximo 1,76 veces la mediana), 5 de 5 centros de costo en dim_Sector y el total
+src = fact al centavo. Hallazgo de negocio: los gastos de administración son fijos
+y los de los sectores son variables.
+
+**Lección:** una cuenta simple (filas ÷ filas esperadas por mes) encuentra lo que
+falta antes que cualquier gráfico.
+
+**Siguiente:** Fase 4, el modelo: relaciones, Dim_Calendario y las fechas activas
+e inactivas.

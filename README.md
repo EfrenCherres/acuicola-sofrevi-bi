@@ -15,7 +15,7 @@
 | 0. Preparación del repo y proyecto | ✅ Terminada | [Diario](bitacora/diario_avance.md) |
 | 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
 | 2. Conexión y cuadre de carga | ✅ Terminada | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
-| 3. Limpieza (staging) | 🔄 Fase 3 en curso: 12 de 13 tablas listas (dim_Piscina, fact_Ciclos, dim_Laboratorio, dim_Proveedor, fact_Compras, dim_Empacadora, fact_Liquidaciones, dim_Sector, fact_Alimentacion, fact_Kardex, fact_ParametrosAgua, Dim_Calendario). Falta: fact_Gastos. | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
+| 3. Limpieza (staging) | ✅ Fase 3 terminada: 13 de 13 tablas limpias y validadas (40 novedades en el Log). Siguiente: Fase 4, modelo y relaciones. | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
 | 4. Tablas finales | ⬜ Pendiente | |
 | 5. Modelo y medidas DAX | ⬜ Pendiente | |
 | 6. Dashboard | ⬜ Pendiente | |

@@ -578,9 +578,12 @@ expression stg_Compras =
 		    else if Text.Contains(t, "ANDINOS") then "BALANCEADOS ANDINOS CIA. LTDA."
 		    else if Text.Contains(t, "NUTRIACUA") then "NUTRIACUA S.A."
 		    else _, type text}}),
-		  #"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)" = Table.Distinct(#"Proveedor: 13 formas a 3 (sin espacios ni puntos + palabra clave)")
+		  #"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)" = Table.Distinct(#"Proveedor: 13 formas a 3 (sin espacios ni puntos + palabra clave)"),
+		  #"Kg_Por_Saco: número de la presentación" = Table.AddColumn(#"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)", "Kg_Por_Saco", each Number.From(Text.Select([Presentacion], {"0".."9"})), Int64.Type),
+		  #"Kg_Comprados: sacos × kg por saco" = Table.AddColumn(#"Kg_Por_Saco: número de la presentación", "Kg_Comprados", each [Cantidad_Sacos] * [Kg_Por_Saco], type number),
+		  #"Precio_Kg_USD: subtotal ÷ kg" = Table.AddColumn(#"Kg_Comprados: sacos × kg por saco", "Precio_Kg_USD", each Number.Round([Subtotal_USD] / [Kg_Comprados], 4), type number)
 		in
-		  #"Filas duplicadas exactas: quitar (4 facturas cargadas dos veces)"
+		  #"Precio_Kg_USD: subtotal ÷ kg"
 	lineageTag: 9b5ed758-10b7-465e-932a-41c803d0611f
 	queryGroup: 02_Staging
 
@@ -733,13 +736,14 @@ expression QA_Piscinas_Liquidaciones =
 		let
 		    Origen = src_Liquidaciones,
 		    Agrupado = Table.Group(Origen, {"Piscina"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
-		    Ordenado = Table.Sort(Agrupado, {{"Piscina", Order.Ascending}})
+		    Ordenado = Table.Sort(Agrupado, {{"Piscina", Order.Ascending}}),
+		  Personalizado = List.Sum(Table.SelectRows(Ordenado, each [Piscina] <> null and Text.StartsWith([Piscina], "PISC"))[Filas])
 		in
-		    Ordenado
+		    Personalizado
 	lineageTag: 3f42f666-1bd9-481a-9332-8b0d2fe92694
 	queryGroup: QA
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Number
 
 expression QA_Clase_Talla =
 		let
@@ -847,6 +851,486 @@ expression QA_Controles_Liquidaciones =
 		in
 		    Resultado
 	lineageTag: e6cc0fdd-af92-4ec0-8546-0655259bd8f1
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression stg_Alimentacion =
+		let
+		  Origen = src_Alimentacion,
+		  #"Fecha: número de serie → fecha" = Table.TransformColumns(Origen, {{"Fecha", fnTextoAFecha, type date}}),
+		  #"Piscina: dígitos → P-00" = Table.TransformColumns(#"Fecha: número de serie → fecha", {{"Piscina", each "P-" & Text.PadStart(Text.Select(_, {"0".."9"}), 2, "0"), type text}}),
+		  #"Proveedor: palabra clave → razón social" = Table.TransformColumns(#"Piscina: dígitos → P-00", {{"Proveedor", each
+		    let t = Text.Remove(Text.Upper(Text.From(_)), {" ", "."}) in
+		    if Text.Contains(t, "FEED") then "AQUAFEED LITORAL S.A."
+		    else if Text.Contains(t, "ANDINOS") then "BALANCEADOS ANDINOS CIA. LTDA."
+		    else if Text.Contains(t, "NUTRIACUA") then "NUTRIACUA S.A."
+		    else _, type text}}),
+		  #"Kg: S/D → vacío y texto → número" = Table.TransformColumns(#"Proveedor: palabra clave → razón social", {{"Kg_Aplicados", each
+		    if _ = null or Text.Upper(Text.Trim(Text.From(_))) = "S/D" then null else fnTextoANumero(_), type nullable number}}),
+		  #"Kg: negativos → sin signo (error de signo)" = Table.TransformColumns(#"Kg: S/D → vacío y texto → número", {{"Kg_Aplicados", each if _ = null then null else Number.Abs(_), type nullable number}}),
+		  #"Turno: mayúsculas" = Table.TransformColumns(#"Kg: negativos → sin signo (error de signo)", {{"Turno", each Text.Upper(Text.Trim(_)), type text}}),
+		  #"Tipos: Registrado_Por como texto" = Table.TransformColumnTypes(#"Turno: mayúsculas", {{"Registrado_Por", type text}}),
+		  #"Filas duplicadas exactas: quitar (343)" = Table.Distinct(#"Tipos: Registrado_Por como texto")
+		in
+		  #"Filas duplicadas exactas: quitar (343)"
+	lineageTag: ab1a2af6-f90f-434a-80ca-b2184e675eae
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+
+expression QA_Piscinas_Alimentacion =
+		let
+		    Origen = src_Alimentacion,
+		    Agrupado = Table.Group(Origen, {"Piscina"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Piscina", Order.Ascending}}),
+		  Personalizado = List.Sum(Table.SelectRows(Ordenado, each not Text.StartsWith([Piscina], "P-"))[Filas])
+		in
+		    Personalizado
+	lineageTag: 3e624b86-a342-4a88-92f4-6a9b0d1994d7
+	queryGroup: QA
+
+	annotation PBI_ResultType = Number
+
+expression QA_Proveedor_Alimentacion =
+		let
+		    Origen = src_Alimentacion,
+		    Agrupado = Table.Group(Origen, {"Proveedor"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Proveedor", Order.Ascending}})
+		in
+		    Ordenado
+	lineageTag: 64d42c2e-6b71-4eac-aaa2-b566fa1c228a
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Piscinas_Alimentacion_Despues =
+		let
+		    Origen = src_Alimentacion,
+		    Agrupado = Table.Group(Origen, {"Piscina"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Piscina", Order.Ascending}}),
+		  #"Prueba: regla de dígitos → P-00." = Table.Group(
+		    Table.TransformColumns(Ordenado, {{"Piscina", each "P-" & Text.PadStart(Text.Select(_, {"0".."9"}), 2, "0"), type text}}),
+		    {"Piscina"},
+		    {{"Filas", each List.Sum([Filas]), type number}}),
+		  #"Personalizado 1" = [
+		    Total_filas = List.Sum(#"Prueba: regla de dígitos → P-00."[Filas]),
+		    Huerfanas = List.Difference(#"Prueba: regla de dígitos → P-00."[Piscina], dim_Piscina[Piscina])
+		  ],
+		  Navegación = #"Personalizado 1"[Huerfanas]
+		in
+		    Navegación
+	lineageTag: 702584fe-7dbd-4928-9e43-d9da05dac7e7
+	queryGroup: QA
+
+	annotation PBI_ResultType = List
+
+expression QA_Controles_Alimentacion =
+		let
+		    s = src_Alimentacion,
+		    F = List.Transform(s[Fecha], each try fnTextoAFecha(_) otherwise "ERR"),
+		    K = List.Transform(s[Kg_Aplicados], each try fnTextoANumero(_) otherwise "ERR"),
+		    Fd = List.Select(F, each _ is date),
+		    Kn = List.Select(K, each _ is number),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Filas", Table.RowCount(s)},
+		        {"Fechas que no convierten", List.Count(List.Select(F, each _ = "ERR"))},
+		        {"Fechas vacías", List.Count(List.Select(F, each _ = null))},
+		        {"Fecha mínima", List.Min(Fd)},
+		        {"Fecha máxima", List.Max(Fd)},
+		        {"Kg que no convierten", List.Count(List.Select(K, each _ = "ERR"))},
+		        {"Kg vacíos", List.Count(List.Select(K, each _ = null))},
+		        {"Kg en cero", List.Count(List.Select(Kn, each _ = 0))},
+		        {"Kg negativos", List.Count(List.Select(Kn, each _ < 0))},
+		        {"Kg mínimo mayor que cero", List.Min(List.Select(Kn, each _ > 0))},
+		        {"Kg máximo", List.Max(Kn)},
+		        {"Turnos distintos", Text.Combine(List.Transform(List.Distinct(s[Turno]), each Text.From(_)), " | ")},
+		        {"Registrado_Por distintos", Text.Combine(List.Transform(List.Distinct(s[Registrado_Por]), each Text.From(_)), " | ")}})
+		in
+		    Resultado
+	lineageTag: a2ff9901-e680-4142-9ee2-1553fc4c5dc1
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Kg_NoConvierten =
+		let
+		    s = src_Alimentacion,
+		    Marca = Table.AddColumn(s, "Conv", each try fnTextoANumero([Kg_Aplicados]) otherwise "ERR"),
+		    Malos = Table.SelectRows(Marca, each [Conv] = "ERR"),
+		    Agrupado = Table.Group(Malos, {"Kg_Aplicados"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    Ordenado = Table.Sort(Agrupado, {{"Filas", Order.Descending}})
+		in
+		    Ordenado
+	lineageTag: 5fa55ef0-08c2-4c7b-9d02-5d6089b9fa03
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Kg_Negativos =
+		let
+		    s = src_Alimentacion,
+		    K = Table.AddColumn(s, "Kg", each try fnTextoANumero([Kg_Aplicados]) otherwise null, type nullable number),
+		    Neg = Table.SelectRows(K, each [Kg] <> null and [Kg] < 0),
+		    Abs = List.Transform(Neg[Kg], Number.Abs),
+		    Pos = List.Select(K[Kg], each _ <> null and _ > 0),
+		    Resumen = (col) => Text.Combine(Table.TransformRows(Table.Group(Neg, {col}, {{"n", each Table.RowCount(_)}}), each Text.From(Record.Field(_, col)) & ": " & Text.From([n])), " | "),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Negativos", Table.RowCount(Neg)},
+		        {"Sin signo: mínimo", List.Min(Abs)},
+		        {"Sin signo: máximo", List.Max(Abs)},
+		        {"Sin signo: promedio", Number.Round(List.Average(Abs), 1)},
+		        {"Positivos: promedio", Number.Round(List.Average(Pos), 1)},
+		        {"Positivos: mediana", List.Median(Pos)},
+		        {"Negativos por registrador", Resumen("Registrado_Por")},
+		        {"Negativos por turno", Resumen("Turno")}})
+		in
+		    Resultado
+	lineageTag: d145c335-d3de-4070-b6eb-0a2035a0d6d5
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Kg_Ceros =
+		let
+		    s = src_Alimentacion,
+		    K = Table.AddColumn(s, "Kg", each try fnTextoANumero([Kg_Aplicados]) otherwise null),
+		    Z = Table.SelectRows(K, each [Kg] = 0),
+		    P = Table.TransformColumns(Z, {{"Piscina", each "P-" & Text.PadStart(Text.Select(_, {"0".."9"}), 2, "0")}, {"Fecha", fnTextoAFecha}}),
+		    C = Table.Buffer(Table.SelectColumns(fact_Ciclos, {"Piscina", "Fecha_Siembra", "Fecha_Cosecha"})),
+		    Ubicar = Table.AddColumn(P, "Situacion", each
+		        let f = [Fecha], p = [Piscina],
+		            c = Table.SelectRows(C, (r) => r[Piscina] = p and r[Fecha_Siembra] <= f and (r[Fecha_Cosecha] = null or f <= r[Fecha_Cosecha]))
+		        in
+		            if Table.IsEmpty(c) then "Fuera de ciclo (piscina sin camarón)"
+		            else if c{0}[Fecha_Cosecha] <> null and Duration.Days(c{0}[Fecha_Cosecha] - f) <= 3 then "Últimos 3 días antes de cosechar"
+		            else "Dentro del ciclo"),
+		    Agrupado = Table.Group(Ubicar, {"Situacion"}, {{"Filas", each Table.RowCount(_), Int64.Type}})
+		in
+		    Agrupado
+	lineageTag: d7f4ae66-3857-4f6f-9982-e0d3f873b69d
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Alimentacion_Clave =
+		let
+		    s = stg_Alimentacion,
+		    Total = Table.RowCount(s),
+		    Aqua = Table.SelectRows(s, each [Proveedor] = "AQUAFEED LITORAL S.A."),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Filas", Total},
+		        {"Filas duplicadas exactas", Total - Table.RowCount(Table.Distinct(s))},
+		        {"Repetidas por Fecha + Piscina + Turno", Total - Table.RowCount(Table.Distinct(s, {"Fecha", "Piscina", "Turno"}))},
+		        {"Primera alimentación con Aquafeed", List.Min(Aqua[Fecha])},
+		        {"Alimentación con Aquafeed antes de feb-2024", Table.RowCount(Table.SelectRows(Aqua, each [Fecha] < #date(2024, 2, 1)))}})
+		in
+		    Resultado
+	lineageTag: 9632ceb8-db90-4eca-b2eb-b3c46077d0de
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Ciclos_Solapados =
+		let
+		    C = Table.Buffer(Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Siembra", "Fecha_Cosecha"})),
+		    Pares = Table.NestedJoin(C, {"Piscina"}, C, {"Piscina"}, "Otro", JoinKind.Inner),
+		    Exp = Table.ExpandTableColumn(Pares, "Otro", {"ID_Ciclo", "Fecha_Siembra", "Fecha_Cosecha"}, {"ID_2", "Siembra_2", "Cosecha_2"}),
+		    Fin = (d) => if d = null then #date(2100, 1, 1) else d,
+		    Solapados = Table.SelectRows(Exp, each [ID_Ciclo] < [ID_2] and [Fecha_Siembra] <= Fin([Cosecha_2]) and [Siembra_2] <= Fin([Fecha_Cosecha]))
+		in
+		    Solapados
+	lineageTag: b8f4a46a-ac09-4bee-8acc-fc1c3b1e0b9b
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Sector_Fuentes =
+		let
+		    P = Table.Group(stg_Piscina, {"Sector"}, {{"Piscinas", each Table.RowCount(_), Int64.Type}}),
+		    G = Table.Group(src_Gastos, {"Centro_Costo"}, {{"Filas_Gastos", each Table.RowCount(_), Int64.Type}}),
+		    Resultado = #table({"Fuente", "Valor", "Filas"},
+		        List.Transform(Table.ToRecords(P), each {"stg_Piscina", [Sector], [Piscinas]}) &
+		        List.Transform(Table.ToRecords(G), each {"src_Gastos", [Centro_Costo], [Filas_Gastos]}))
+		in
+		    Resultado
+	lineageTag: 7e18f3e4-3265-4e00-8551-c9902d7ed4be
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression stg_ParametrosAgua =
+		let
+		  Origen = src_ParametrosAgua,
+		  #"Fecha: número de serie → fecha" = Table.TransformColumns(Origen, {{"Fecha", fnTextoAFecha, type date}}),
+		  #"Piscina: dígitos → P-00" = Table.TransformColumns(#"Fecha: número de serie → fecha", {{"Piscina", each "P-" & Text.PadStart(Text.Select(_, {"0".."9"}), 2, "0"), type text}}),
+		  #"Parámetros: texto → número" = Table.TransformColumns(#"Piscina: dígitos → P-00",
+		    List.Transform({"OD_Madrugada_mgL", "OD_Tarde_mgL", "Temperatura_C", "Salinidad_ppt", "pH", "Transparencia_cm"},
+		        each {_, fnTextoANumero, type nullable number})),
+		  #"Valores centinela → vacío (OD 99,9 · Temp 0 · pH 14)" = Table.TransformColumns(#"Parámetros: texto → número", {
+		    {"OD_Madrugada_mgL", each if _ <> null and _ > 15 then null else _, type nullable number},
+		    {"Temperatura_C", each if _ = 0 then null else _, type nullable number},
+		    {"pH", each if _ <> null and _ > 10 then null else _, type nullable number}}),
+		  #"Tipos: Tecnico como texto" =  Table.TransformColumnTypes(#"Valores centinela → vacío (OD 99,9 · Temp 0 · pH 14)", {{"Tecnico", type text}})
+		in
+		  #"Tipos: Tecnico como texto"
+	lineageTag: 150c6d30-4364-4df3-8ff9-9dac5908e28a
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Exception
+
+expression stg_Kardex =
+		let
+		  Origen = src_Kardex,
+		  #"Fecha: número de serie → fecha" = Table.TransformColumns(Origen, {{"Fecha", fnTextoAFecha, type date}}),
+		  #"Tipos: hora, sacos y textos" = Table.TransformColumnTypes(#"Fecha: número de serie → fecha", {
+		    {"Hora", type time}, {"Sacos", Int64.Type},
+		    {"N_Documento", type text}, {"Tipo_Mov", type text}, {"Codigo_Producto", type text},
+		    {"Piscina", type text}, {"Entregado_A", type text}, {"Registrado_Por", type text}})
+		in
+		  #"Tipos: hora, sacos y textos"
+	lineageTag: 46322d9f-7180-4415-997b-2c49844f208d
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+
+expression QA_Formas_Kardex =
+		let
+		    s = src_Kardex,
+		    Cols = {"Tipo_Mov", "Codigo_Producto", "Piscina", "Entregado_A", "Registrado_Por"},
+		    Uno = (c) => Table.AddColumn(
+		        Table.RenameColumns(Table.Group(s, {c}, {{"Filas", each Table.RowCount(_), Int64.Type}}), {{c, "Valor"}}),
+		        "Columna", each c, type text),
+		    Todo = Table.Combine(List.Transform(Cols, Uno)),
+		    Orden = Table.Sort(Table.SelectColumns(Todo, {"Columna", "Valor", "Filas"}), {{"Columna", Order.Ascending}, {"Filas", Order.Descending}})
+		in
+		    Orden
+	lineageTag: 9bc49092-ad73-4058-895b-f0a95d34b557
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Impacto_Kg =
+		let
+		    s = src_Alimentacion,
+		    K = List.Transform(s[Kg_Aplicados], each try fnTextoANumero(_) otherwise null),
+		    Kn = List.Select(K, each _ is number),
+		    Bruto = List.Sum(Kn),
+		    Neg = List.Sum(List.Select(Kn, each _ < 0)),
+		    Limpio = List.Sum(List.RemoveNulls(stg_Alimentacion[Kg_Aplicados])),
+		    Dup = (Bruto - 2 * Neg) - Limpio,
+		     PrecioKg = List.Sum(fact_Compras[Subtotal_USD]) / List.Sum(fact_Compras[Kg_Comprados]),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Kg total sin limpiar (como venía)", Number.Round(Bruto, 1)},
+		        {"Kg negativos (restaban)", Number.Round(Neg, 1)},
+		        {"Kg duplicados (sumaban)", Number.Round(Dup, 1)},
+		        {"Kg total limpio", Number.Round(Limpio, 1)},
+		        {"Diferencia limpio − sin limpiar", Number.Round(Limpio - Bruto, 1)},
+		        {"Precio promedio USD/kg (compras)", Number.Round(PrecioKg, 3)},
+		        {"USD negativos", Number.Round(-Neg * PrecioKg, 0)},
+		        {"USD duplicados", Number.Round(Dup * PrecioKg, 0)}})
+		in
+		    Resultado
+	lineageTag: 9a8e95c0-fcca-468a-b865-1bb0007150cf
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Controles_Kardex =
+		let
+		    s = src_Kardex,
+		    F = List.Transform(s[Fecha], each try fnTextoAFecha(_) otherwise "ERR"),
+		    H = List.Transform(s[Hora], each try Time.From(_) otherwise "ERR"),
+		    Sx = List.Transform(s[Sacos], each try fnTextoANumero(_) otherwise "ERR"),
+		    Fd = List.Select(F, each _ is date),
+		    Sn = List.Select(Sx, each _ is number),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Filas", Table.RowCount(s)},
+		        {"Fechas que no convierten", List.Count(List.Select(F, each _ = "ERR"))},
+		        {"Fecha mínima", List.Min(Fd)},
+		        {"Fecha máxima", List.Max(Fd)},
+		        {"Horas que no convierten", List.Count(List.Select(H, each _ = "ERR"))},
+		        {"Sacos que no convierten", List.Count(List.Select(Sx, each _ = "ERR"))},
+		        {"Sacos vacíos", List.Count(List.Select(Sx, each _ = null))},
+		        {"Sacos en cero o negativos", List.Count(List.Select(Sn, each _ <= 0))},
+		        {"Sacos con decimales", List.Count(List.Select(Sn, each _ <> Number.Round(_)))},
+		        {"Sacos máximo", List.Max(Sn)},
+		        {"Filas duplicadas exactas", Table.RowCount(s) - Table.RowCount(Table.Distinct(s))},
+		        {"N_Documento repetidos", Table.RowCount(s) - List.Count(List.Distinct(s[N_Documento]))},
+		        {"Repetidas por Fecha + Piscina + Hora", Table.RowCount(s) - Table.RowCount(Table.Distinct(s, {"Fecha", "Piscina", "Hora"}))}})
+		in
+		    Resultado
+	lineageTag: a14341fd-d2ba-44d0-b2f0-972561c54574
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Kardex_vs_Alimentacion =
+		let
+		    K = Table.Group(fact_Kardex, {"Piscina", "Fecha"}, {{"Desp", each List.Sum([Kg_Despachados]), type number}}),
+		    A = Table.Group(fact_Alimentacion, {"Piscina", "Fecha"}, {{"Apl", each List.Sum(List.RemoveNulls([Kg_Aplicados])), type number}}),
+		    J = Table.NestedJoin(K, {"Piscina", "Fecha"}, A, {"Piscina", "Fecha"}, "A", JoinKind.FullOuter),
+		    E = Table.ExpandTableColumn(J, "A", {"Apl"}, {"Apl"}),
+		    D = Table.AddColumn(E, "Dif", each (if [Desp] = null then 0 else [Desp]) - (if [Apl] = null then 0 else [Apl]), type number),
+		    S = Table.AddColumn(D, "Situacion", each
+		        if [Desp] = null then "Ración sin despacho de bodega"
+		        else if [Apl] = null then "Despacho sin ración registrada"
+		        else if [Dif] < -1 then "Se aplicó MÁS de lo despachado"
+		        else if [Dif] <= 25 then "Cuadra (diferencia menor a 1 saco)"
+		        else "Se despachó MÁS de lo aplicado (más de 1 saco)", type text),
+		    G = Table.Group(S, {"Situacion"}, {
+		        {"Dias_Piscina", each Table.RowCount(_), Int64.Type},
+		        {"Kg_Despachados", each List.Sum(List.RemoveNulls([Desp])), type number},
+		        {"Kg_Aplicados", each List.Sum(List.RemoveNulls([Apl])), type number},
+		        {"Kg_Diferencia", each List.Sum([Dif]), type number}})
+		in
+		    G
+	lineageTag: 556025b3-c78e-4b8d-ad1e-5f3c139d5bd1
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Kardex_vs_Alim_Ciclo =
+		let
+		    K = Table.Group(fact_Kardex, {"ID_Ciclo"}, {
+		        {"Desp", each List.Sum([Kg_Despachados]), type number},
+		        {"Supervisor", each List.Mode([Entregado_A]), type text}}),
+		    A = Table.Group(fact_Alimentacion, {"ID_Ciclo"}, {
+		        {"Apl", each List.Sum(List.RemoveNulls([Kg_Aplicados])), type number},
+		        {"Sin_dato", each List.Count(List.Select([Kg_Aplicados], each _ = null)), Int64.Type}}),
+		    J = Table.ExpandTableColumn(Table.NestedJoin(K, {"ID_Ciclo"}, A, {"ID_Ciclo"}, "A", JoinKind.Inner), "A", {"Apl", "Sin_dato"}),
+		    D = Table.AddColumn(J, "Dif", each [Desp] - [Apl], type number),
+		    PorSupervisor = Table.Group(D, {"Supervisor"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Kg_Despachados", each List.Sum([Desp]), type number},
+		        {"Kg_Aplicados", each List.Sum([Apl]), type number},
+		        {"Kg_Diferencia", each List.Sum([Dif]), type number},
+		        {"Raciones_sin_dato", each List.Sum([Sin_dato]), Int64.Type}}),
+		    Pct = Table.AddColumn(PorSupervisor, "Pct_Diferencia", each Number.Round([Kg_Diferencia] / [Kg_Despachados] * 100, 2), type number),
+		    Orden = Table.Sort(Pct, {{"Pct_Diferencia", Order.Descending}})
+		in
+		    Orden
+	lineageTag: be74a8a2-6729-4742-b2e4-db1aff97dea1
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_SUP07_Detalle =
+		let
+		    K = Table.Group(fact_Kardex, {"ID_Ciclo"}, {
+		        {"Desp", each List.Sum([Kg_Despachados]), type number},
+		        {"Supervisor", each List.Mode([Entregado_A]), type text}}),
+		    A = Table.Group(fact_Alimentacion, {"ID_Ciclo"}, {{"Apl", each List.Sum(List.RemoveNulls([Kg_Aplicados])), type number}}),
+		    J = Table.ExpandTableColumn(Table.NestedJoin(K, {"ID_Ciclo"}, A, {"ID_Ciclo"}, "A", JoinKind.Inner), "A", {"Apl"}),
+		    C = Table.ExpandTableColumn(Table.NestedJoin(J, {"ID_Ciclo"}, fact_Ciclos, {"ID_Ciclo"}, "C", JoinKind.Inner), "C", {"Piscina", "Fecha_Siembra"}),
+		    Grupo = Table.AddColumn(C, "Grupo", each if [Supervisor] = "SUP-07" then "SUP-07" else "Resto", type text),
+		    Anio = Table.AddColumn(Grupo, "Anio", each Date.Year([Fecha_Siembra]), Int64.Type),
+		    PorAnio = Table.Group(Anio, {"Grupo", "Anio"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Kg_Diferencia", each List.Sum([Desp]) - List.Sum([Apl]), type number},
+		        {"Pct_Diferencia", each Number.Round((List.Sum([Desp]) - List.Sum([Apl])) / List.Sum([Desp]) * 100, 2), type number},
+		        {"Piscinas", each Text.Combine(List.Sort(List.Distinct([Piscina])), ", "), type text}}),
+		    Orden = Table.Sort(PorAnio, {{"Grupo", Order.Ascending}, {"Anio", Order.Ascending}})
+		in
+		    Orden
+	lineageTag: 201d8aa6-7457-4560-a1ea-4dfcd3b42496
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_SectorC_Antes_Despues =
+		let
+		    PiscinasC = {"P-17", "P-18", "P-19", "P-20", "P-21", "P-22", "P-23", "P-24"},
+		    K = Table.Group(fact_Kardex, {"ID_Ciclo"}, {
+		        {"Desp", each List.Sum([Kg_Despachados]), type number},
+		        {"Supervisor", each List.Mode([Entregado_A]), type text}}),
+		    A = Table.Group(fact_Alimentacion, {"ID_Ciclo"}, {{"Apl", each List.Sum(List.RemoveNulls([Kg_Aplicados])), type number}}),
+		    J = Table.ExpandTableColumn(Table.NestedJoin(K, {"ID_Ciclo"}, A, {"ID_Ciclo"}, "A", JoinKind.Inner), "A", {"Apl"}),
+		    C = Table.ExpandTableColumn(Table.NestedJoin(J, {"ID_Ciclo"}, fact_Ciclos, {"ID_Ciclo"}, "C", JoinKind.Inner), "C", {"Piscina", "Fecha_Siembra"}),
+		    SoloC = Table.SelectRows(C, each List.Contains(PiscinasC, [Piscina])),
+		    Anio = Table.AddColumn(SoloC, "Anio", each Date.Year([Fecha_Siembra]), Int64.Type),
+		    G = Table.Group(Anio, {"Anio", "Supervisor"}, {
+		        {"Ciclos", each Table.RowCount(_), Int64.Type},
+		        {"Kg_Despachados", each List.Sum([Desp]), type number},
+		        {"Kg_Diferencia", each List.Sum([Desp]) - List.Sum([Apl]), type number},
+		        {"Pct_Diferencia", each Number.Round((List.Sum([Desp]) - List.Sum([Apl])) / List.Sum([Desp]) * 100, 2), type number}}),
+		    Orden = Table.Sort(G, {{"Anio", Order.Ascending}, {"Supervisor", Order.Ascending}})
+		in
+		    Orden
+	lineageTag: 0cb3031a-c0b1-4d0b-80bf-d860d3863c10
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Controles_Agua =
+		let
+		    s = src_ParametrosAgua,
+		    Rangos = {
+		        {"OD_Madrugada_mgL", 0.5, 15},
+		        {"OD_Tarde_mgL", 0.5, 20},
+		        {"Temperatura_C", 18, 38},
+		        {"Salinidad_ppt", 0, 50},
+		        {"pH", 6, 10},
+		        {"Transparencia_cm", 5, 150}},
+		    Revisar = (r) =>
+		        let
+		            col = r{0}, lo = r{1}, hi = r{2},
+		            V = List.Transform(Table.Column(s, col), each try fnTextoANumero(_) otherwise "ERR"),
+		            N = List.Select(V, each _ is number)
+		        in
+		            {col,
+		             List.Count(List.Select(V, each _ = "ERR")),
+		             List.Count(List.Select(V, each _ = null)),
+		             List.Count(List.Select(N, each _ = 0)),
+		             List.Count(List.Select(N, each _ < lo or _ > hi)),
+		             List.Min(N), List.Max(N), Number.Round(List.Median(N), 2)},
+		    Resultado = #table(
+		        {"Parametro", "No_convierten", "Vacios", "Ceros", "Fuera_de_rango", "Minimo", "Maximo", "Mediana"},
+		        List.Transform(Rangos, Revisar)),
+		  Personalizado = Resultado
+		in
+		    Personalizado
+	lineageTag: fc1cb6e3-9d15-4fbd-b389-464111e1a4b9
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Agua_Raros =
+		let
+		    s = src_ParametrosAgua,
+		    N = (v) => try fnTextoANumero(v) otherwise null,
+		    M = Table.AddColumn(s, "Marcas", each
+		        (if [OD_Madrugada_mgL] = null then "OD vacío · " else if N([OD_Madrugada_mgL]) > 15 then "OD imposible · " else "") &
+		        (if [Temperatura_C] = null then "Temp vacía · " else if N([Temperatura_C]) = 0 then "Temp = 0 · " else "") &
+		        (if [pH] = null then "pH vacío" else if N([pH]) > 10 then "pH imposible" else ""), type text),
+		    Raras = Table.SelectRows(M, each [Marcas] <> ""),
+		    G = Table.Group(Raras, {"Marcas", "Tecnico"}, {
+		        {"Filas", each Table.RowCount(_), Int64.Type},
+		        {"Valores_OD", each Text.Combine(List.Transform(List.FirstN(List.Distinct([OD_Madrugada_mgL]), 5), Text.From), " | "), type text},
+		        {"Valores_pH", each Text.Combine(List.Transform(List.FirstN(List.Distinct([pH]), 5), Text.From), " | "), type text}}),
+		    Orden = Table.Sort(G, {{"Filas", Order.Descending}})
+		in
+		    Orden
+	lineageTag: 63937873-4e55-467e-afca-b749fbc86220
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Ceros_vs_Oxigeno =
+		let
+		    M = Table.SelectRows(stg_ParametrosAgua, each [OD_Madrugada_mgL] <> null),
+		    Exp = Table.ExpandListColumn(Table.AddColumn(M, "Dia", each {Date.AddDays([Fecha], -1), [Fecha], Date.AddDays([Fecha], 1)}), "Dia"),
+		    ODdia = Table.Group(Exp, {"Piscina", "Dia"}, {{"OD_min", each List.Min([OD_Madrugada_mgL]), type number}}),
+		    R = Table.SelectRows(Table.SelectColumns(fact_Alimentacion, {"Piscina", "Fecha", "Kg_Aplicados"}), each [Kg_Aplicados] <> null),
+		    J = Table.ExpandTableColumn(Table.NestedJoin(R, {"Piscina", "Fecha"}, ODdia, {"Piscina", "Dia"}, "O", JoinKind.LeftOuter), "O", {"OD_min"}),
+		    T = Table.AddColumn(J, "Racion", each if [Kg_Aplicados] = 0 then "Ración en 0 kg" else "Ración normal", type text),
+		    C = Table.AddColumn(T, "Oxigeno", each if [OD_min] = null then "Sin medición cercana" else if [OD_min] < 3 then "OD bajo (< 3)" else "OD normal", type text),
+		    G = Table.Group(C, {"Racion", "Oxigeno"}, {{"Raciones", each Table.RowCount(_), Int64.Type}}),
+		    Pct = Table.AddColumn(G, "Pct_dentro_del_tipo", each Number.Round([Raciones] / List.Sum(Table.SelectRows(G, (r) => r[Racion] = [Racion])[Raciones]) * 100, 1), type number),
+		    Orden = Table.Sort(Pct, {{"Racion", Order.Ascending}, {"Oxigeno", Order.Ascending}})
+		in
+		    Orden
+	lineageTag: dd0c5089-f41a-4d32-b0e9-dc811e23ba6e
 	queryGroup: QA
 
 	annotation PBI_ResultType = Table

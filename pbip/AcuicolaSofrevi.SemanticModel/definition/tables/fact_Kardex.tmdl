@@ -1,0 +1,148 @@
+table fact_Kardex
+	lineageTag: c212d789-688c-40cd-a602-d815a8b0a14b
+
+	column N_Documento
+		dataType: string
+		lineageTag: 89f60c72-8140-4cc4-b685-f377ac58fcd7
+		summarizeBy: none
+		sourceColumn: N_Documento
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 563d1a07-1768-41f6-af88-58f7ba532291
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Hora
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: 9f1d367d-5109-4e0a-ad6d-308e4391d1d7
+		summarizeBy: none
+		sourceColumn: Hora
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column Tipo_Mov
+		dataType: string
+		lineageTag: 1a173696-2450-4813-bdea-e59ef81e98d7
+		summarizeBy: none
+		sourceColumn: Tipo_Mov
+
+		annotation SummarizationSetBy = Automatic
+
+	column Codigo_Producto
+		dataType: string
+		lineageTag: 5392de48-7ecb-4381-8b96-c6265d5529d6
+		summarizeBy: none
+		sourceColumn: Codigo_Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Piscina
+		dataType: string
+		lineageTag: ea237811-b32b-4f45-929c-8eb23404b55c
+		summarizeBy: none
+		sourceColumn: Piscina
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sacos
+		dataType: int64
+		formatString: 0
+		lineageTag: a2cd14c0-336e-4d91-ad30-a31fc2d58e4f
+		summarizeBy: sum
+		sourceColumn: Sacos
+
+		annotation SummarizationSetBy = Automatic
+
+	column Entregado_A
+		dataType: string
+		lineageTag: 58becbf0-6c8f-4f06-b355-dce30237182b
+		summarizeBy: none
+		sourceColumn: Entregado_A
+
+		annotation SummarizationSetBy = Automatic
+
+	column Registrado_Por
+		dataType: string
+		lineageTag: 24a14574-794a-4ce8-b4a7-1927a241565d
+		summarizeBy: none
+		sourceColumn: Registrado_Por
+
+		annotation SummarizationSetBy = Automatic
+
+	column Proveedor
+		dataType: string
+		lineageTag: 6ccee7e6-05f2-49cc-b09c-b9f7fdd41fa5
+		summarizeBy: none
+		sourceColumn: Proveedor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kg_Por_Saco
+		dataType: int64
+		formatString: 0
+		lineageTag: b03ac50f-69df-405e-baf0-8eb745b132f0
+		summarizeBy: sum
+		sourceColumn: Kg_Por_Saco
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kg_Despachados
+		dataType: double
+		lineageTag: 385db74c-bb12-40e0-84e2-5b5251709734
+		summarizeBy: sum
+		sourceColumn: Kg_Despachados
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column ID_Ciclo
+		dataType: string
+		lineageTag: bdcc1995-c9a4-4d85-a321-f8c684bfc0ef
+		summarizeBy: none
+		sourceColumn: ID_Ciclo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_Kardex = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Kardex,
+				  Personalizado = Origen,
+				  #"Proveedor: desde el código del producto" = Table.AddColumn(Origen, "Proveedor", each
+				    let p = Text.BeforeDelimiter([Codigo_Producto], "-") in
+				    if p = "NA" then "NUTRIACUA S.A."
+				    else if p = "AFL" then "AQUAFEED LITORAL S.A."
+				    else if p = "BA" then "BALANCEADOS ANDINOS CIA. LTDA."
+				    else "Desconocido", type text),
+				  #"Kg_Por_Saco: último número del código" = Table.AddColumn(#"Proveedor: desde el código del producto", "Kg_Por_Saco", each
+				    Number.From(Text.AfterDelimiter([Codigo_Producto], "-", {0, RelativePosition.FromEnd})), Int64.Type),
+				  #"Kg_Despachados: sacos × kg por saco" = Table.AddColumn(#"Kg_Por_Saco: último número del código", "Kg_Despachados", each [Sacos] * [Kg_Por_Saco], type number),
+				  #"ID_Ciclo: ciclo activo en la piscina ese día" = let
+				    base = #"Kg_Despachados: sacos × kg por saco",
+				    C = Table.Buffer(Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Siembra", "Fecha_Cosecha"})),
+				    PorPiscina = Record.FromTable(Table.Group(Table.RenameColumns(C, {{"Piscina", "Name"}}), {"Name"}, {{"Value", each Table.Buffer(_)}})),
+				    Buscar = (p, f) =>
+				        let t = Record.FieldOrDefault(PorPiscina, p, null),
+				            m = if t = null then #table({}, {}) else Table.SelectRows(t, (r) => r[Fecha_Siembra] <= f and (r[Fecha_Cosecha] = null or f <= r[Fecha_Cosecha]))
+				        in if Table.IsEmpty(m) then null else m{0}[ID_Ciclo]
+				  in
+				    Table.AddColumn(base, "ID_Ciclo", each Buscar([Piscina], [Fecha]), type text)
+				in
+				  #"ID_Ciclo: ciclo activo en la piscina ese día"
+
+	annotation PBI_ResultType = Table
+

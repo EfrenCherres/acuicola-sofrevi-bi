@@ -1,0 +1,129 @@
+table fact_ParametrosAgua
+	lineageTag: b5d3afff-09bf-449a-84e1-3f09cb29c69e
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5df14f3d-f6d3-44c1-8d29-ede48b2718d0
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Piscina
+		dataType: string
+		lineageTag: 6f83126d-a1de-48ee-8998-3def3fa93ca3
+		summarizeBy: none
+		sourceColumn: Piscina
+
+		annotation SummarizationSetBy = Automatic
+
+	column OD_Madrugada_mgL
+		dataType: double
+		lineageTag: 3dfad188-8353-45d5-86b2-39068d0b546e
+		summarizeBy: sum
+		sourceColumn: OD_Madrugada_mgL
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OD_Tarde_mgL
+		dataType: double
+		lineageTag: 31b00e23-9caa-49a0-bddb-f9aa1d601b67
+		summarizeBy: sum
+		sourceColumn: OD_Tarde_mgL
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Temperatura_C
+		dataType: double
+		lineageTag: 62c86294-358b-4e38-a2d2-79b7dd9ae3f2
+		summarizeBy: sum
+		sourceColumn: Temperatura_C
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Salinidad_ppt
+		dataType: double
+		lineageTag: 6a483c04-df31-4995-8571-cb18ee6de80c
+		summarizeBy: sum
+		sourceColumn: Salinidad_ppt
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column pH
+		dataType: double
+		lineageTag: ff5c32fc-fb37-4232-afba-cafda5bd2b5f
+		summarizeBy: sum
+		sourceColumn: pH
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Transparencia_cm
+		dataType: double
+		lineageTag: 07372340-b0f1-4ca7-b78d-6d52029229c6
+		summarizeBy: sum
+		sourceColumn: Transparencia_cm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Tecnico
+		dataType: string
+		lineageTag: 08446e2c-6125-4098-958a-0fb6efc09e9a
+		summarizeBy: none
+		sourceColumn: Tecnico
+
+		annotation SummarizationSetBy = Automatic
+
+	column OD_Critico
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 087cb7ca-5a36-43e3-aeac-0867829784d1
+		summarizeBy: none
+		sourceColumn: OD_Critico
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID_Ciclo
+		dataType: string
+		lineageTag: e135ef11-9ee7-40af-8794-75fa40c2142b
+		summarizeBy: none
+		sourceColumn: ID_Ciclo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_ParametrosAgua = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_ParametrosAgua,
+				  #"OD_Critico: oxígeno de madrugada menor a 3 mg/L" = Table.AddColumn(Origen, "OD_Critico", each if [OD_Madrugada_mgL] = null then null else [OD_Madrugada_mgL] < 3, type nullable logical),
+				  #"ID_Ciclo: ciclo activo en la piscina ese día" = let
+				    base = #"OD_Critico: oxígeno de madrugada menor a 3 mg/L",
+				    C = Table.Buffer(Table.SelectColumns(fact_Ciclos, {"ID_Ciclo", "Piscina", "Fecha_Siembra", "Fecha_Cosecha"})),
+				    PorPiscina = Record.FromTable(Table.Group(Table.RenameColumns(C, {{"Piscina", "Name"}}), {"Name"}, {{"Value", each Table.Buffer(_)}})),
+				    Buscar = (p, f) =>
+				        let t = Record.FieldOrDefault(PorPiscina, p, null),
+				            m = if t = null then #table({}, {}) else Table.SelectRows(t, (r) => r[Fecha_Siembra] <= f and (r[Fecha_Cosecha] = null or f <= r[Fecha_Cosecha]))
+				        in if Table.IsEmpty(m) then null else m{0}[ID_Ciclo]
+				  in
+				    Table.AddColumn(base, "ID_Ciclo", each Buscar([Piscina], [Fecha]), type text)
+				in
+				  #"ID_Ciclo: ciclo activo en la piscina ese día"
+
+	annotation PBI_ResultType = Table
+

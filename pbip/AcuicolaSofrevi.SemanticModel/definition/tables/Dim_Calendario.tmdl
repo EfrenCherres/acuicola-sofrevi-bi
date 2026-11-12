@@ -1,0 +1,520 @@
+table Dim_Calendario
+	lineageTag: 8fc589f6-f4f9-4d21-aa2e-da3bd8bafce3
+
+	column Date
+		formatString: General Date
+		lineageTag: 5ad777ad-b559-4dae-914c-e28caa71084b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 352e0606-0c15-4c48-93fd-82cdce6643bf
+			defaultHierarchy: LocalDateTable_8e13c5a1-9b76-4034-a016-6f0b515736d6.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año
+		formatString: 0
+		lineageTag: 08d44c71-163f-4c33-8b27-fb83c3812530
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Num'
+		formatString: 0
+		lineageTag: a730bfe3-be4a-4b0a-be57-3f70bfcd8dff
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Mes Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		lineageTag: 3d15aac2-1f27-424b-8129-2cb38cfac1fa
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Corto'
+		lineageTag: 46f5bf26-5566-4de1-9d3d-294dbeb740c2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes Corto]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Mes'
+		lineageTag: 8f79f867-a48e-4385-b999-c7873fffee36
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Año Mes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Mes Num'
+		formatString: 0
+		lineageTag: 6357595a-303c-43eb-ba54-13b28dc33efe
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año Mes Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Periodo
+		lineageTag: 984bad60-2ec8-4140-92f7-7a8e7ebf3966
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Periodo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inicio Mes'
+		formatString: General Date
+		lineageTag: 8d130353-8961-46dc-a1a3-e4937f98d8d7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Inicio Mes]
+
+		variation Variation
+			isDefault
+			relationship: c5d9b70b-64d6-46f0-aba7-dd4745134b7c
+			defaultHierarchy: LocalDateTable_48a3d0d5-689b-40d6-a756-7532353c470a.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fin Mes'
+		formatString: General Date
+		lineageTag: d2c91cd1-6871-4f4e-ac40-95f904a5c2a0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Fin Mes]
+
+		variation Variation
+			isDefault
+			relationship: afba8aee-e928-4f83-a3a5-f4ee17204dbb
+			defaultHierarchy: LocalDateTable_9de5dcce-1e45-4db6-85b9-76f90fe980ed.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Mes'
+		formatString: 0
+		lineageTag: a3203ab9-5afc-4c3a-834e-b0e9e8e3cac3
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dia Mes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Año'
+		formatString: 0
+		lineageTag: dd262577-e91e-4470-b206-3751ff484f32
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dia Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		lineageTag: c808ac79-a971-4302-8910-24e49c72d35c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Trimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trimestre Orden'
+		formatString: 0
+		lineageTag: 63638da9-6a75-4c2c-8ced-879313c46b6f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Trimestre Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Trimestre'
+		lineageTag: 13aa6318-e3a7-48e5-8f53-a3c1c6410a6d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Año Trimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Trimestre Num'
+		formatString: 0
+		lineageTag: 8f28cb8f-66cc-44a9-b18e-e9ff94cf5e7e
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año Trimestre Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Semestre
+		lineageTag: f766e125-f5d6-4b2c-83d6-9342281055cf
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Semestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Semestre Orden'
+		formatString: 0
+		lineageTag: 4dda3d25-ab31-4a9a-ab09-9380d5ec59b9
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Semestre Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Bimestre
+		lineageTag: 9acfab53-0466-4255-96b8-2581f842970d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Bimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Bimestre Orden'
+		lineageTag: d85d28c2-1c35-4266-b248-c278a09578fa
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Bimestre Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Cuatrimestre
+		lineageTag: 24319bb6-319f-4670-9eed-4258eca80dd1
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Cuatrimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cuatrimestre Orden'
+		lineageTag: 4cceb426-434a-4761-b161-6a9926b46fa7
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Cuatrimestre Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Semana ISO'
+		formatString: 0
+		lineageTag: eb70e461-74c7-440e-91e4-9785fb80bbbf
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Semana ISO]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año ISO'
+		formatString: 0
+		lineageTag: c82e4983-c9a9-430d-a11e-23f9c327b2d1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año ISO]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Semana'
+		lineageTag: 388c84d5-c87d-4b66-8eb0-813d5f7e4922
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Año Semana]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Semana Num'
+		formatString: 0
+		lineageTag: dbec2a1a-c300-49d8-bf80-d68694ef89ab
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año Semana Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inicio Semana'
+		formatString: General Date
+		lineageTag: c03b42fd-2574-4b7b-9ec8-9f2d2fe127a3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Inicio Semana]
+
+		variation Variation
+			isDefault
+			relationship: 9fd9db49-828c-4e29-a149-20409c3f4109
+			defaultHierarchy: LocalDateTable_2304601c-8ecf-416c-9b75-300e48239b2a.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Semana'
+		formatString: 0
+		lineageTag: 2e95ce87-ce63-4bd7-88f9-3d69d3a117fc
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dia Semana]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre Dia'
+		lineageTag: e3095938-750b-4ec0-b12e-3acfb8a98389
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Nombre Dia]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nombre Dia Corto'
+		lineageTag: 042026e3-efcb-43bd-b2b9-12f838b3266d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Nombre Dia Corto]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Es Fin de Semana'
+		lineageTag: 09a76f36-87b0-4f29-88e0-c97a391d47ab
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Es Fin de Semana]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Es Feriado'
+		lineageTag: ab5a380c-8169-4585-9b1b-aef58f01094c
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Es Feriado]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Es Laborable'
+		lineageTag: f7db28b2-a969-417a-90ae-4848edbf28a2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Es Laborable]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Fiscal'
+		formatString: 0
+		lineageTag: 559ad63c-61ab-488c-851d-a3e42b373f47
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año Fiscal]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Fiscal'
+		formatString: 0
+		lineageTag: 10cda8d6-a71d-40e4-bc12-e1014f436693
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Mes Fiscal]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Trimestre Fiscal'
+		lineageTag: d75d3725-f328-4531-b460-7cc3b029a3d9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Trimestre Fiscal]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Con Datos'
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f2276d4a-b635-4277-99d7-0dd269c6e992
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Con Datos]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Hasta Fecha Comparable'
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 32f90308-55e1-404c-9d22-56d2c2aa1ab8
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Hasta Fecha Comparable]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Relativo'
+		formatString: 0
+		lineageTag: fa4a3672-dffa-4165-931d-6bfc5a6f4753
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Mes Relativo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Relativo'
+		formatString: 0
+		lineageTag: 68df3818-264c-4ec5-98d1-76f52c19464f
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año Relativo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dia Relativo'
+		formatString: 0
+		lineageTag: 4c33fd36-c79a-421a-a0bd-9bbe04276ae0
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Dia Relativo]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Calendario = calculated
+		mode: import
+		source = ```
+				
+				-- ======================= PARÁMETROS: solo cambia esta sección =======================
+				VAR AnioInicio = 2021              -- vacío = automático; o un año fijo, ej. 2020
+				                                   -- Sofrevi: fijo porque fact_Kardex tiene una columna Hora
+				VAR AnioFin = 2026                 -- vacío = automático; o un año fijo, ej. 2027
+				VAR AniosAtrasMax = 20             -- modo automático: máximo de años hacia atrás
+				VAR AniosAdelanteMax = 5           -- modo automático: máximo de años hacia adelante
+				VAR AniosExtra = 0                 -- años adicionales al final (metas, pronósticos)
+				VAR FechaUltimoDato = DATE ( 2026, 10, 20 )  -- Sofrevi: último día con operación completa; vacío = hoy; o una fecha fija, ej. DATE ( 2026, 8, 31 )
+				VAR CorteMesAnterior = FALSE ()    -- TRUE () = el corte es el fin del mes anterior a hoy
+				VAR ZonaHoraria = -5               -- horas respecto a UTC (Ecuador = -5)
+				VAR MesInicioFiscal = 1            -- 1 = enero; 7 = julio, etc.
+				VAR Idioma = "es-EC"
+				VAR Feriados = { DATE ( 1900, 1, 1 ) }   -- reemplaza por tus feriados, ej.:
+				                                         -- { DATE ( 2026, 1, 1 ), DATE ( 2026, 5, 1 ) }
+				-- =====================================================================================
+				
+				-- Hoy en la zona horaria indicada (el servicio de Power BI trabaja en UTC)
+				VAR Ahora = UTCNOW () + ZonaHoraria / 24
+				VAR Hoy = DATE ( YEAR ( Ahora ), MONTH ( Ahora ), DAY ( Ahora ) )
+				
+				-- Fecha de corte: la última fecha que se considera "con datos"
+				VAR FechaCorte =
+				    IF (
+				        NOT ISBLANK ( FechaUltimoDato ),
+				        FechaUltimoDato,
+				        IF ( CorteMesAnterior, EOMONTH ( Hoy, -1 ), Hoy )
+				    )
+				
+				-- Rango base: fijo si hay años escritos; si no, detectado en el modelo y acotado
+				VAR MesFinFiscal = MOD ( MesInicioFiscal - 2, 12 ) + 1
+				VAR MinBase =
+				    IF (
+				        NOT ISBLANK ( AnioInicio ),
+				        DATE ( AnioInicio, 1, 1 ),
+				        MAX (
+				            MINX ( CALENDARAUTO ( MesFinFiscal ), [Date] ),
+				            DATE ( YEAR ( FechaCorte ) - AniosAtrasMax, 1, 1 )
+				        )
+				    )
+				VAR MaxBase =
+				    IF (
+				        NOT ISBLANK ( AnioFin ),
+				        DATE ( AnioFin, 12, 31 ),
+				        MIN (
+				            MAXX ( CALENDARAUTO ( MesFinFiscal ), [Date] ),
+				            DATE ( YEAR ( FechaCorte ) + AniosAdelanteMax, 12, 31 )
+				        )
+				    )
+				
+				-- Ajuste a años fiscales completos (con MesInicioFiscal = 1 son años calendario)
+				VAR Desplazar = IF ( MesInicioFiscal > 1, 1, 0 )
+				VAR AnioFiscalIni =
+				    YEAR ( MinBase ) + IF ( MesInicioFiscal > 1 && MONTH ( MinBase ) >= MesInicioFiscal, 1, 0 )
+				VAR AnioFiscalFin =
+				    YEAR ( MaxBase ) + IF ( MesInicioFiscal > 1 && MONTH ( MaxBase ) >= MesInicioFiscal, 1, 0 )
+				VAR FechaInicio = DATE ( AnioFiscalIni - Desplazar, MesInicioFiscal, 1 )
+				VAR FechaFin = DATE ( AnioFiscalFin - Desplazar + 1 + AniosExtra, MesInicioFiscal, 1 ) - 1
+				
+				RETURN
+				ADDCOLUMNS (
+				    CALENDAR ( FechaInicio, FechaFin ),
+				
+				    -- ---------- Año, mes y día ----------
+				    "Año", YEAR ( [Date] ),
+				    "Mes Num", MONTH ( [Date] ),
+				    "Mes",
+				        VAR X = FORMAT ( [Date], "mmmm", Idioma )
+				        RETURN UPPER ( LEFT ( X, 1 ) ) & MID ( X, 2, LEN ( X ) ),
+				    "Mes Corto",
+				        VAR X = FORMAT ( [Date], "mmmm", Idioma )
+				        RETURN UPPER ( LEFT ( X, 1 ) ) & MID ( X, 2, 2 ),
+				    "Año Mes",
+				        VAR X = FORMAT ( [Date], "mmmm", Idioma )
+				        RETURN UPPER ( LEFT ( X, 1 ) ) & MID ( X, 2, 2 ) & " " & YEAR ( [Date] ),
+				    "Año Mes Num", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+				    "Periodo", FORMAT ( [Date], "yyyy-mm" ),
+				    "Inicio Mes", DATE ( YEAR ( [Date] ), MONTH ( [Date] ), 1 ),
+				    "Fin Mes", EOMONTH ( [Date], 0 ),
+				    "Dia Mes", DAY ( [Date] ),
+				    "Dia Año", INT ( [Date] - DATE ( YEAR ( [Date] ), 1, 1 ) ) + 1,
+				
+				    -- ---------- Agrupaciones del año ----------
+				    "Trimestre", "T" & QUARTER ( [Date] ),
+				    "Trimestre Orden", QUARTER ( [Date] ),
+				    "Año Trimestre", YEAR ( [Date] ) & "-T" & QUARTER ( [Date] ),
+				    "Año Trimestre Num", YEAR ( [Date] ) * 10 + QUARTER ( [Date] ),
+				    "Semestre", "Sem " & IF ( MONTH ( [Date] ) <= 6, 1, 2 ),
+				    "Semestre Orden", IF ( MONTH ( [Date] ) <= 6, 1, 2 ),
+				    "Bimestre", "Bim " & ROUNDUP ( MONTH ( [Date] ) / 2, 0 ),
+				    "Bimestre Orden", ROUNDUP ( MONTH ( [Date] ) / 2, 0 ),
+				    "Cuatrimestre", "Cuatrim " & ROUNDUP ( MONTH ( [Date] ) / 4, 0 ),
+				    "Cuatrimestre Orden", ROUNDUP ( MONTH ( [Date] ) / 4, 0 ),
+				
+				    -- ---------- Semanas (ISO 8601: lunes a domingo; la semana 1 contiene el primer jueves) ----------
+				    "Semana ISO", WEEKNUM ( [Date], 21 ),
+				    "Año ISO", YEAR ( [Date] - WEEKDAY ( [Date], 3 ) + 3 ),
+				    "Año Semana",
+				        YEAR ( [Date] - WEEKDAY ( [Date], 3 ) + 3 ) & "-S" & FORMAT ( WEEKNUM ( [Date], 21 ), "00" ),
+				    "Año Semana Num",
+				        YEAR ( [Date] - WEEKDAY ( [Date], 3 ) + 3 ) * 100 + WEEKNUM ( [Date], 21 ),
+				    "Inicio Semana", [Date] - WEEKDAY ( [Date], 2 ) + 1,
+				
+				    -- ---------- Días ----------
+				    "Dia Semana", WEEKDAY ( [Date], 2 ),
+				    "Nombre Dia",
+				        VAR D = FORMAT ( [Date], "dddd", Idioma )
+				        RETURN UPPER ( LEFT ( D, 1 ) ) & MID ( D, 2, LEN ( D ) ),
+				    "Nombre Dia Corto",
+				        VAR D = FORMAT ( [Date], "dddd", Idioma )
+				        RETURN UPPER ( LEFT ( D, 1 ) ) & MID ( D, 2, 2 ),
+				    "Es Fin de Semana", IF ( WEEKDAY ( [Date], 2 ) >= 6, "Sí", "No" ),
+				    "Es Feriado", IF ( [Date] IN Feriados, "Sí", "No" ),
+				    "Es Laborable",
+				        IF ( WEEKDAY ( [Date], 2 ) <= 5 && NOT ( [Date] IN Feriados ), "Sí", "No" ),
+				
+				    -- ---------- Año fiscal (se nombra por el año en que termina) ----------
+				    "Año Fiscal",
+				        YEAR ( [Date] ) + IF ( MesInicioFiscal > 1 && MONTH ( [Date] ) >= MesInicioFiscal, 1, 0 ),
+				    "Mes Fiscal", MOD ( MONTH ( [Date] ) - MesInicioFiscal, 12 ) + 1,
+				    "Trimestre Fiscal",
+				        "TF" & ROUNDUP ( ( MOD ( MONTH ( [Date] ) - MesInicioFiscal, 12 ) + 1 ) / 3, 0 ),
+				
+				    -- ---------- Columnas relativas a la fecha de corte ----------
+				    "Con Datos", [Date] <= FechaCorte,
+				    "Hasta Fecha Comparable",
+				        MONTH ( [Date] ) * 100 + DAY ( [Date] )
+				            <= MONTH ( FechaCorte ) * 100 + DAY ( FechaCorte ),
+				    "Mes Relativo",
+				        ( YEAR ( [Date] ) - YEAR ( FechaCorte ) ) * 12 + MONTH ( [Date] ) - MONTH ( FechaCorte ),
+				    "Año Relativo", YEAR ( [Date] ) - YEAR ( FechaCorte ),
+				    "Dia Relativo", INT ( [Date] - FechaCorte )
+				)
+				
+				
+				```
+
+	annotation PBI_Id = 3ad936fc2bd8471c964d9e34f0c0eac2
+

@@ -1,0 +1,44 @@
+table dim_Sector
+	lineageTag: ba6d5590-329e-47cc-8bc6-f7aca6b12005
+
+	column Sector
+		dataType: string
+		lineageTag: a88d7e92-4495-4854-8b93-2b754781aeba
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo
+		dataType: string
+		lineageTag: 6c95f63e-9d4e-402d-a1cf-663057c829ba
+		summarizeBy: none
+		sourceColumn: Tipo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Nombre_Sector
+		dataType: string
+		lineageTag: 846714b5-abb6-4c92-9501-b1081cf13d84
+		summarizeBy: none
+		sourceColumn: Nombre_Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Sector = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				    #"Sectores de las piscinas" = Table.Distinct(Table.SelectColumns(stg_Piscina, {"Sector"})),
+				    #"Tipo: Productivo" = Table.AddColumn(#"Sectores de las piscinas", "Tipo", each "Productivo", type text),
+				    #"Miembro ADMINISTRACION (gastos generales)" = Table.Combine({#"Tipo: Productivo",
+				        #table(type table [Sector = text, Tipo = text], {{"ADMINISTRACION", "Administrativo"}})}),
+				    #"Nombre para mostrar" = Table.AddColumn(#"Miembro ADMINISTRACION (gastos generales)", "Nombre_Sector",
+				        each if [Tipo] = "Productivo" then "Sector " & [Sector] else "Administración", type text),
+				  #"Una fila por sector: productivos primero" = Table.Sort(#"Nombre para mostrar", {{"Tipo", Order.Descending}, {"Sector", Order.Ascending}})
+				in
+				    #"Una fila por sector: productivos primero"
+
+	annotation PBI_ResultType = Table
+
