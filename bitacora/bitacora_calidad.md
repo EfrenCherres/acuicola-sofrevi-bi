@@ -87,6 +87,10 @@ Resumen del Log de calidad (`Log_Calidad.xlsx`, hoja 4). El detalle completo de 
 | 31 | fact_Alimentacion | Turno | Consistencia | "mañana" en minúsculas junto a "MAÑANA" | 2.837 | Baja | Text.Upper | Resuelto |
 | 32 | fact_Kardex | Tipo_Mov | Completitud | El kardex solo trae SALIDAS: no tiene entradas ni saldos de bodega | 56.690 | Media | Usar fact_Compras como entradas; no se calcula saldo de inventario | Escalado |
 | 33 | fact_Kardex | Kg_Despachados | Consistencia entre tablas | Desde 2024, en P-17 a P-24 (Sector C), el 12 % del alimento despachado no aparece como ración: 185.687 kg ≈ 204.000 USD. Mismas piscinas 2021–2023: 0,3–0,6 % | 6.788 | Alta | Sin cambios en los datos; hallazgo confidencial para el cliente (en un caso real no se publicaría) | Escalado 
+| 34 | fact_ParametrosAgua | Piscina | Consistencia | Piscina escrita como "PISC-01" en lugar de P-01 | ___ | Baja | Regla de siempre: solo dígitos → P-00 | Resuelto |
+| 35 | fact_ParametrosAgua | OD_Madrugada_mgL | Validez | 245 vacíos + 96 con el centinela 99,9 (máximo físico ~15 mg/L) | 341 | Media | Centinela → vacío. No se estima | Resuelto |
+| 36 | fact_ParametrosAgua | Temperatura_C | Validez | 245 vacíos + 98 con 0 °C (imposible en Ecuador) | 343 | Media | Centinela → vacío | Resuelto |
+| 37 | fact_ParametrosAgua | pH | Validez | 245 vacíos + 98 con pH 14 (tope de la escala) | 343 | Media | Centinela → vacío (pH > 10 imposible) | Resuelto |
 
 **Resumen:** 16 novedades · 9 resueltas · 7 escaladas al cliente.
 

@@ -220,3 +220,24 @@ Registro fechado del trabajo: qué hice, qué encontré y **por qué** tomé cad
 - Novedad 33 (Alta, Escalado, confidencial): no prueba causa ni intención; se entrega al cliente para investigar con guías e inventario físico.
 
 **Siguiente:** fact_ParametrosAgua (y el cruce de los ceros de alimentación con el oxígeno bajo).
+
+## 11 nov 2026 — fact_ParametrosAgua y Dim_Calendario
+
+**ParametrosAgua (tabla 11).** 24,462 mediciones de 32 piscinas, una por fecha y piscina,
+cada 2–3 días. Encontré valores centinela: datos vacíos disfrazados de números
+(OD 99,9 · Temperatura 0 · pH 14). Los convertí a vacío con reglas físicas,
+no por muestra. Los errores son aleatorios entre los 3 técnicos.
+Usé esta tabla para probar una hipótesis de la novedad 29 (raciones en 0 por oxígeno
+bajo) y quedó descartada: 8,6 % vs 8,8 %.
+
+**Dim_Calendario (tabla 12).** Usé mi plantilla DAX genérica. El calendario empezaba
+en 2006, aunque ninguna tabla tenía fechas anteriores a 2021 (lo comprobé con
+QA_Rango_Fechas). La causa: la columna Hora de fact_Kardex. Power BI guarda las
+horas como 30/12/1899 y CALENDARAUTO las cuenta como fechas.
+Solución: rango fijo 2021–2026 (2,191 días) y corte al 20/10/2026.
+No cambié la columna Hora, porque es un dato bueno.
+
+**Lección:** cuando un resultado no cuadra y los datos están limpios, revisa cómo
+la herramienta lee los datos.
+
+**Siguiente:** fact_Gastos, la última tabla de Power Query.
