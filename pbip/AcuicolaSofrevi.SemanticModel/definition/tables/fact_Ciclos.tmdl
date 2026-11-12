@@ -3,26 +3,35 @@ table fact_Ciclos
 
 	column ID_Ciclo
 		dataType: string
+		isHidden
 		lineageTag: cca60490-8d34-43f5-b96f-203914d5199b
 		summarizeBy: none
 		sourceColumn: ID_Ciclo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Piscina
 		dataType: string
+		isHidden
 		lineageTag: f2319f56-df44-43bf-8a3f-efc3d908b4c9
 		summarizeBy: none
 		sourceColumn: Piscina
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column Fecha_Siembra
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 619959de-d267-4478-9255-e809dbf43f2e
 		summarizeBy: none
 		sourceColumn: Fecha_Siembra
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -30,10 +39,13 @@ table fact_Ciclos
 
 	column Fecha_Cosecha
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 5470ec55-1103-4677-929e-d42e5ab17a86
 		summarizeBy: none
 		sourceColumn: Fecha_Cosecha
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -41,9 +53,12 @@ table fact_Ciclos
 
 	column Laboratorio
 		dataType: string
+		isHidden
 		lineageTag: 73b0ec29-f232-40a1-8564-9226b38689ad
 		summarizeBy: none
 		sourceColumn: Laboratorio
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -60,30 +75,30 @@ table fact_Ciclos
 	column Costo_Larva_USD_mil
 		dataType: double
 		lineageTag: 1c2291a6-d982-4edd-af71-289e5fbded1c
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Costo_Larva_USD_mil
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Densidad_m2
 		dataType: double
 		lineageTag: f4e53fba-c596-4ec0-82f8-f9e5f44b3d43
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Densidad_m2
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Peso_Muestreo_g
 		dataType: double
 		lineageTag: 4466d8da-d9bd-4dd9-bdd8-3fe9a21bfd1f
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Peso_Muestreo_g
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -100,10 +115,10 @@ table fact_Ciclos
 	column Sobrevivencia_pct
 		dataType: double
 		lineageTag: 657d6962-4777-44a4-bc6e-5e0c3d356cb7
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Sobrevivencia_pct
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -143,10 +158,10 @@ table fact_Ciclos
 		dataType: int64
 		formatString: 0
 		lineageTag: 4df962e2-4ab2-4611-ba05-084250579ae5
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Dias_Cultivo
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	partition fact_Ciclos = m
 		mode: import

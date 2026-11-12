@@ -1335,3 +1335,183 @@ expression QA_Ceros_vs_Oxigeno =
 
 	annotation PBI_ResultType = Table
 
+expression QA_Controles_Gastos =
+		let
+		    T = Table.AddColumn(src_Gastos, "Monto_Num", each try Number.From([Monto_USD], "en-US") otherwise null),
+		    Filas = Table.RowCount(T),
+		    Montos = List.RemoveNulls(T[Monto_Num]),
+		    Resultado = #table({"Control", "Valor"}, {
+		        {"Filas", Filas},
+		        {"Monto que no convierte a número", Filas - List.Count(Montos)},
+		        {"Monto negativo", List.Count(List.Select(Montos, each _ < 0))},
+		        {"Monto en 0", List.Count(List.Select(Montos, each _ = 0))},
+		        {"Monto mínimo", List.Min(Montos)},
+		        {"Monto máximo", List.Max(Montos)},
+		        {"Duplicados exactos", Filas - Table.RowCount(Table.Distinct(src_Gastos))},
+		        {"Duplicados de clave (Periodo + Centro + Rubro)",
+		            Filas - Table.RowCount(Table.Distinct(src_Gastos, {"Periodo", "Centro_Costo", "Rubro"}))}
+		    })
+		in
+		    Resultado
+	lineageTag: 1324d706-ff15-4091-8f82-28ca35bf9f16
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Perfil_Gastos =
+		let
+		  Origen = Table.Profile(src_Gastos)
+		in
+		  Origen
+	lineageTag: ccf7c935-8fcd-42c0-80ad-5ecbe73d3623
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Formas_Gastos =
+		let
+		    Columnas = {"Periodo", "Centro_Costo", "Rubro"},
+		    #"Formas por columna" = Table.Combine(List.Transform(Columnas, (c) =>
+		        let
+		            g = Table.Group(Table.SelectColumns(src_Gastos, {c}), {c}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		            t = Table.TransformColumns(g, {{c, each Text.From(_), type text}})
+		        in
+		            Table.AddColumn(Table.RenameColumns(t, {{c, "Valor"}}), "Columna", each c, type text))),
+		    #"Ordenado" = Table.Sort(Table.ReorderColumns(#"Formas por columna", {"Columna", "Valor", "Filas"}),
+		        {{"Columna", Order.Ascending}, {"Valor", Order.Ascending}})
+		in
+		    #"Ordenado"
+	lineageTag: adb31752-7f97-4946-9a0c-0408b95249d4
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Periodo_Formas =
+		let
+		    Periodos = Table.Group(src_Gastos, {"Periodo"}, {{"Filas", each Table.RowCount(_), Int64.Type}}),
+		    #"Patrón" = Table.AddColumn(Periodos, "Patron", each
+		        let t = Text.From([Periodo]), izq = Text.BeforeDelimiter(t, "-")
+		        in if Text.Length(izq) = 4 and Value.Is(Value.FromText(izq), type number)
+		           then "aaaa-mm"
+		           else "mmm-aa: " & izq, type text),
+		    #"Resumen por patrón" = Table.Group(#"Patrón", {"Patron"}, {
+		        {"Periodos", each Table.RowCount(_), Int64.Type},
+		        {"Filas", each List.Sum([Filas]), Int64.Type},
+		        {"Valores", each Text.Combine(List.Sort(List.Transform([Periodo], Text.From)), ", "), type text}}),
+		    #"Ordenado" = Table.Sort(#"Resumen por patrón", {{"Patron", Order.Ascending}})
+		in
+		    #"Ordenado"
+	lineageTag: c520e727-cd5e-42fd-b1bf-2ccbe5341304
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Meses_Faltantes =
+		let
+		    Origen = List.Difference(
+		    List.Generate(() => #date(2021,1,1), each _ <= #date(2026,10,1), each Date.AddMonths(_, 1)),
+		    List.Distinct(stg_Gastos[Fecha_Mes]))
+		in
+		    Origen
+	lineageTag: 8f55ced2-3d36-470e-812f-f6e5bf441a2a
+	queryGroup: QA
+
+	annotation PBI_ResultType = List
+
+expression QA_Filas_por_Mes =
+		let
+		    Origen = Table.SelectRows(Table.Group(stg_Gastos, {"Fecha_Mes"}, {{"Filas", each Table.RowCount(_), Int64.Type}}), each [Filas] <> 27)
+		in
+		    Origen
+	lineageTag: 590c2877-33a5-409c-a471-7a1354c921ed
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Centros_Huerfanos =
+		let
+		    Origen = List.Difference(List.Distinct(stg_Gastos[Centro_Costo]), dim_Sector[Sector])
+		in
+		    Origen
+	lineageTag: eff503ea-4797-451d-bc88-01aa02be307a
+	queryGroup: QA
+
+	annotation PBI_ResultType = List
+
+expression QA_Montos_por_Rubro =
+		let
+		    Origen = Table.Sort(
+		    Table.Group(stg_Gastos, {"Rubro"}, {
+		        {"Filas", each Table.RowCount(_), Int64.Type},
+		        {"Minimo", each List.Min([Monto_USD]), type number},
+		        {"Mediana", each List.Median([Monto_USD]), type number},
+		        {"Maximo", each List.Max([Monto_USD]), type number},
+		        {"Max_vs_Mediana", each Number.Round(List.Max([Monto_USD]) / List.Median([Monto_USD]), 2), type number}}),
+		    {{"Max_vs_Mediana", Order.Descending}})
+		in
+		    Origen
+	lineageTag: cfc38c6d-4638-42ca-adcd-70b41cd5c81c
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression QA_Total_Gastos =
+		let
+		    Origen = #table({"Control", "Valor"}, {
+		    {"Total src_Gastos", List.Sum(List.Transform(src_Gastos[Monto_USD], each Number.From(_, "en-US")))},
+		    {"Total fact_Gastos", List.Sum(fact_Gastos[Monto_USD])},
+		    {"Filas src", Table.RowCount(src_Gastos)},
+		    {"Filas fact", Table.RowCount(fact_Gastos)}})
+		in
+		    Origen
+	lineageTag: 3e08a189-aac1-4633-b76c-0ea7b574c95c
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+
+expression stg_Gastos =
+		let
+		  Origen = src_Gastos,
+		  #"Periodo → Fecha_Mes (dos formatos)" = Table.AddColumn(Origen, "Fecha_Mes", each
+		    let
+		        t = Text.Lower(Text.Trim(Text.From([Periodo]))),
+		        izq = Text.BeforeDelimiter(t, "-"),
+		        der = Text.AfterDelimiter(t, "-")
+		    in
+		        if Text.Length(izq) = 4
+		        then #date(Number.From(izq), Number.From(der), 1)
+		        else #date(2000 + Number.From(der),
+		             List.PositionOf({"ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"}, izq) + 1, 1),
+		    type date),
+		  #"Quitar Periodo y ordenar columnas" = Table.ReorderColumns(Table.RemoveColumns(#"Periodo → Fecha_Mes (dos formatos)", {"Periodo"}),
+		    {"Fecha_Mes", "Centro_Costo", "Rubro", "Monto_USD"}),
+		  #"Centro_Costo: Sector A → A" = Table.TransformColumns(#"Quitar Periodo y ordenar columnas", {{"Centro_Costo", each
+		    let t = Text.Upper(Text.Trim(Text.From(_)))
+		    in if Text.StartsWith(t, "SECTOR ") then Text.AfterDelimiter(t, "SECTOR ") else t, type text}}),
+		  Tipos = Table.TransformColumnTypes(#"Centro_Costo: Sector A → A", {{"Rubro", type text}, {"Monto_USD", type number}}, "en-US")
+		in
+		  Tipos
+	lineageTag: fcf8daed-0376-4089-9201-25deaebf901e
+	queryGroup: 02_Staging
+
+	annotation PBI_ResultType = Table
+
+expression QA_Esquema_Modelo =
+		let
+		    Tablas = #table({"Tabla", "Datos"}, {
+		        {"dim_Piscina", dim_Piscina}, {"dim_Sector", dim_Sector}, {"dim_Laboratorio", dim_Laboratorio},
+		        {"dim_Proveedor", dim_Proveedor}, {"dim_Empacadora", dim_Empacadora}, {"fact_Ciclos", fact_Ciclos},
+		        {"fact_Compras", fact_Compras}, {"fact_Liquidaciones", fact_Liquidaciones}, {"fact_Alimentacion", fact_Alimentacion},
+		        {"fact_Kardex", fact_Kardex}, {"fact_ParametrosAgua", fact_ParametrosAgua}, {"fact_Gastos", fact_Gastos}
+		    }),
+		    #"Filas y columnas" = Table.AddColumn(Table.AddColumn(Tablas,
+		        "Filas", each Table.RowCount([Datos]), Int64.Type),
+		        "Columnas", each Text.Combine(Table.ColumnNames([Datos]), ", "), type text),
+		    #"Sin datos" = Table.RemoveColumns(#"Filas y columnas", {"Datos"})
+		in
+		    #"Sin datos"
+	lineageTag: efeb1b46-b8d9-4268-9815-0257fdef73a0
+	queryGroup: QA
+
+	annotation PBI_ResultType = Table
+

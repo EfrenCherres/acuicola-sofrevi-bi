@@ -1,0 +1,57 @@
+table fact_Gastos
+	lineageTag: 1bc77ad9-0ee9-4f53-90ac-0efd1a847aad
+
+	column Fecha_Mes
+		dataType: dateTime
+		isHidden
+		formatString: Long Date
+		lineageTag: a2adf1d7-18a1-4051-8293-f431fe6cf684
+		summarizeBy: none
+		sourceColumn: Fecha_Mes
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Centro_Costo
+		dataType: string
+		isHidden
+		lineageTag: 0335639d-e5da-4c44-a295-d47a4834286a
+		summarizeBy: none
+		sourceColumn: Centro_Costo
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Rubro
+		dataType: string
+		lineageTag: 6c8f08ff-1777-4e2c-b398-02c46ff5ad79
+		summarizeBy: none
+		sourceColumn: Rubro
+
+		annotation SummarizationSetBy = Automatic
+
+	column Monto_USD
+		dataType: double
+		lineageTag: 2ed5777c-bf49-4700-83b3-5f3c5e13564b
+		summarizeBy: sum
+		sourceColumn: Monto_USD
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_Gastos = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = stg_Gastos
+				in
+				  Origen
+
+	annotation PBI_ResultType = Table
+

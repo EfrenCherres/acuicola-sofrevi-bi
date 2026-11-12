@@ -11,10 +11,13 @@ table fact_Kardex
 
 	column Fecha
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 563d1a07-1768-41f6-af88-58f7ba532291
 		summarizeBy: none
 		sourceColumn: Fecha
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -26,6 +29,8 @@ table fact_Kardex
 		lineageTag: 9f1d367d-5109-4e0a-ad6d-308e4391d1d7
 		summarizeBy: none
 		sourceColumn: Hora
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -49,9 +54,12 @@ table fact_Kardex
 
 	column Piscina
 		dataType: string
+		isHidden
 		lineageTag: ea237811-b32b-4f45-929c-8eb23404b55c
 		summarizeBy: none
 		sourceColumn: Piscina
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -82,9 +90,12 @@ table fact_Kardex
 
 	column Proveedor
 		dataType: string
+		isHidden
 		lineageTag: 6ccee7e6-05f2-49cc-b09c-b9f7fdd41fa5
 		summarizeBy: none
 		sourceColumn: Proveedor
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -92,10 +103,10 @@ table fact_Kardex
 		dataType: int64
 		formatString: 0
 		lineageTag: b03ac50f-69df-405e-baf0-8eb745b132f0
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Kg_Por_Saco
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column Kg_Despachados
 		dataType: double
@@ -109,9 +120,12 @@ table fact_Kardex
 
 	column ID_Ciclo
 		dataType: string
+		isHidden
 		lineageTag: bdcc1995-c9a4-4d85-a321-f8c684bfc0ef
 		summarizeBy: none
 		sourceColumn: ID_Ciclo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

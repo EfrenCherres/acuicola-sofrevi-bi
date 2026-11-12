@@ -3,10 +3,13 @@ table fact_Alimentacion
 
 	column Fecha
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 4a055df2-b600-4f2d-bb20-b5f6ed50d50b
 		summarizeBy: none
 		sourceColumn: Fecha
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -14,9 +17,12 @@ table fact_Alimentacion
 
 	column Piscina
 		dataType: string
+		isHidden
 		lineageTag: 2a49bde0-3ed9-4940-8cf9-b0deb55052af
 		summarizeBy: none
 		sourceColumn: Piscina
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -32,9 +38,12 @@ table fact_Alimentacion
 
 	column Proveedor
 		dataType: string
+		isHidden
 		lineageTag: 8ffce26a-9f56-43b6-976c-d0f98f2532b3
 		summarizeBy: none
 		sourceColumn: Proveedor
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -56,9 +65,12 @@ table fact_Alimentacion
 
 	column ID_Ciclo
 		dataType: string
+		isHidden
 		lineageTag: a93ec35c-e924-4bc7-9d89-7413ade99b06
 		summarizeBy: none
 		sourceColumn: ID_Ciclo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

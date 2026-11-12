@@ -1,0 +1,47 @@
+table dim_Ciclo
+	lineageTag: 05a80e91-bf83-4978-8353-4723c696b716
+
+	column ID_Ciclo
+		dataType: string
+		lineageTag: 15f776f9-4941-4d71-aa9e-f5dcf87c4aec
+		summarizeBy: none
+		sourceColumn: ID_Ciclo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sistema
+		dataType: string
+		lineageTag: 6f809a96-2de1-4b5b-8d9f-7ff47a63e859
+		summarizeBy: none
+		sourceColumn: Sistema
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo_Cosecha
+		dataType: string
+		lineageTag: ebe4e69d-0d69-42d2-b2db-a4092b2bfd87
+		summarizeBy: none
+		sourceColumn: Tipo_Cosecha
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cosecha_Estimada
+		dataType: string
+		lineageTag: 04910269-9c71-4705-b7b2-64af870ad8ba
+		summarizeBy: none
+		sourceColumn: Cosecha_Estimada
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Ciclo = m
+		mode: import
+		queryGroup: 03_Final
+		source =
+				let
+				  Origen = fact_Ciclos,
+				  Personalizado = Table.SelectColumns(Origen, {"ID_Ciclo", "Sistema", "Tipo_Cosecha", "Cosecha_Estimada"})
+				in
+				  Personalizado
+
+	annotation PBI_ResultType = Table
+

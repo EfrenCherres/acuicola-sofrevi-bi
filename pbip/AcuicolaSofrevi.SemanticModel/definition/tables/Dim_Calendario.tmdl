@@ -2,7 +2,7 @@ table Dim_Calendario
 	lineageTag: 8fc589f6-f4f9-4d21-aa2e-da3bd8bafce3
 
 	column Date
-		formatString: General Date
+		formatString: Short Date
 		lineageTag: 5ad777ad-b559-4dae-914c-e28caa71084b
 		summarizeBy: none
 		isNameInferred
@@ -18,13 +18,14 @@ table Dim_Calendario
 	column Año
 		formatString: 0
 		lineageTag: 08d44c71-163f-4c33-8b27-fb83c3812530
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Mes Num'
+		isHidden
 		formatString: 0
 		lineageTag: a730bfe3-be4a-4b0a-be57-3f70bfcd8dff
 		summarizeBy: sum
@@ -38,6 +39,7 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Mes]
+		sortByColumn: 'Mes Num'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -46,6 +48,7 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Mes Corto]
+		sortByColumn: 'Mes Num'
 
 		annotation SummarizationSetBy = Automatic
 
@@ -54,17 +57,19 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año Mes]
+		sortByColumn: 'Año Mes Num'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Año Mes Num'
+		isHidden
 		formatString: 0
 		lineageTag: 6357595a-303c-43eb-ba54-13b28dc33efe
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año Mes Num]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column Periodo
 		lineageTag: 984bad60-2ec8-4140-92f7-7a8e7ebf3966
@@ -105,30 +110,32 @@ table Dim_Calendario
 	column 'Dia Mes'
 		formatString: 0
 		lineageTag: a3203ab9-5afc-4c3a-834e-b0e9e8e3cac3
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Dia Mes]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Dia Año'
 		formatString: 0
 		lineageTag: dd262577-e91e-4470-b206-3751ff484f32
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Dia Año]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column Trimestre
 		lineageTag: c808ac79-a971-4302-8910-24e49c72d35c
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Trimestre]
+		sortByColumn: 'Trimestre Orden'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Trimestre Orden'
+		isHidden
 		formatString: 0
 		lineageTag: 63638da9-6a75-4c2c-8ced-879313c46b6f
 		summarizeBy: sum
@@ -146,6 +153,7 @@ table Dim_Calendario
 		annotation SummarizationSetBy = Automatic
 
 	column 'Año Trimestre Num'
+		isHidden
 		formatString: 0
 		lineageTag: 8f28cb8f-66cc-44a9-b18e-e9ff94cf5e7e
 		summarizeBy: sum
@@ -159,10 +167,12 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Semestre]
+		sortByColumn: 'Semestre Orden'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Semestre Orden'
+		isHidden
 		formatString: 0
 		lineageTag: 4dda3d25-ab31-4a9a-ab09-9380d5ec59b9
 		summarizeBy: sum
@@ -176,10 +186,12 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Bimestre]
+		sortByColumn: 'Bimestre Orden'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Bimestre Orden'
+		isHidden
 		lineageTag: d85d28c2-1c35-4266-b248-c278a09578fa
 		summarizeBy: sum
 		isNameInferred
@@ -194,10 +206,12 @@ table Dim_Calendario
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Cuatrimestre]
+		sortByColumn: 'Cuatrimestre Orden'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Cuatrimestre Orden'
+		isHidden
 		lineageTag: 4cceb426-434a-4761-b161-6a9926b46fa7
 		summarizeBy: sum
 		isNameInferred
@@ -210,30 +224,33 @@ table Dim_Calendario
 	column 'Semana ISO'
 		formatString: 0
 		lineageTag: eb70e461-74c7-440e-91e4-9785fb80bbbf
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Semana ISO]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Año ISO'
 		formatString: 0
 		lineageTag: c82e4983-c9a9-430d-a11e-23f9c327b2d1
-		summarizeBy: sum
+		isDefaultLabel
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año ISO]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Año Semana'
 		lineageTag: 388c84d5-c87d-4b66-8eb0-813d5f7e4922
 		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año Semana]
+		sortByColumn: 'Año Semana Num'
 
 		annotation SummarizationSetBy = Automatic
 
 	column 'Año Semana Num'
+		isHidden
 		formatString: 0
 		lineageTag: dbec2a1a-c300-49d8-bf80-d68694ef89ab
 		summarizeBy: sum
@@ -257,6 +274,7 @@ table Dim_Calendario
 		annotation SummarizationSetBy = Automatic
 
 	column 'Dia Semana'
+		isHidden
 		formatString: 0
 		lineageTag: 2e95ce87-ce63-4bd7-88f9-3d69d3a117fc
 		summarizeBy: sum
@@ -308,20 +326,20 @@ table Dim_Calendario
 	column 'Año Fiscal'
 		formatString: 0
 		lineageTag: 559ad63c-61ab-488c-851d-a3e42b373f47
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año Fiscal]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Mes Fiscal'
 		formatString: 0
 		lineageTag: 10cda8d6-a71d-40e4-bc12-e1014f436693
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Mes Fiscal]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Trimestre Fiscal'
 		lineageTag: d75d3725-f328-4531-b460-7cc3b029a3d9
@@ -352,29 +370,29 @@ table Dim_Calendario
 	column 'Mes Relativo'
 		formatString: 0
 		lineageTag: fa4a3672-dffa-4165-931d-6bfc5a6f4753
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Mes Relativo]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Año Relativo'
 		formatString: 0
 		lineageTag: 68df3818-264c-4ec5-98d1-76f52c19464f
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Año Relativo]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column 'Dia Relativo'
 		formatString: 0
 		lineageTag: 4c33fd36-c79a-421a-a0bd-9bbe04276ae0
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Dia Relativo]
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	partition Dim_Calendario = calculated
 		mode: import

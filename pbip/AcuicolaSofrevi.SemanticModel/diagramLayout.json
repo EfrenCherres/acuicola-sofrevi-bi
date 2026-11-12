@@ -4,13 +4,13 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 488,
-        "y": 0
+        "x": 404,
+        "y": 3
       },
       "nodes": [
         {
           "location": {
-            "x": 1110,
+            "x": 906,
             "y": 0
           },
           "nodeIndex": "dim_Piscina",
@@ -19,12 +19,12 @@
             "height": 224,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 9
         },
         {
           "location": {
-            "x": 431,
-            "y": 514
+            "x": 174,
+            "y": 289
           },
           "nodeIndex": "fact_Ciclos",
           "nodeLineageTag": "263d572f-2748-459d-afa3-598126338ea4",
@@ -32,12 +32,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 10
         },
         {
           "location": {
-            "x": 1108,
-            "y": 336
+            "x": 671,
+            "y": 664
           },
           "nodeIndex": "dim_Laboratorio",
           "nodeLineageTag": "9ca09e94-be6e-4d90-abe0-770bb9a3b2d1",
@@ -45,12 +45,12 @@
             "height": 104,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 1
         },
         {
           "location": {
-            "x": 762,
-            "y": 215
+            "x": 1627,
+            "y": 0
           },
           "nodeIndex": "Medidas DAX",
           "nodeLineageTag": "6fc95ce6-81e6-4abd-9dd1-b252e11ff183",
@@ -58,11 +58,11 @@
             "height": 128,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 2
         },
         {
           "location": {
-            "x": 178,
+            "x": 236,
             "y": 0
           },
           "nodeIndex": "dim_Empacadora",
@@ -71,11 +71,11 @@
             "height": 104,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 7
         },
         {
           "location": {
-            "x": 759,
+            "x": 566,
             "y": 0
           },
           "nodeIndex": "dim_Proveedor",
@@ -84,12 +84,12 @@
             "height": 104,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 6
         },
         {
           "location": {
-            "x": 457,
-            "y": 0
+            "x": 454,
+            "y": 312
           },
           "nodeIndex": "fact_Compras",
           "nodeLineageTag": "e5f5d9e0-71d2-42a5-a912-0afb37f3b036",
@@ -97,12 +97,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 11
         },
         {
           "location": {
-            "x": 7,
-            "y": 223
+            "x": 708,
+            "y": 304
           },
           "nodeIndex": "fact_Liquidaciones",
           "nodeLineageTag": "5a43e367-3a22-4e62-a922-64a087f0811b",
@@ -110,12 +110,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 13
         },
         {
           "location": {
-            "x": 1092,
-            "y": 534
+            "x": 334,
+            "y": 648
           },
           "nodeIndex": "dim_Sector",
           "nodeLineageTag": "ba6d5590-329e-47cc-8bc6-f7aca6b12005",
@@ -123,12 +123,12 @@
             "height": 152,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 3
         },
         {
           "location": {
-            "x": 817,
-            "y": 408
+            "x": 1086,
+            "y": 299
           },
           "nodeIndex": "fact_Alimentacion",
           "nodeLineageTag": "b1ed9779-d436-4441-b945-ca2c4e053f8e",
@@ -136,12 +136,12 @@
             "height": 248,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 4
         },
         {
           "location": {
-            "x": 1387,
-            "y": 257
+            "x": 1439,
+            "y": 282
           },
           "nodeIndex": "fact_Kardex",
           "nodeLineageTag": "c212d789-688c-40cd-a602-d815a8b0a14b",
@@ -149,12 +149,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 12
         },
         {
           "location": {
-            "x": 1671,
-            "y": 257
+            "x": 1718,
+            "y": 286
           },
           "nodeIndex": "fact_ParametrosAgua",
           "nodeLineageTag": "b5d3afff-09bf-449a-84e1-3f09cb29c69e",
@@ -162,12 +162,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 14
         },
         {
           "location": {
-            "x": 1609,
-            "y": 0
+            "x": 1247,
+            "y": 3
           },
           "nodeIndex": "Dim_Calendario",
           "nodeLineageTag": "8fc589f6-f4f9-4d21-aa2e-da3bd8bafce3",
@@ -175,7 +175,33 @@
             "height": 207,
             "width": 234
           },
-          "zIndex": 0
+          "zIndex": 15
+        },
+        {
+          "location": {
+            "x": 1002,
+            "y": 581
+          },
+          "nodeIndex": "fact_Gastos",
+          "nodeLineageTag": "1bc77ad9-0ee9-4f53-90ac-0efd1a847aad",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 1437,
+            "y": 661.5
+          },
+          "nodeIndex": "dim_Ciclo",
+          "nodeLineageTag": "05a80e91-bf83-4978-8353-4723c696b716",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 5
         }
       ],
       "name": "Todas las tablas",

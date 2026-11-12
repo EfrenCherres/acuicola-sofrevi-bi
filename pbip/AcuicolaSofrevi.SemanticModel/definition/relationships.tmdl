@@ -1,77 +1,3 @@
-relationship AutoDetected_efc5d1ca-c1f1-44fc-822a-342a57adbbbc
-	fromColumn: fact_Ciclos.Piscina
-	toColumn: dim_Piscina.Piscina
-
-relationship AutoDetected_a2b17a99-d602-4b6b-9890-210b246fea6b
-	fromColumn: fact_Ciclos.Laboratorio
-	toColumn: dim_Laboratorio.Laboratorio
-
-relationship AutoDetected_d9373245-a51d-4ba1-9f99-c7357bb47dc3
-	fromColumn: fact_Compras.Proveedor
-	toColumn: dim_Proveedor.Proveedor
-
-relationship f051bd27-2265-427e-ae73-fb8fd29b5eb1
-	joinOnDateBehavior: datePartOnly
-	fromColumn: fact_Liquidaciones.Fecha_Liquidacion
-	toColumn: LocalDateTable_d371475b-4f01-4702-9ce3-5ec3f0f9bf00.Date
-
-relationship 96087c11-3d47-41a0-83ed-955a33ff1ffd
-	joinOnDateBehavior: datePartOnly
-	fromColumn: fact_Liquidaciones.Fecha_Cosecha
-	toColumn: LocalDateTable_d5ca94f9-d969-427b-95dc-e63b00f5754f.Date
-
-relationship AutoDetected_db2ecc5b-2546-4df4-8844-d9d8245c909e
-	fromColumn: fact_Liquidaciones.Piscina
-	toColumn: dim_Piscina.Piscina
-
-relationship AutoDetected_1dff4b5d-85bd-4ef6-9fd5-a9305c09b0c4
-	isActive: false
-	fromColumn: fact_Liquidaciones.ID_Ciclo
-	toColumn: fact_Ciclos.ID_Ciclo
-
-relationship AutoDetected_f59629aa-4cf9-4991-a6d2-e10486d41a17
-	fromColumn: fact_Liquidaciones.Empacadora
-	toColumn: dim_Empacadora.Empacadora
-
-relationship AutoDetected_8e6d89f1-67be-4649-b8a3-027b7417e0fb
-	fromColumn: fact_Alimentacion.Piscina
-	toColumn: dim_Piscina.Piscina
-
-relationship AutoDetected_3bda049b-9c4f-47d8-bcb6-674b2799cf58
-	fromColumn: dim_Piscina.Sector
-	toColumn: dim_Sector.Sector
-
-relationship AutoDetected_6338a12e-920c-48eb-9293-e4d9aef8b3b6
-	isActive: false
-	fromColumn: fact_Alimentacion.ID_Ciclo
-	toColumn: fact_Ciclos.ID_Ciclo
-
-relationship AutoDetected_dda0848c-4f9b-4f4c-a2e1-ffa9d1e1aee6
-	fromColumn: fact_Alimentacion.Proveedor
-	toColumn: dim_Proveedor.Proveedor
-
-relationship AutoDetected_90208df3-6d69-409d-875a-2175558dfd96
-	fromColumn: fact_Kardex.Piscina
-	toColumn: dim_Piscina.Piscina
-
-relationship AutoDetected_c2c0f169-e154-4ce0-ba68-6f6bbf3f9918
-	fromColumn: fact_ParametrosAgua.Piscina
-	toColumn: dim_Piscina.Piscina
-
-relationship AutoDetected_2b2802b0-d879-42dd-b3dc-8b33ca1561e1
-	isActive: false
-	fromColumn: fact_Kardex.ID_Ciclo
-	toColumn: fact_Ciclos.ID_Ciclo
-
-relationship AutoDetected_640de2f8-3d47-42a0-a758-d2eeef7e69fe
-	isActive: false
-	fromColumn: fact_ParametrosAgua.ID_Ciclo
-	toColumn: fact_Ciclos.ID_Ciclo
-
-relationship AutoDetected_48eed74c-a389-432c-8272-4b3ad394ca8f
-	fromColumn: fact_Kardex.Proveedor
-	toColumn: dim_Proveedor.Proveedor
-
 relationship 352e0606-0c15-4c48-93fd-82cdce6643bf
 	joinOnDateBehavior: datePartOnly
 	fromColumn: Dim_Calendario.Date
@@ -92,28 +18,109 @@ relationship 9fd9db49-828c-4e29-a149-20409c3f4109
 	fromColumn: Dim_Calendario.'Inicio Semana'
 	toColumn: LocalDateTable_2304601c-8ecf-416c-9b75-300e48239b2a.Date
 
-relationship b3b75f97-945c-d78f-1125-d1a482d4af1c
-	fromColumn: fact_ParametrosAgua.Fecha
-	toColumn: Dim_Calendario.Date
-
-relationship 4644aeb6-a3dc-39a8-2ccc-47bc28011dae
-	fromColumn: fact_Kardex.Fecha
-	toColumn: Dim_Calendario.Date
-
-relationship 80c0a19e-1888-5e55-ed35-0cd70478fa51
-	fromColumn: fact_Alimentacion.Fecha
-	toColumn: Dim_Calendario.Date
-
-relationship e016d52c-298c-835d-5a8c-a1c80348ad4e
-	fromColumn: fact_Compras.Fecha_Factura
-	toColumn: Dim_Calendario.Date
-
-relationship b24b9f57-8900-1701-1ac0-f791b919a0b3
+relationship b7efdc9a-68de-62f7-3e5e-7af0e711febd
 	fromColumn: fact_Ciclos.Fecha_Cosecha
 	toColumn: Dim_Calendario.Date
 
-relationship 26c55744-4d73-6ff5-f10e-c725e074d924
+relationship 05402beb-02fb-b5a5-082c-8094a2fb2d05
 	isActive: false
 	fromColumn: fact_Ciclos.Fecha_Siembra
 	toColumn: Dim_Calendario.Date
+
+relationship 2242be91-4469-60b3-df2a-c606dc27c6b7
+	fromColumn: fact_Compras.Fecha_Factura
+	toColumn: Dim_Calendario.Date
+
+relationship 1f444c58-2f5b-d00d-306f-57f037c56997
+	fromColumn: fact_ParametrosAgua.Fecha
+	toColumn: Dim_Calendario.Date
+
+relationship 04c864d4-c63f-9174-4372-b4ee816b75af
+	fromColumn: fact_Kardex.Fecha
+	toColumn: Dim_Calendario.Date
+
+relationship acdf8874-4d9b-9482-863a-093548cff388
+	fromColumn: fact_Gastos.Fecha_Mes
+	toColumn: Dim_Calendario.Date
+
+relationship ba57843f-fc1f-03e8-da41-dbc936422d73
+	fromColumn: fact_Alimentacion.Fecha
+	toColumn: Dim_Calendario.Date
+
+relationship c68889a4-0fad-0f5a-928e-07f60d04be38
+	fromColumn: fact_Liquidaciones.Fecha_Liquidacion
+	toColumn: Dim_Calendario.Date
+
+relationship 700bd7d6-dc3c-d413-aa6d-8fdb0417022d
+	isActive: false
+	fromColumn: fact_Liquidaciones.Fecha_Cosecha
+	toColumn: Dim_Calendario.Date
+
+relationship 1090e81b-d764-ff6b-2e4d-4f354bb9e3c5
+	fromColumn: fact_Ciclos.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship d653a6e6-481e-be68-88bf-0167b8b3d420
+	fromColumn: fact_Liquidaciones.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship a2d84693-a851-cd5b-1f70-3216975ff468
+	fromColumn: fact_Alimentacion.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship d12e7793-614c-3c86-d781-50a4856bbff4
+	fromColumn: fact_Kardex.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship 4d309467-a179-cd62-ffff-f57e94d99c0b
+	fromColumn: fact_ParametrosAgua.Piscina
+	toColumn: dim_Piscina.Piscina
+
+relationship 9aca0088-b6dc-00ae-1e4d-cf98f96f91e4
+	fromColumn: fact_ParametrosAgua.ID_Ciclo
+	toColumn: dim_Ciclo.ID_Ciclo
+
+relationship c1a9c135-5ec0-99b0-3273-1007c64f7c5f
+	fromColumn: fact_Kardex.ID_Ciclo
+	toColumn: dim_Ciclo.ID_Ciclo
+
+relationship 9740da1e-eb7c-4d2f-5343-6152d955dbd6
+	fromColumn: fact_Alimentacion.ID_Ciclo
+	toColumn: dim_Ciclo.ID_Ciclo
+
+relationship 006b3135-cb27-10c3-d353-3e7bc7fb2004
+	fromColumn: fact_Liquidaciones.ID_Ciclo
+	toColumn: dim_Ciclo.ID_Ciclo
+
+relationship d1a19749-d10a-5e55-0724-a193e3e224c3
+	fromColumn: fact_Ciclos.ID_Ciclo
+	toColumn: dim_Ciclo.ID_Ciclo
+
+relationship 80662e8f-054d-a726-34ff-2f82663a875d
+	fromColumn: dim_Piscina.Sector
+	toColumn: dim_Sector.Sector
+
+relationship bc13f801-3b21-2f62-73b7-f04c416a4540
+	fromColumn: fact_Gastos.Centro_Costo
+	toColumn: dim_Sector.Sector
+
+relationship cb6ad224-77df-067b-2cdc-18b964416ab6
+	fromColumn: fact_Compras.Proveedor
+	toColumn: dim_Proveedor.Proveedor
+
+relationship 1bc85484-1eb4-d0f3-13c9-3ce86fb5aa31
+	fromColumn: fact_Alimentacion.Proveedor
+	toColumn: dim_Proveedor.Proveedor
+
+relationship 5ba2ae21-533d-7eb6-2360-1010b64d3dfe
+	fromColumn: fact_Kardex.Proveedor
+	toColumn: dim_Proveedor.Proveedor
+
+relationship 0060c278-098f-37ea-b323-c5d36d03c241
+	fromColumn: fact_Ciclos.Laboratorio
+	toColumn: dim_Laboratorio.Laboratorio
+
+relationship 54125d68-5cc4-d955-3f6d-5e1490f313ea
+	fromColumn: fact_Liquidaciones.Empacadora
+	toColumn: dim_Empacadora.Empacadora
 

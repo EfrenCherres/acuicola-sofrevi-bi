@@ -3,10 +3,13 @@ table fact_ParametrosAgua
 
 	column Fecha
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 5df14f3d-f6d3-44c1-8d29-ede48b2718d0
 		summarizeBy: none
 		sourceColumn: Fecha
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -14,69 +17,72 @@ table fact_ParametrosAgua
 
 	column Piscina
 		dataType: string
+		isHidden
 		lineageTag: 6f83126d-a1de-48ee-8998-3def3fa93ca3
 		summarizeBy: none
 		sourceColumn: Piscina
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
 	column OD_Madrugada_mgL
 		dataType: double
 		lineageTag: 3dfad188-8353-45d5-86b2-39068d0b546e
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: OD_Madrugada_mgL
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column OD_Tarde_mgL
 		dataType: double
 		lineageTag: 31b00e23-9caa-49a0-bddb-f9aa1d601b67
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: OD_Tarde_mgL
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Temperatura_C
 		dataType: double
 		lineageTag: 62c86294-358b-4e38-a2d2-79b7dd9ae3f2
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Temperatura_C
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Salinidad_ppt
 		dataType: double
 		lineageTag: 6a483c04-df31-4995-8571-cb18ee6de80c
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Salinidad_ppt
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column pH
 		dataType: double
 		lineageTag: ff5c32fc-fb37-4232-afba-cafda5bd2b5f
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: pH
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	column Transparencia_cm
 		dataType: double
 		lineageTag: 07372340-b0f1-4ca7-b78d-6d52029229c6
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Transparencia_cm
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -99,9 +105,12 @@ table fact_ParametrosAgua
 
 	column ID_Ciclo
 		dataType: string
+		isHidden
 		lineageTag: e135ef11-9ee7-40af-8794-75fa40c2142b
 		summarizeBy: none
 		sourceColumn: ID_Ciclo
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 

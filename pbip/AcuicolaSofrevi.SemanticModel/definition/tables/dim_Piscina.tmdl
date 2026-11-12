@@ -40,10 +40,10 @@ table dim_Piscina
 		dataType: int64
 		formatString: 0
 		lineageTag: 5047756e-a27c-4db5-8bab-2b091e7af1ff
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Anio_Construccion
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column Estado
 		dataType: string

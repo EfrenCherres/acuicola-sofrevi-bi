@@ -3,10 +3,13 @@ table fact_Compras
 
 	column Fecha_Factura
 		dataType: dateTime
+		isHidden
 		formatString: Long Date
 		lineageTag: 7909e093-4da9-4362-8b3b-ec473cb8a307
 		summarizeBy: none
 		sourceColumn: Fecha_Factura
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -22,9 +25,12 @@ table fact_Compras
 
 	column Proveedor
 		dataType: string
+		isHidden
 		lineageTag: 8a4da9fd-aeeb-4f45-9fc3-7565d40d1f8b
 		summarizeBy: none
 		sourceColumn: Proveedor
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -57,10 +63,10 @@ table fact_Compras
 	column Precio_Saco_USD
 		dataType: double
 		lineageTag: 7bb0c8b8-24bc-44c6-a7c2-ee2f8555612e
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Precio_Saco_USD
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
@@ -98,10 +104,10 @@ table fact_Compras
 		dataType: int64
 		formatString: 0
 		lineageTag: f5da9f2a-42d0-4bc4-a2bd-6a444697ec98
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Kg_Por_Saco
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 	column Kg_Comprados
 		dataType: double
@@ -116,10 +122,10 @@ table fact_Compras
 	column Precio_Kg_USD
 		dataType: double
 		lineageTag: 9b83a89a-d698-4ef1-b109-a1af51329c39
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Precio_Kg_USD
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 

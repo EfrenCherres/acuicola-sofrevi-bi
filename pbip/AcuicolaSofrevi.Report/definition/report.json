@@ -56,8 +56,43 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "Lienzo_ECHB_oscuro_1920x108031994239721510154.png",
-          "path": "Lienzo_ECHB_oscuro_1920x108031994239721510154.png",
+          "name": "Sofrevi_claro_00_Portada2998343850740547.png",
+          "path": "Sofrevi_claro_00_Portada2998343850740547.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_01_Resumen0495150768590189.png",
+          "path": "Sofrevi_oscuro_01_Resumen0495150768590189.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_02_Produccion28364512567045663.png",
+          "path": "Sofrevi_oscuro_02_Produccion28364512567045663.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_03_Alimentacion08374196626615182.png",
+          "path": "Sofrevi_oscuro_03_Alimentacion08374196626615182.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_04_Agua39502765950525365.png",
+          "path": "Sofrevi_oscuro_04_Agua39502765950525365.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_05_Ventas6052613808016273.png",
+          "path": "Sofrevi_oscuro_05_Ventas6052613808016273.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_06_Costos4212449451750774.png",
+          "path": "Sofrevi_oscuro_06_Costos4212449451750774.png",
+          "type": "Image"
+        },
+        {
+          "name": "Sofrevi_oscuro_07_Calidad_de_d34953890775945073.png",
+          "path": "Sofrevi_oscuro_07_Calidad_de_d34953890775945073.png",
           "type": "Image"
         }
       ]

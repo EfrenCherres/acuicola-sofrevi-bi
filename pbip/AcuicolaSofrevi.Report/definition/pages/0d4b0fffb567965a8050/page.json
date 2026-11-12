@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "0d4b0fffb567965a8050",
-  "displayName": "Página 1",
+  "displayName": "Portada",
   "displayOption": "FitToPage",
   "height": 1080,
   "width": 1920,
@@ -14,7 +14,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Lienzo_ECHB_oscuro_1920x1080.png'"
+                    "Value": "'Sofrevi_claro_00_Portada.png'"
                   }
                 }
               },
@@ -23,14 +23,14 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "Lienzo_ECHB_oscuro_1920x108031994239721510154.png"
+                    "ItemName": "Sofrevi_claro_00_Portada2998343850740547.png"
                   }
                 }
               },
               "scaling": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Normal'"
+                    "Value": "'Fill'"
                   }
                 }
               }
