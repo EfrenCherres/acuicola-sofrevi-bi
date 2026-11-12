@@ -6,7 +6,7 @@
 
 ![Estado](https://img.shields.io/badge/estado-en%20progreso-orange) ![Power BI](https://img.shields.io/badge/Power%20BI-PBIP-F2C811) ![Power Query](https://img.shields.io/badge/Power%20Query-M-217346)
 
-> ⚠️ **Datos sintéticos.** La empresa y todos los registros son ficticios, creados para practicar. Cualquier parecido con una empresa real es coincidencia.
+> ⚠️ **Sobre los datos.** Los datos son simulados. En proyectos con clientes, la información operativa y financiera es confidencial y no se publica; por eso este caso usa una camaronera simulada que reproduce los problemas de una operación real: errores de digitación, cambios de sistema, duplicados, valores centinela y meses sin cerrar. El proceso, las decisiones y la documentación son los mismos que se aplican con un cliente.
 
 ## Avance del proyecto
 
