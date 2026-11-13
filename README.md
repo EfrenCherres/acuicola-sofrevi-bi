@@ -16,8 +16,8 @@
 | 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
 | 2. Conexión y cuadre de carga | ✅ Terminada | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
 | 3. Limpieza (staging) | ✅ Fase 3 terminada: 13 de 13 tablas limpias y validadas (40 novedades en el Log). Siguiente: Fase 4, modelo y relaciones. | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
-| 4. Tablas finales | ✅ **Fase 4 · Modelo:** terminada. Modelo en estrella con 7 dimensiones, 7 tablas de hechos y 26 relaciones validadas con consultas DAX (0 filas huérfanas). Evidencia: [relaciones y decisiones](modelo/relaciones.md) · [diagrama](modelo/diagrama_modelo.png) | |
-| 5. Modelo y medidas DAX | 🔄 **Fase 5 · Medidas DAX:** en curso. 26 medidas de producción, ventas, alimentación y compras, validadas contra los totales del ETL. Evidencia: [medidas y hallazgos](modelo/medidas_dax.md)| |
+| 4. Tablas finales | ✅ **Fase 4 · Modelo:** terminada. Modelo en estrella con 7 dimensiones, 7 tablas de hechos y 26 relaciones validadas con consultas DAX (0 filas huérfanas). | [relaciones y decisiones](modelo/relaciones.md) · [diagrama](modelo/diagrama_modelo.png) | |
+| 5. Modelo y medidas DAX | 🔄 **Fase 5 · Medidas DAX:** en curso. 26 medidas de producción, ventas, alimentación y compras, validadas contra los totales del ETL. | [medidas y hallazgos](modelo/medidas_dax.md)| |
 | 6. Dashboard | ⬜ Pendiente | |
 | 7. Insights | ⬜ Pendiente | |
 
