@@ -28,23 +28,41 @@
 *[Quién es la empresa, a qué se dedica y qué necesita decidir. 3–5 líneas.]*
 
 **Preguntas que el dashboard debe responder:**
-1. [Pregunta 1]
-2. [Pregunta 2]
-3. [Pregunta 3]
+1. ¿Cuánto producimos y vendemos, a qué precio, y cómo cambia por sector, piscina y año?
+2. ¿Qué tan eficiente es el uso del alimento (conversión alimenticia) y dónde se pierde entre bodega y piscina?
+3. ¿Cuánto cuesta producir una libra de camarón y cuál es el margen?
+4. ¿Qué condiciones del agua ponen en riesgo los ciclos?
+
 
 ## 2. Los datos de origen
 
+Un libro de Excel (`AcuicolaSofrevi_BD_2021-2026.xlsx`) con 8 hojas:
+
 | Archivo / hoja | Contenido | Filas | Columnas |
 |---|---|---|---|
-| [tabla] | [qué registra] | [n] | [n] |
+| MAESTRO_PISCINAS | Catálogo de piscinas: sector, área, aireadores, año de construcción, estado | 33 | 6 |
+| CICLOS_PRODUCCION | Un ciclo de cultivo por fila: siembra, cosecha, larvas, peso, biomasa, sobrevivencia | 550 | 13 |
+| ALIMENTACION_DIARIA | Una ración por piscina, día y turno | 57.480 | 6 |
+| KARDEX_BODEGA | Despachos de alimento de bodega a piscina | 56.690 | 9 |
+| COMPRAS | Facturas de compra de alimento | 748 | 10 |
+| PARAMETROS_AGUA | Mediciones de oxígeno, temperatura, salinidad, pH y transparencia | 24.462 | 9 |
+| LIQUIDACIONES_EMPACADORAS | Ventas a empacadoras por liquidación, clase y talla | 3.438 | 11 |
+| GASTOS_OPERATIVOS | Gastos mensuales por centro de costo y rubro | 1.863 | 4 |
 
 ## 3. Calidad de datos: hallazgos principales
 
-Resumen de la [bitácora de calidad](bitacora/bitacora_calidad.md) (fuente: [`Log_Calidad.xlsx`](bitacora/Log_Calidad.xlsx)). El detalle día a día está en el [diario de avance](bitacora/diario_avance.md).
+Resumen de la [bitácora de calidad](bitacora/bitacora_calidad.md) (fuente: `Log_Calidad.xlsx`). El detalle día a día está en el [diario de avance](bitacora/diario_avance.md). En total se registraron **40 novedades**; estas son las de mayor impacto.
 
 | # | Hallazgo | Filas afectadas | Decisión |
 |---|---|---|---|
-| 1 | [problema] | [n (%)] | [qué se hizo] |
+| 1 | La biomasa venía en kilos en el sistema nuevo y en libras en el anterior. Sin corregirla, la producción parecía caer a menos de la mitad desde marzo de 2023 | 326 ciclos (60 %) | Unificada en libras, la unidad de venta; validada con larvas × sobrevivencia × peso |
+| 2 | Raciones de alimento duplicadas y con signo negativo que se compensaban: el total cuadraba (0,3 %) pero 128.097 kg estaban mal registrados (~141.000 USD) | 343 duplicadas + 226 negativas (1,0 %) | Duplicados eliminados y signo corregido |
+| 3 | El 12 % del alimento despachado por bodega al Sector C no aparece como ración desde 2024 (185.687 kg, ~204.000 USD). La conversión alimenticia indica que el alimento sí llegó a las piscinas: falla el registro | 76 % de la diferencia total | Sin cambios en los datos; escalado al cliente |
+| 4 | Valores centinela en el agua: OD de 99,9 mg/L, temperatura de 0 °C y pH 14, imposibles en una piscina | 292 (1,2 %) | Convertidos a vacío con reglas físicas; no se estiman |
+| 5 | 6 liquidaciones cargadas dos veces (489.902,56 USD de ventas duplicadas) | 38 (1,1 %) | Eliminadas; clave única verificada |
+| 6 | Piscina escrita de muchas formas (P-01, PISC-01, P1, p 1…) en varias tablas | Todas las tablas operativas | Una sola regla: conservar los dígitos y escribir P-00 |
+| 7 | Gastos con el periodo en dos formatos ("ene-21" y "2023-07") y octubre de 2026 sin gastos (mes no cerrado) | 1.863 / 27 faltantes | Fecha del mes unificada; el costo por libra se calcula solo en meses con gastos |
+| 8 | Raciones en 0 kg dentro de ciclos activos, sin explicación en los datos (se descartó el oxígeno bajo como causa) | 1.645 (2,9 %) | Sin cambios; escalado al cliente |
 
 ## 4. Proceso ETL (Power Query)
 
