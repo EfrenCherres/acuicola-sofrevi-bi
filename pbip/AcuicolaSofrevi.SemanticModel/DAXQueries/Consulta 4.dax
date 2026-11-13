@@ -1,0 +1,9 @@
+EVALUATE
+SUMMARIZECOLUMNS (
+    Dim_Calendario[Año],
+    dim_Sector[Sector],
+    "FCA", [FCA],
+    "% dif. bodega", [% Diferencia Bodega vs Piscina],
+    "Peso g", [Peso Promedio (g)]
+)
+ORDER BY dim_Sector[Sector], Dim_Calendario[Año]

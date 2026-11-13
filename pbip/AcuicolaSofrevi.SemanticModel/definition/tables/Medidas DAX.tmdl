@@ -11,6 +11,231 @@ table 'Medidas DAX'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure 'Ciclos Cosechados' = ```
+			
+			        CALCULATE ( COUNTROWS ( fact_Ciclos ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+			```
+		formatString: 0
+		displayFolder: 01. Produccion
+		lineageTag: da7191b4-51fe-4c17-918d-cd7dabb327b4
+
+	measure 'Ciclos Sembrados' = ```
+			
+			        CALCULATE ( COUNTROWS ( fact_Ciclos ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+			```
+		formatString: 0
+		displayFolder: 01. Produccion
+		lineageTag: feba0cee-27df-43cf-a022-5aba920d2adf
+
+	measure 'Biomasa Cosechada (lb)' = ```
+			
+			        SUM ( fact_Ciclos[Biomasa_lb] )
+			```
+		displayFolder: 01. Produccion
+		lineageTag: 1949286b-1c84-4d67-92fb-a269c3154b67
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Larvas Sembradas (miles)' = ```
+			
+			        CALCULATE ( SUM ( fact_Ciclos[Larvas_Sembradas_miles] ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+			```
+		displayFolder: 01. Produccion
+		lineageTag: 8ee0765e-6db9-463e-9004-7411e0789a92
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Peso Promedio (g)' = ```
+			
+			        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Peso_Muestreo_g] ) && NOT ISBLANK ( fact_Ciclos[Biomasa_lb] ) )
+			        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Peso_Muestreo_g] * fact_Ciclos[Biomasa_lb] ), SUMX ( T, fact_Ciclos[Biomasa_lb] ) )
+			```
+		displayFolder: 01. Produccion
+		lineageTag: 7103aa90-052e-45d3-9c4f-4e58e8d7047a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sobrevivencia %' = ```
+			
+			        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Sobrevivencia_pct] ) )
+			        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] * fact_Ciclos[Sobrevivencia_pct] ), SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] ) ) / 100
+			```
+		displayFolder: 01. Produccion
+		lineageTag: d11c3ec8-6f6f-4429-b366-6ff6e2939dfa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Días de Cultivo Promedio' = ```
+			
+			        AVERAGE ( fact_Ciclos[Dias_Cultivo] )
+			```
+		displayFolder: 01. Produccion
+		lineageTag: 5cb46f8c-c439-4b0b-8476-4330d9e07ee4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Libras Vendidas' = ```
+			
+			        SUM ( fact_Liquidaciones[Lbs_Recibidas] )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 9bfc11f8-660a-449d-a766-5c78f92e912b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ventas USD' = ```
+			
+			        SUM ( fact_Liquidaciones[Total_USD] )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 326995c5-f5e4-4101-adc4-e6dc61ace8be
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Promedio (USD/lb)' = ```
+			
+			        DIVIDE ( [Ventas USD], [Libras Vendidas] )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 10b28768-bf19-47fe-a429-3e98c64e5e88
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Libras en Guía' = ```
+			
+			        SUMX ( VALUES ( fact_Liquidaciones[N_Liquidacion] ), CALCULATE ( MAX ( fact_Liquidaciones[Lbs_Guia_Remision] ) ) )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: c0be470c-a1e4-40ad-a5cc-1b186784a476
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Recibido en Planta' = ```
+			
+			        DIVIDE ( [Libras Vendidas], [Libras en Guía] )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 51aaa43c-0dcc-42a3-afef-a5188c95afd2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ventas por Fecha de Cosecha' = ```
+			
+			        CALCULATE ( [Ventas USD], USERELATIONSHIP ( Dim_Calendario[Date], fact_Liquidaciones[Fecha_Cosecha] ) )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 30e2260c-f8b9-4ef2-961c-82787b436777
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Alimento Aplicado (kg)' = ```
+			
+			        SUM ( fact_Alimentacion[Kg_Aplicados] )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: 27faacfc-a39c-49f3-8b40-4185a1f57f59
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Alimento Despachado (kg)' = ```
+			
+			        SUM ( fact_Kardex[Kg_Despachados] )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: c57fa236-2747-4bec-85ee-aa8bda01e4b9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Diferencia Bodega vs Piscina (kg)' = ```
+			
+			        [Alimento Despachado (kg)] - [Alimento Aplicado (kg)]
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: f09831b6-0f2f-4b95-9e2b-cf1d97e7e1c0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Diferencia Bodega vs Piscina' = ```
+			
+			        DIVIDE ( [Diferencia Bodega vs Piscina (kg)], [Alimento Despachado (kg)] )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: fc1875b7-ceb6-4110-a3ef-7d7958c52a9f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Alimento Comprado (kg)' = ```
+			
+			        SUM ( fact_Compras[Kg_Comprados] )
+			```
+		displayFolder: 04. Compras
+		lineageTag: d1b6870c-613f-4d6c-bb03-bd4bbc27f006
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Compras Alimento USD' = ```
+			
+			        SUM ( fact_Compras[Subtotal_USD] )
+			```
+		displayFolder: 04. Compras
+		lineageTag: 592feceb-d75c-4078-bf55-88c73a1b162d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Alimento (USD/kg)' = ```
+			
+			        DIVIDE ( [Compras Alimento USD], [Alimento Comprado (kg)] )
+			```
+		displayFolder: 04. Compras
+		lineageTag: 3626765c-f972-40ac-ab2f-f7fae25adfe5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Biomasa Cosechada (kg)' = ```
+			
+			        [Biomasa Cosechada (lb)] / 2.20462
+			```
+		displayFolder: 01. Produccion
+		lineageTag: c19432b6-390d-4fa8-9f02-0bd1c524a7cf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Alimento de Ciclos Cosechados (kg)' = ```
+			
+			        VAR Ciclos =
+			            CALCULATETABLE ( VALUES ( fact_Ciclos[ID_Ciclo] ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+			        RETURN
+			            CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: de54027b-cbb5-47c4-bdfa-c4357ef98cfc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure FCA = ```
+			
+			        DIVIDE ( [Alimento de Ciclos Cosechados (kg)], [Biomasa Cosechada (kg)] )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: 6436a5b8-51d7-4bb2-825d-5d569b9eab64
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'FCA con Despacho' = ```
+			
+			        VAR Ciclos =
+			            CALCULATETABLE ( VALUES ( fact_Ciclos[ID_Ciclo] ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+			        RETURN
+			            DIVIDE (
+			                CALCULATE ( [Alimento Despachado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) ),
+			                [Biomasa Cosechada (kg)]
+			            )
+			```
+		displayFolder: 03. Alimentación
+		lineageTag: b3f302e9-8b41-4bc7-b44b-20471e2cf869
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	partition 'Medidas DAX' = m
 		mode: import
 		source =

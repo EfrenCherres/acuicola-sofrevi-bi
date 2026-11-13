@@ -61,13 +61,14 @@ table fact_Liquidaciones
 
 	column Lbs_Guia_Remision
 		dataType: double
+		formatString: 0
 		lineageTag: 22c80331-cf27-4570-a6c2-5a1086168ad6
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: Lbs_Guia_Remision
 
-		annotation SummarizationSetBy = Automatic
+		annotation SummarizationSetBy = User
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+		annotation PBI_FormatHint = {"isDecimal":true}
 
 	column Clase
 		dataType: string

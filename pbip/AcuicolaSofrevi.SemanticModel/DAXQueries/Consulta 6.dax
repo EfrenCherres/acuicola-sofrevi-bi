@@ -1,0 +1,18 @@
+DEFINE
+    MEASURE 'Medidas DAX'[FCA con Despacho] =
+        VAR Ciclos =
+            CALCULATETABLE ( VALUES ( fact_Ciclos[ID_Ciclo] ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+        RETURN
+            DIVIDE (
+                CALCULATE ( [Alimento Despachado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) ),
+                [Biomasa Cosechada (kg)]
+            )
+EVALUATE
+SUMMARIZECOLUMNS (
+    Dim_Calendario[Año],
+    "A", CALCULATE ( [FCA con Despacho], dim_Sector[Sector] = "A" ),
+    "B", CALCULATE ( [FCA con Despacho], dim_Sector[Sector] = "B" ),
+    "C", CALCULATE ( [FCA con Despacho], dim_Sector[Sector] = "C" ),
+    "D", CALCULATE ( [FCA con Despacho], dim_Sector[Sector] = "D" )
+)
+ORDER BY Dim_Calendario[Año]

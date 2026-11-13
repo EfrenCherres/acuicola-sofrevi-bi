@@ -4,8 +4,8 @@
     {
       "ordinal": 0,
       "scrollPosition": {
-        "x": 404,
-        "y": 3
+        "x": 26.666666666666664,
+        "y": 0
       },
       "nodes": [
         {
@@ -23,8 +23,8 @@
         },
         {
           "location": {
-            "x": 174,
-            "y": 289
+            "x": 28.444444444444429,
+            "y": 280.11111111111114
           },
           "nodeIndex": "fact_Ciclos",
           "nodeLineageTag": "263d572f-2748-459d-afa3-598126338ea4",
@@ -36,8 +36,8 @@
         },
         {
           "location": {
-            "x": 671,
-            "y": 664
+            "x": 674.33333333333337,
+            "y": 738.44444444444434
           },
           "nodeIndex": "dim_Laboratorio",
           "nodeLineageTag": "9ca09e94-be6e-4d90-abe0-770bb9a3b2d1",
@@ -88,8 +88,8 @@
         },
         {
           "location": {
-            "x": 454,
-            "y": 312
+            "x": 323.99999999999994,
+            "y": 283.11111111111114
           },
           "nodeIndex": "fact_Compras",
           "nodeLineageTag": "e5f5d9e0-71d2-42a5-a912-0afb37f3b036",
@@ -101,8 +101,8 @@
         },
         {
           "location": {
-            "x": 708,
-            "y": 304
+            "x": 625.77777777777783,
+            "y": 278.44444444444446
           },
           "nodeIndex": "fact_Liquidaciones",
           "nodeLineageTag": "5a43e367-3a22-4e62-a922-64a087f0811b",
@@ -110,12 +110,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 13
+          "zIndex": 15
         },
         {
           "location": {
-            "x": 334,
-            "y": 648
+            "x": 329.55555555555554,
+            "y": 711.33333333333337
           },
           "nodeIndex": "dim_Sector",
           "nodeLineageTag": "ba6d5590-329e-47cc-8bc6-f7aca6b12005",
@@ -127,8 +127,8 @@
         },
         {
           "location": {
-            "x": 1086,
-            "y": 299
+            "x": 910.44444444444457,
+            "y": 281.22222222222223
           },
           "nodeIndex": "fact_Alimentacion",
           "nodeLineageTag": "b1ed9779-d436-4441-b945-ca2c4e053f8e",
@@ -140,8 +140,8 @@
         },
         {
           "location": {
-            "x": 1439,
-            "y": 282
+            "x": 1197.8888888888891,
+            "y": 277.55555555555549
           },
           "nodeIndex": "fact_Kardex",
           "nodeLineageTag": "c212d789-688c-40cd-a602-d815a8b0a14b",
@@ -153,8 +153,8 @@
         },
         {
           "location": {
-            "x": 1718,
-            "y": 286
+            "x": 1725.7777777777776,
+            "y": 299.33333333333337
           },
           "nodeIndex": "fact_ParametrosAgua",
           "nodeLineageTag": "b5d3afff-09bf-449a-84e1-3f09cb29c69e",
@@ -162,12 +162,12 @@
             "height": 300,
             "width": 234
           },
-          "zIndex": 14
+          "zIndex": 13
         },
         {
           "location": {
-            "x": 1247,
-            "y": 3
+            "x": 1260.3333333333333,
+            "y": 0
           },
           "nodeIndex": "Dim_Calendario",
           "nodeLineageTag": "8fc589f6-f4f9-4d21-aa2e-da3bd8bafce3",
@@ -175,12 +175,12 @@
             "height": 207,
             "width": 234
           },
-          "zIndex": 15
+          "zIndex": 14
         },
         {
           "location": {
-            "x": 1002,
-            "y": 581
+            "x": 1457.5555555555557,
+            "y": 306.55555555555554
           },
           "nodeIndex": "fact_Gastos",
           "nodeLineageTag": "1bc77ad9-0ee9-4f53-90ac-0efd1a847aad",
@@ -192,8 +192,8 @@
         },
         {
           "location": {
-            "x": 1437,
-            "y": 661.5
+            "x": 1310.3333333333335,
+            "y": 740.3888888888888
           },
           "nodeIndex": "dim_Ciclo",
           "nodeLineageTag": "05a80e91-bf83-4978-8353-4723c696b716",
@@ -205,7 +205,7 @@
         }
       ],
       "name": "Todas las tablas",
-      "zoomValue": 100,
+      "zoomValue": 90,
       "pinKeyFieldsToTop": false,
       "showExtraHeaderInfo": false,
       "hideKeyFieldsWhenCollapsed": false,

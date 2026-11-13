@@ -1,0 +1,10 @@
+EVALUATE
+SUMMARIZECOLUMNS (
+    Dim_Calendario[Año],
+    "FCA A", CALCULATE ( [FCA], dim_Sector[Sector] = "A" ),
+    "FCA B", CALCULATE ( [FCA], dim_Sector[Sector] = "B" ),
+    "FCA C", CALCULATE ( [FCA], dim_Sector[Sector] = "C" ),
+    "FCA D", CALCULATE ( [FCA], dim_Sector[Sector] = "D" ),
+    "Dif. bodega C", CALCULATE ( [% Diferencia Bodega vs Piscina], dim_Sector[Sector] = "C" )
+)
+ORDER BY Dim_Calendario[Año]

@@ -1,0 +1,39 @@
+DEFINE
+    MEASURE 'Medidas DAX'[Alimento Aplicado (kg)] =
+        SUM ( fact_Alimentacion[Kg_Aplicados] )
+    MEASURE 'Medidas DAX'[Alimento Despachado (kg)] =
+        SUM ( fact_Kardex[Kg_Despachados] )
+    MEASURE 'Medidas DAX'[Diferencia Bodega vs Piscina (kg)] =
+        [Alimento Despachado (kg)] - [Alimento Aplicado (kg)]
+    MEASURE 'Medidas DAX'[% Diferencia Bodega vs Piscina] =
+        DIVIDE ( [Diferencia Bodega vs Piscina (kg)], [Alimento Despachado (kg)] )
+    MEASURE 'Medidas DAX'[Alimento Comprado (kg)] =
+        SUM ( fact_Compras[Kg_Comprados] )
+    MEASURE 'Medidas DAX'[Compras Alimento USD] =
+        SUM ( fact_Compras[Subtotal_USD] )
+    MEASURE 'Medidas DAX'[Precio Alimento (USD/kg)] =
+        DIVIDE ( [Compras Alimento USD], [Alimento Comprado (kg)] )
+    MEASURE 'Medidas DAX'[Biomasa Cosechada (kg)] =
+        [Biomasa Cosechada (lb)] / 2.20462
+    MEASURE 'Medidas DAX'[Alimento de Ciclos Cosechados (kg)] =
+        VAR Ciclos =
+            CALCULATETABLE ( VALUES ( fact_Ciclos[ID_Ciclo] ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+        RETURN
+            CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) )
+    MEASURE 'Medidas DAX'[FCA] =
+        DIVIDE ( [Alimento de Ciclos Cosechados (kg)], [Biomasa Cosechada (kg)] )
+
+EVALUATE
+SUMMARIZECOLUMNS (
+    ROLLUPADDISSUBTOTAL ( Dim_Calendario[Año], "Es total" ),
+    "Aplicado kg", [Alimento Aplicado (kg)],
+    "Despachado kg", [Alimento Despachado (kg)],
+    "Dif. kg", [Diferencia Bodega vs Piscina (kg)],
+    "% dif.", [% Diferencia Bodega vs Piscina],
+    "Comprado kg", [Alimento Comprado (kg)],
+    "USD/kg", [Precio Alimento (USD/kg)],
+    "Biomasa kg", [Biomasa Cosechada (kg)],
+    "Alim. ciclos cosechados", [Alimento de Ciclos Cosechados (kg)],
+    "FCA", [FCA]
+)
+ORDER BY [Es total], Dim_Calendario[Año]
