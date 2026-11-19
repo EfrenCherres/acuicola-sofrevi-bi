@@ -14,18 +14,17 @@
 |---|---|---|
 | 0. Preparación del repo y proyecto | ✅ Terminada | [Diario](bitacora/diario_avance.md) |
 | 1. Entender el negocio y los datos | ✅ Terminada | [Exploración de datos](bitacora/exploracion_datos.md) · [Log de calidad](bitacora/Log_Calidad.xlsx) |
-| 2. Conexión y cuadre de carga | ✅ Terminada | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
-| 3. Limpieza (staging) | ✅ Fase 3 terminada: 13 de 13 tablas limpias y validadas (40 novedades en el Log). Siguiente: Fase 4, modelo y relaciones. | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
-| 4. Tablas finales | ✅ **Fase 4 · Modelo:** terminada. Modelo en estrella con 7 dimensiones, 7 tablas de hechos y 26 relaciones validadas con consultas DAX (0 filas huérfanas). | [relaciones y decisiones](modelo/relaciones.md) · [diagrama](modelo/diagrama_modelo.png) | |
-| 5. Modelo y medidas DAX | 🔄 **Fase 5 · Medidas DAX:** en curso. 26 medidas de producción, ventas, alimentación y compras, validadas contra los totales del ETL. | [medidas y hallazgos](modelo/medidas_dax.md)| |
-| 6. Dashboard | ⬜ Pendiente | |
+| 2. Conexión y cuadre de carga | ✅ Terminada: 8 de 8 hojas, diferencia 0 | [Bitácora de calidad](bitacora/bitacora_calidad.md) |
+| 3. Limpieza (staging) | ✅ Terminada: 13 tablas limpias y validadas, 40 novedades en el Log | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
+| 4. Modelo y relaciones | ✅ Terminada: modelo en estrella con 7 dimensiones, 7 tablas de hechos y 26 relaciones validadas con consultas DAX (0 filas huérfanas) | [Relaciones y decisiones](modelo/relaciones.md) · [Diagrama](modelo/diagrama_modelo.png) |
+| 5. Medidas DAX | ✅ Terminada: 50 medidas en 8 carpetas, validadas contra los totales del ETL | [Medidas y hallazgos](modelo/medidas_dax.md) |
+| 6. Dashboard | 🔄 Siguiente | |
 | 7. Insights | ⬜ Pendiente | |
-
 ---
 
-## 1. El problema del negocio
+#### 1. El problema del negocio
 
-*[Quién es la empresa, a qué se dedica y qué necesita decidir. 3–5 líneas.]*
+Acuícola Sofrevi es una camaronera simulada de la costa ecuatoriana: 33 piscinas en 4 sectores y 547 ciclos de cultivo entre 2021 y 2026. Su información está repartida en 8 hojas de Excel que llenan áreas distintas (producción, bodega, laboratorio de agua, ventas y contabilidad), y en marzo de 2023 cambió de sistema de registro. La gerencia necesita saber si la operación es rentable y dónde se pierde dinero, pero los números de cada área no cuadran entre sí.
 
 **Preguntas que el dashboard debe responder:**
 1. ¿Cuánto producimos y vendemos, a qué precio, y cómo cambia por sector, piscina y año?
