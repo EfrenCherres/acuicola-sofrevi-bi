@@ -1,9 +1,25 @@
 EVALUATE
-SUMMARIZECOLUMNS (
-    Dim_Calendario[Año],
-    dim_Sector[Sector],
-    "FCA", [FCA],
-    "% dif. bodega", [% Diferencia Bodega vs Piscina],
-    "Peso g", [Peso Promedio (g)]
+VAR Combos = SUMMARIZE ( ALL ( fact_Liquidaciones ), fact_Liquidaciones[Clase], fact_Liquidaciones[Talla] )
+RETURN
+FILTER (
+    ADDCOLUMNS (
+        VALUES ( Dim_Calendario[Año] ),
+        "Precio real", [Precio Promedio (USD/lb)],
+        "Mezcla 2022 · precios del año",
+            VAR A = Dim_Calendario[Año]
+            VAR X = ADDCOLUMNS ( Combos,
+                "S", CALCULATE ( [Libras Vendidas], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ),
+                "P", CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = A ) )
+            VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+            RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) ),
+        "Mezcla del año · precios 2022",
+            VAR A = Dim_Calendario[Año]
+            VAR X = ADDCOLUMNS ( Combos,
+                "S", CALCULATE ( [Libras Vendidas], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = A ),
+                "P", CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ) )
+            VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+            RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) )
+    ),
+    NOT ISBLANK ( [Precio real] )
 )
-ORDER BY dim_Sector[Sector], Dim_Calendario[Año]
+ORDER BY Dim_Calendario[Año]

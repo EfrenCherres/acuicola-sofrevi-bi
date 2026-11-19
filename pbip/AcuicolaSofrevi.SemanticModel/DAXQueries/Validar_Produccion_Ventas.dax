@@ -1,0 +1,46 @@
+DEFINE
+    MEASURE 'Medidas DAX'[Ciclos Cosechados] =
+        CALCULATE ( COUNTROWS ( fact_Ciclos ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
+    MEASURE 'Medidas DAX'[Ciclos Sembrados] =
+        CALCULATE ( COUNTROWS ( fact_Ciclos ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+    MEASURE 'Medidas DAX'[Biomasa Cosechada (lb)] =
+        SUM ( fact_Ciclos[Biomasa_lb] )
+    MEASURE 'Medidas DAX'[Larvas Sembradas (miles)] =
+        CALCULATE ( SUM ( fact_Ciclos[Larvas_Sembradas_miles] ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+    MEASURE 'Medidas DAX'[Peso Promedio (g)] =
+        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Peso_Muestreo_g] ) && NOT ISBLANK ( fact_Ciclos[Biomasa_lb] ) )
+        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Peso_Muestreo_g] * fact_Ciclos[Biomasa_lb] ), SUMX ( T, fact_Ciclos[Biomasa_lb] ) )
+    MEASURE 'Medidas DAX'[Sobrevivencia %] =
+        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Sobrevivencia_pct] ) )
+        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] * fact_Ciclos[Sobrevivencia_pct] ), SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] ) ) / 100
+    MEASURE 'Medidas DAX'[Días de Cultivo Promedio] =
+        AVERAGE ( fact_Ciclos[Dias_Cultivo] )
+    MEASURE 'Medidas DAX'[Libras Vendidas] =
+        SUM ( fact_Liquidaciones[Lbs_Recibidas] )
+    MEASURE 'Medidas DAX'[Ventas USD] =
+        SUM ( fact_Liquidaciones[Total_USD] )
+    MEASURE 'Medidas DAX'[Precio Promedio (USD/lb)] =
+        DIVIDE ( [Ventas USD], [Libras Vendidas] )
+    MEASURE 'Medidas DAX'[Libras en Guía] =
+        SUMX ( VALUES ( fact_Liquidaciones[N_Liquidacion] ), CALCULATE ( MAX ( fact_Liquidaciones[Lbs_Guia_Remision] ) ) )
+    MEASURE 'Medidas DAX'[% Recibido en Planta] =
+        DIVIDE ( [Libras Vendidas], [Libras en Guía] )
+    MEASURE 'Medidas DAX'[Ventas por Fecha de Cosecha] =
+        CALCULATE ( [Ventas USD], USERELATIONSHIP ( Dim_Calendario[Date], fact_Liquidaciones[Fecha_Cosecha] ) )
+
+EVALUATE
+SUMMARIZECOLUMNS (
+    Dim_Calendario[Año],
+    "Cosechados", [Ciclos Cosechados],
+    "Sembrados", [Ciclos Sembrados],
+    "Biomasa lb", [Biomasa Cosechada (lb)],
+    "Lb guía", [Libras en Guía],
+    "Lb vendidas", [Libras Vendidas],
+    "% recibido", [% Recibido en Planta],
+    "Ventas USD", [Ventas USD],
+    "USD/lb", [Precio Promedio (USD/lb)],
+    "Peso g", [Peso Promedio (g)],
+    "Sobrev.", [Sobrevivencia %],
+    "Días", [Días de Cultivo Promedio]
+)
+ORDER BY Dim_Calendario[Año]

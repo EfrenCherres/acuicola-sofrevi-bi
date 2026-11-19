@@ -1,39 +1,48 @@
 DEFINE
-    MEASURE 'Medidas DAX'[Alimento Aplicado (kg)] =
-        SUM ( fact_Alimentacion[Kg_Aplicados] )
-    MEASURE 'Medidas DAX'[Alimento Despachado (kg)] =
-        SUM ( fact_Kardex[Kg_Despachados] )
-    MEASURE 'Medidas DAX'[Diferencia Bodega vs Piscina (kg)] =
-        [Alimento Despachado (kg)] - [Alimento Aplicado (kg)]
-    MEASURE 'Medidas DAX'[% Diferencia Bodega vs Piscina] =
-        DIVIDE ( [Diferencia Bodega vs Piscina (kg)], [Alimento Despachado (kg)] )
-    MEASURE 'Medidas DAX'[Alimento Comprado (kg)] =
-        SUM ( fact_Compras[Kg_Comprados] )
-    MEASURE 'Medidas DAX'[Compras Alimento USD] =
-        SUM ( fact_Compras[Subtotal_USD] )
-    MEASURE 'Medidas DAX'[Precio Alimento (USD/kg)] =
-        DIVIDE ( [Compras Alimento USD], [Alimento Comprado (kg)] )
-    MEASURE 'Medidas DAX'[Biomasa Cosechada (kg)] =
-        [Biomasa Cosechada (lb)] / 2.20462
-    MEASURE 'Medidas DAX'[Alimento de Ciclos Cosechados (kg)] =
-        VAR Ciclos =
-            CALCULATETABLE ( VALUES ( fact_Ciclos[ID_Ciclo] ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
-        RETURN
-            CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) )
-    MEASURE 'Medidas DAX'[FCA] =
-        DIVIDE ( [Alimento de Ciclos Cosechados (kg)], [Biomasa Cosechada (kg)] )
+    MEASURE 'Medidas DAX'[% Alimento por Proveedor] =
+        DIVIDE ( [Alimento Aplicado (kg)], CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( dim_Proveedor ) ) )
+    MEASURE 'Medidas DAX'[Densidad Promedio (m2)] =
+        CALCULATE ( AVERAGE ( fact_Ciclos[Densidad_m2] ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+    MEASURE 'Medidas DAX'[% Mediciones OD Crítico] =
+        DIVIDE (
+            COUNTROWS ( FILTER ( fact_ParametrosAgua, fact_ParametrosAgua[OD_Critico] = TRUE () ) ),
+            COUNTROWS ( FILTER ( fact_ParametrosAgua, NOT ISBLANK ( fact_ParametrosAgua[OD_Critico] ) ) )
+        )
+    MEASURE 'Medidas DAX'[Costo Alimento de Ciclos (USD)] =
+        SUMX (
+            VALUES ( dim_Proveedor[Proveedor] ),
+            [Alimento de Ciclos Cosechados (kg)] * CALCULATE ( [Precio Alimento (USD/kg)], REMOVEFILTERS ( Dim_Calendario ) )
+        )
+    MEASURE 'Medidas DAX'[Costo Alimento por kg Camarón] =
+        DIVIDE ( [Costo Alimento de Ciclos (USD)], [Biomasa Cosechada (kg)] )
+    MEASURE 'Medidas DAX'[Libras Vendidas por Fecha de Cosecha] =
+        CALCULATE ( [Libras Vendidas], USERELATIONSHIP ( Dim_Calendario[Date], fact_Liquidaciones[Fecha_Cosecha] ) )
+    MEASURE 'Medidas DAX'[Precio por Fecha de Cosecha (USD/lb)] =
+        DIVIDE ( [Ventas por Fecha de Cosecha], [Libras Vendidas por Fecha de Cosecha] )
+    MEASURE 'Medidas DAX'[Ventas Perdidas por Precio (Aquafeed)] =
+        SUMX (
+            VALUES ( Dim_Calendario[Año] ),
+            VAR LbA = CALCULATE ( [Libras Vendidas por Fecha de Cosecha], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+            VAR PO = CALCULATE ( [Precio por Fecha de Cosecha (USD/lb)], dim_Ciclo[Grupo Alimento] = "Otros" )
+            VAR PA = CALCULATE ( [Precio por Fecha de Cosecha (USD/lb)], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+            RETURN IF ( LbA > 0, LbA * ( PO - PA ) )
+        )
+    MEASURE 'Medidas DAX'[Sobrecosto Alimento (Aquafeed)] =
+        SUMX (
+            VALUES ( Dim_Calendario[Año] ),
+            VAR KgA = CALCULATE ( [Biomasa Cosechada (kg)], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+            VAR CA = CALCULATE ( [Costo Alimento por kg Camarón], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+            VAR CO = CALCULATE ( [Costo Alimento por kg Camarón], dim_Ciclo[Grupo Alimento] = "Otros" )
+            RETURN IF ( KgA > 0, KgA * ( CA - CO ) )
+        )
+    MEASURE 'Medidas DAX'[Impacto Estimado Aquafeed (USD)] =
+        [Ventas Perdidas por Precio (Aquafeed)] + [Sobrecosto Alimento (Aquafeed)]
 
 EVALUATE
 SUMMARIZECOLUMNS (
     ROLLUPADDISSUBTOTAL ( Dim_Calendario[Año], "Es total" ),
-    "Aplicado kg", [Alimento Aplicado (kg)],
-    "Despachado kg", [Alimento Despachado (kg)],
-    "Dif. kg", [Diferencia Bodega vs Piscina (kg)],
-    "% dif.", [% Diferencia Bodega vs Piscina],
-    "Comprado kg", [Alimento Comprado (kg)],
-    "USD/kg", [Precio Alimento (USD/kg)],
-    "Biomasa kg", [Biomasa Cosechada (kg)],
-    "Alim. ciclos cosechados", [Alimento de Ciclos Cosechados (kg)],
-    "FCA", [FCA]
+    "Impacto", [Impacto Estimado Aquafeed (USD)],
+    "% OD crítico", [% Mediciones OD Crítico],
+    "Densidad", [Densidad Promedio (m2)]
 )
 ORDER BY [Es total], Dim_Calendario[Año]

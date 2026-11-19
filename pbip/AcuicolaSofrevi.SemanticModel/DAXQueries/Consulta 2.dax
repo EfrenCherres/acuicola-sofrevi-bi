@@ -1,46 +1,40 @@
 DEFINE
-    MEASURE 'Medidas DAX'[Ciclos Cosechados] =
-        CALCULATE ( COUNTROWS ( fact_Ciclos ), KEEPFILTERS ( NOT ISBLANK ( fact_Ciclos[Fecha_Cosecha] ) ) )
-    MEASURE 'Medidas DAX'[Ciclos Sembrados] =
-        CALCULATE ( COUNTROWS ( fact_Ciclos ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
-    MEASURE 'Medidas DAX'[Biomasa Cosechada (lb)] =
-        SUM ( fact_Ciclos[Biomasa_lb] )
-    MEASURE 'Medidas DAX'[Larvas Sembradas (miles)] =
-        CALCULATE ( SUM ( fact_Ciclos[Larvas_Sembradas_miles] ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
-    MEASURE 'Medidas DAX'[Peso Promedio (g)] =
-        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Peso_Muestreo_g] ) && NOT ISBLANK ( fact_Ciclos[Biomasa_lb] ) )
-        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Peso_Muestreo_g] * fact_Ciclos[Biomasa_lb] ), SUMX ( T, fact_Ciclos[Biomasa_lb] ) )
-    MEASURE 'Medidas DAX'[Sobrevivencia %] =
-        VAR T = FILTER ( fact_Ciclos, NOT ISBLANK ( fact_Ciclos[Sobrevivencia_pct] ) )
-        RETURN DIVIDE ( SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] * fact_Ciclos[Sobrevivencia_pct] ), SUMX ( T, fact_Ciclos[Larvas_Sembradas_miles] ) ) / 100
-    MEASURE 'Medidas DAX'[Días de Cultivo Promedio] =
-        AVERAGE ( fact_Ciclos[Dias_Cultivo] )
-    MEASURE 'Medidas DAX'[Libras Vendidas] =
-        SUM ( fact_Liquidaciones[Lbs_Recibidas] )
-    MEASURE 'Medidas DAX'[Ventas USD] =
-        SUM ( fact_Liquidaciones[Total_USD] )
-    MEASURE 'Medidas DAX'[Precio Promedio (USD/lb)] =
-        DIVIDE ( [Ventas USD], [Libras Vendidas] )
-    MEASURE 'Medidas DAX'[Libras en Guía] =
-        SUMX ( VALUES ( fact_Liquidaciones[N_Liquidacion] ), CALCULATE ( MAX ( fact_Liquidaciones[Lbs_Guia_Remision] ) ) )
-    MEASURE 'Medidas DAX'[% Recibido en Planta] =
-        DIVIDE ( [Libras Vendidas], [Libras en Guía] )
-    MEASURE 'Medidas DAX'[Ventas por Fecha de Cosecha] =
-        CALCULATE ( [Ventas USD], USERELATIONSHIP ( Dim_Calendario[Date], fact_Liquidaciones[Fecha_Cosecha] ) )
+    MEASURE 'Medidas DAX'[Gastos Operativos USD] =
+        SUM ( fact_Gastos[Monto_USD] )
+    MEASURE 'Medidas DAX'[Costo Larvas USD] =
+        CALCULATE (
+            SUMX ( fact_Ciclos, fact_Ciclos[Larvas_Sembradas_miles] * fact_Ciclos[Costo_Larva_USD_mil] ),
+            USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] )
+        )
+    MEASURE 'Medidas DAX'[Costo Total USD] =
+        [Gastos Operativos USD] + [Compras Alimento USD] + [Costo Larvas USD]
+    MEASURE 'Medidas DAX'[Ventas (meses cerrados)] =
+        CALCULATE ( [Ventas USD],
+            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+    MEASURE 'Medidas DAX'[Costo Total (meses cerrados)] =
+        CALCULATE ( [Costo Total USD],
+            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+    MEASURE 'Medidas DAX'[Libras (meses cerrados)] =
+        CALCULATE ( [Libras Vendidas],
+            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+    MEASURE 'Medidas DAX'[Margen USD] =
+        [Ventas (meses cerrados)] - [Costo Total (meses cerrados)]
+    MEASURE 'Medidas DAX'[Margen %] =
+        DIVIDE ( [Margen USD], [Ventas (meses cerrados)] )
+    MEASURE 'Medidas DAX'[Costo por Libra (USD)] =
+        DIVIDE ( [Costo Total (meses cerrados)], [Libras (meses cerrados)] )
 
 EVALUATE
 SUMMARIZECOLUMNS (
-    Dim_Calendario[Año],
-    "Cosechados", [Ciclos Cosechados],
-    "Sembrados", [Ciclos Sembrados],
-    "Biomasa lb", [Biomasa Cosechada (lb)],
-    "Lb guía", [Libras en Guía],
-    "Lb vendidas", [Libras Vendidas],
-    "% recibido", [% Recibido en Planta],
-    "Ventas USD", [Ventas USD],
-    "USD/lb", [Precio Promedio (USD/lb)],
-    "Peso g", [Peso Promedio (g)],
-    "Sobrev.", [Sobrevivencia %],
-    "Días", [Días de Cultivo Promedio]
+    ROLLUPADDISSUBTOTAL ( Dim_Calendario[Año], "Es total" ),
+    "Gastos", [Gastos Operativos USD],
+    "Alimento", [Compras Alimento USD],
+    "Larvas", [Costo Larvas USD],
+    "Costo total", [Costo Total (meses cerrados)],
+    "Ventas", [Ventas (meses cerrados)],
+    "Margen", [Margen USD],
+    "Margen %", [Margen %],
+    "Costo/lb", [Costo por Libra (USD)],
+    "Precio/lb", [Precio Promedio (USD/lb)]
 )
-ORDER BY Dim_Calendario[Año]
+ORDER BY [Es total], Dim_Calendario[Año]

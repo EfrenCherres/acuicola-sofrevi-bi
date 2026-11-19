@@ -33,6 +33,16 @@ table dim_Ciclo
 
 		annotation SummarizationSetBy = Automatic
 
+	column 'Grupo Alimento' =
+			
+			VAR Total = CALCULATE ( SUM ( fact_Alimentacion[Kg_Aplicados] ) )
+			VAR Aquafeed = CALCULATE ( SUM ( fact_Alimentacion[Kg_Aplicados] ), dim_Proveedor[Proveedor] = "AQUAFEED LITORAL S.A." )
+			RETURN IF ( DIVIDE ( Aquafeed, Total ) >= 0.5, "Aquafeed", "Otros" )
+		lineageTag: 1664be93-a936-49ae-8f94-b037cb317f29
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
 	partition dim_Ciclo = m
 		mode: import
 		queryGroup: 03_Final

@@ -1,12 +1,17 @@
 {
   "version": "1.0.0",
   "tabOrder": [
+    "QA_Relaciones_y_Columnas",
+    "Validar_Produccion_Ventas",
+    "Validar_Alimentacion_FCA",
+    "FCA_por_Sector_Largo",
+    "FCA_por_Sector",
+    "FCA_con_Despacho",
     "Consulta 1",
     "Consulta 2",
     "Consulta 3",
     "Consulta 4",
-    "Consulta 5",
-    "Consulta 6"
+    "Consulta 5"
   ],
-  "defaultTab": "Consulta 6"
+  "defaultTab": "Consulta 5"
 }

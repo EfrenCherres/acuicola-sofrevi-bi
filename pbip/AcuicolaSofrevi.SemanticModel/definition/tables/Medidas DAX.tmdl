@@ -2,11 +2,13 @@ table 'Medidas DAX'
 	lineageTag: 6fc95ce6-81e6-4abd-9dd1-b252e11ff183
 
 	measure 'Biomasa sin corregir' = SUMX(fact_Ciclos, IF(fact_Ciclos[Sistema] = "SIG", fact_Ciclos[Biomasa_lb] / 2.20462, fact_Ciclos[Biomasa_lb]))
+		displayFolder: 99. Reels
 		lineageTag: 5d399aa1-f33b-4815-91b2-9c68cdeafc14
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Biomasa corregida (lb)' = SUM(fact_Ciclos[Biomasa_lb])
+		displayFolder: 99. Reels
 		lineageTag: 5571c003-99d5-4146-8892-7a651a4cf4dd
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -132,7 +134,7 @@ table 'Medidas DAX'
 			
 			        SUM ( fact_Alimentacion[Kg_Aplicados] )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: 27faacfc-a39c-49f3-8b40-4185a1f57f59
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -141,7 +143,7 @@ table 'Medidas DAX'
 			
 			        SUM ( fact_Kardex[Kg_Despachados] )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: c57fa236-2747-4bec-85ee-aa8bda01e4b9
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -150,7 +152,7 @@ table 'Medidas DAX'
 			
 			        [Alimento Despachado (kg)] - [Alimento Aplicado (kg)]
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: f09831b6-0f2f-4b95-9e2b-cf1d97e7e1c0
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -159,7 +161,7 @@ table 'Medidas DAX'
 			
 			        DIVIDE ( [Diferencia Bodega vs Piscina (kg)], [Alimento Despachado (kg)] )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: fc1875b7-ceb6-4110-a3ef-7d7958c52a9f
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -207,7 +209,7 @@ table 'Medidas DAX'
 			        RETURN
 			            CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( Dim_Calendario ), TREATAS ( Ciclos, dim_Ciclo[ID_Ciclo] ) )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: de54027b-cbb5-47c4-bdfa-c4357ef98cfc
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -216,7 +218,7 @@ table 'Medidas DAX'
 			
 			        DIVIDE ( [Alimento de Ciclos Cosechados (kg)], [Biomasa Cosechada (kg)] )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: 6436a5b8-51d7-4bb2-825d-5d569b9eab64
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -231,8 +233,203 @@ table 'Medidas DAX'
 			                [Biomasa Cosechada (kg)]
 			            )
 			```
-		displayFolder: 03. Alimentación
+		displayFolder: 03. Alimentacion
 		lineageTag: b3f302e9-8b41-4bc7-b44b-20471e2cf869
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Gastos Operativos USD' = ```
+			
+			        SUM ( fact_Gastos[Monto_USD] )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: c93b8b02-3cf8-49d7-b6b9-b87b664bf48e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo Larvas USD' = ```
+			
+			        CALCULATE (
+			            SUMX ( fact_Ciclos, fact_Ciclos[Larvas_Sembradas_miles] * fact_Ciclos[Costo_Larva_USD_mil] ),
+			            USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] )
+			        )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: e8a09620-ebb8-4c39-bf84-4b3b27c56cfe
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo Total USD' = ```
+			
+			        [Gastos Operativos USD] + [Compras Alimento USD] + [Costo Larvas USD]
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: ebe2563a-7203-4955-b3a7-14f74449c652
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ventas (meses cerrados)' = ```
+			
+			        CALCULATE ( [Ventas USD],
+			            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: 3942fbc9-fe42-46d3-a425-76dde9ccaf06
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo Total (meses cerrados)' = ```
+			
+			        CALCULATE ( [Costo Total USD],
+			            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: 9eef4ce6-a8ba-4313-a031-0551ce95f1f2
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Libras (meses cerrados)' = ```
+			
+			        CALCULATE ( [Libras Vendidas],
+			            KEEPFILTERS ( FILTER ( VALUES ( Dim_Calendario[Inicio Mes] ), CALCULATE ( NOT ISEMPTY ( fact_Gastos ) ) ) ) )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: fcc7af30-997b-4a9c-98b9-7cc937b78aa7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen USD' = ```
+			
+			        [Ventas (meses cerrados)] - [Costo Total (meses cerrados)]
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: 3ebba174-af3a-4524-aab4-cec0962ac9ba
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Margen %' = ```
+			
+			        DIVIDE ( [Margen USD], [Ventas (meses cerrados)] )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: ba2bba71-191a-447a-b23a-b5290489d2d5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo por Libra (USD)' = ```
+			
+			        DIVIDE ( [Costo Total (meses cerrados)], [Libras (meses cerrados)] )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: e8363d4c-e8a9-40d1-98f5-66e6d2b07693
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Alimento por Proveedor' = ```
+			
+			        DIVIDE ( [Alimento Aplicado (kg)], CALCULATE ( [Alimento Aplicado (kg)], REMOVEFILTERS ( dim_Proveedor ) ) )
+			```
+		displayFolder: 03. Alimentacion
+		lineageTag: e70ab1c3-45df-4d4c-bfce-5de40e0068ea
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Densidad Promedio (m2)' = ```
+			
+			        CALCULATE ( AVERAGE ( fact_Ciclos[Densidad_m2] ), USERELATIONSHIP ( Dim_Calendario[Date], fact_Ciclos[Fecha_Siembra] ) )
+			```
+		displayFolder: 01. Produccion
+		lineageTag: 8e0225f4-93ad-4a93-87e2-f128ff384bbc
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '% Mediciones OD Crítico' = ```
+			
+			        DIVIDE (
+			            COUNTROWS ( FILTER ( fact_ParametrosAgua, fact_ParametrosAgua[OD_Critico] = TRUE () ) ),
+			            COUNTROWS ( FILTER ( fact_ParametrosAgua, NOT ISBLANK ( fact_ParametrosAgua[OD_Critico] ) ) )
+			        )
+			```
+		displayFolder: 06. Agua
+		lineageTag: 6cf3c02e-1cf6-4379-a1d7-755682ca94ae
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo Alimento de Ciclos (USD)' = ```
+			
+			        SUMX (
+			            VALUES ( dim_Proveedor[Proveedor] ),
+			            [Alimento de Ciclos Cosechados (kg)] * CALCULATE ( [Precio Alimento (USD/kg)], REMOVEFILTERS ( Dim_Calendario ) )
+			        )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: 3d723424-2c1d-4267-b68b-1fefbff97f79
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Costo Alimento por kg Camarón' = ```
+			
+			        DIVIDE ( [Costo Alimento de Ciclos (USD)], [Biomasa Cosechada (kg)] )
+			```
+		displayFolder: 07. Costos y Margen
+		lineageTag: 16c532dd-3c57-4e43-a478-0f1f2be49b00
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Libras Vendidas por Fecha de Cosecha' = ```
+			
+			        CALCULATE ( [Libras Vendidas], USERELATIONSHIP ( Dim_Calendario[Date], fact_Liquidaciones[Fecha_Cosecha] ) )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: 6576927c-4691-4910-bec1-f855687fcf2e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio por Fecha de Cosecha (USD/lb)' = ```
+			
+			        DIVIDE ( [Ventas por Fecha de Cosecha], [Libras Vendidas por Fecha de Cosecha] )
+			```
+		displayFolder: 02. Ventas
+		lineageTag: bc56fa7b-f135-40b0-afee-fe03129fa907
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ventas Perdidas por Precio (Aquafeed)' = ```
+			
+			        SUMX (
+			            VALUES ( Dim_Calendario[Año] ),
+			            VAR LbA = CALCULATE ( [Libras Vendidas por Fecha de Cosecha], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+			            VAR PO = CALCULATE ( [Precio por Fecha de Cosecha (USD/lb)], dim_Ciclo[Grupo Alimento] = "Otros" )
+			            VAR PA = CALCULATE ( [Precio por Fecha de Cosecha (USD/lb)], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+			            RETURN IF ( LbA > 0, LbA * ( PO - PA ) )
+			        )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: 4076ec5d-5173-4306-8e82-b258c7c365d7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Sobrecosto Alimento (Aquafeed)' = ```
+			
+			        SUMX (
+			            VALUES ( Dim_Calendario[Año] ),
+			            VAR KgA = CALCULATE ( [Biomasa Cosechada (kg)], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+			            VAR CA = CALCULATE ( [Costo Alimento por kg Camarón], dim_Ciclo[Grupo Alimento] = "Aquafeed" )
+			            VAR CO = CALCULATE ( [Costo Alimento por kg Camarón], dim_Ciclo[Grupo Alimento] = "Otros" )
+			            RETURN IF ( KgA > 0, KgA * ( CA - CO ) )
+			        )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: 4c45eaf9-28df-4bc9-9835-a9bc7b84a43f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Impacto Estimado Aquafeed (USD)' = ```
+			
+			        [Ventas Perdidas por Precio (Aquafeed)] + [Sobrecosto Alimento (Aquafeed)]
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: 1eefcb31-5c8a-4215-9e51-f5b150112054
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
