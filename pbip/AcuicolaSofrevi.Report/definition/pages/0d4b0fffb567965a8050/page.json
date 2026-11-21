@@ -14,7 +14,7 @@
               "name": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Sofrevi_claro_00_Portada.png'"
+                    "Value": "'Sofrevi_oscuro_00_Portada.png'"
                   }
                 }
               },
@@ -23,14 +23,14 @@
                   "ResourcePackageItem": {
                     "PackageName": "RegisteredResources",
                     "PackageType": 1,
-                    "ItemName": "Sofrevi_claro_00_Portada2998343850740547.png"
+                    "ItemName": "Sofrevi_oscuro_00_Portada2400078239581901.png"
                   }
                 }
               },
               "scaling": {
                 "expr": {
                   "Literal": {
-                    "Value": "'Fill'"
+                    "Value": "'Normal'"
                   }
                 }
               }

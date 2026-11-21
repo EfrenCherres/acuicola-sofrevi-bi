@@ -1,8 +1,9 @@
 EVALUATE
-GROUPBY (
-    SELECTCOLUMNS ( INFO.VIEW.MEASURES (), "Carpeta", [DisplayFolder], "Medida", [Name] ),
-    [Carpeta],
-    "N", COUNTX ( CURRENTGROUP (), 1 ),
-    "Medidas", CONCATENATEX ( CURRENTGROUP (), [Medida], " · " )
+VAR T = SELECTCOLUMNS ( INFO.VIEW.MEASURES (), "Carpeta", [DisplayFolder], "Medida", [Name] )
+RETURN
+ADDCOLUMNS (
+    DISTINCT ( SELECTCOLUMNS ( T, "Carpeta", [Carpeta] ) ),
+    "N", VAR C = [Carpeta] RETURN COUNTROWS ( FILTER ( T, [Carpeta] = C ) ),
+    "Medidas", VAR C = [Carpeta] RETURN CONCATENATEX ( FILTER ( T, [Carpeta] = C ), [Medida], " · " )
 )
 ORDER BY [Carpeta]

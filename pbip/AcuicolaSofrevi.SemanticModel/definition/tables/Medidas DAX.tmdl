@@ -98,10 +98,11 @@ table 'Medidas DAX'
 			
 			        DIVIDE ( [Ventas USD], [Libras Vendidas] )
 			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		displayFolder: 02. Ventas
 		lineageTag: 10b28768-bf19-47fe-a429-3e98c64e5e88
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+		annotation PBI_FormatHint = {"currencyCulture":"es-US"}
 
 	measure 'Libras en Guía' = ```
 			
@@ -311,19 +312,19 @@ table 'Medidas DAX'
 			
 			        DIVIDE ( [Margen USD], [Ventas (meses cerrados)] )
 			```
+		formatString: 0.00\ %;-0.00\ %;0.00\ %
 		displayFolder: 07. Costos y Margen
 		lineageTag: ba2bba71-191a-447a-b23a-b5290489d2d5
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Costo por Libra (USD)' = ```
 			
 			        DIVIDE ( [Costo Total (meses cerrados)], [Libras (meses cerrados)] )
 			```
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
 		displayFolder: 07. Costos y Margen
 		lineageTag: e8363d4c-e8a9-40d1-98f5-66e6d2b07693
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+		annotation PBI_FormatHint = {"currencyCulture":"es-US"}
 
 	measure '% Alimento por Proveedor' = ```
 			
@@ -362,7 +363,7 @@ table 'Medidas DAX'
 			            [Alimento de Ciclos Cosechados (kg)] * CALCULATE ( [Precio Alimento (USD/kg)], REMOVEFILTERS ( Dim_Calendario ) )
 			        )
 			```
-		displayFolder: 07. Costos y Margen
+		displayFolder: 03. Alimentacion
 		lineageTag: 3d723424-2c1d-4267-b68b-1fefbff97f79
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -371,7 +372,7 @@ table 'Medidas DAX'
 			
 			        DIVIDE ( [Costo Alimento de Ciclos (USD)], [Biomasa Cosechada (kg)] )
 			```
-		displayFolder: 07. Costos y Margen
+		displayFolder: 03. Alimentacion
 		lineageTag: 16c532dd-3c57-4e43-a478-0f1f2be49b00
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
@@ -404,10 +405,9 @@ table 'Medidas DAX'
 			            RETURN IF ( LbA > 0, LbA * ( PO - PA ) )
 			        )
 			```
+		formatString: 0.00
 		displayFolder: 05. Hallazgos
 		lineageTag: 4076ec5d-5173-4306-8e82-b258c7c365d7
-
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
 	measure 'Sobrecosto Alimento (Aquafeed)' = ```
 			
@@ -428,8 +428,64 @@ table 'Medidas DAX'
 			
 			        [Ventas Perdidas por Precio (Aquafeed)] + [Sobrecosto Alimento (Aquafeed)]
 			```
+		formatString: \$#,0;(\$#,0);\$#,0
 		displayFolder: 05. Hallazgos
 		lineageTag: 1eefcb31-5c8a-4215-9e51-f5b150112054
+
+		annotation PBI_FormatHint = {"currencyCulture":"es-US"}
+
+	measure 'Precio Base 2022 (USD/lb)' = ```
+			
+			        CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: f007d4a1-89c8-425c-b50a-8ed487f8d719
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Solo Mercado (USD/lb)' = ```
+			
+			        VAR Combos = SUMMARIZE ( ALL ( fact_Liquidaciones ), fact_Liquidaciones[Clase], fact_Liquidaciones[Talla] )
+			        VAR X = ADDCOLUMNS ( Combos,
+			            "S", CALCULATE ( [Libras Vendidas], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ),
+			            "P", [Precio Promedio (USD/lb)] )
+			        VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+			        RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: d7998fa5-c6ab-4cf4-b047-6d5c3a9a209a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Precio Solo Mezcla (USD/lb)' = ```
+			
+			        VAR Combos = SUMMARIZE ( ALL ( fact_Liquidaciones ), fact_Liquidaciones[Clase], fact_Liquidaciones[Talla] )
+			        VAR X = ADDCOLUMNS ( Combos,
+			            "S", [Libras Vendidas],
+			            "P", CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ) )
+			        VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+			        RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: 99405554-4094-4f79-813d-80d39c82e3a7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Efecto Mezcla (USD/lb)' = ```
+			
+			        [Precio Solo Mezcla (USD/lb)] - [Precio Base 2022 (USD/lb)]
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: 6ebfa16b-901b-4770-b496-05007fc72671
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Efecto Mezcla (USD)' = ```
+			
+			        SUMX ( VALUES ( Dim_Calendario[Año] ), [Efecto Mezcla (USD/lb)] * [Libras Vendidas] )
+			```
+		displayFolder: 05. Hallazgos
+		lineageTag: d39790eb-d1ca-410a-a9bb-3a7c0a7c8175
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 

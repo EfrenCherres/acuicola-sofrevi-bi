@@ -9,6 +9,15 @@
         "page": "2.3.1"
       },
       "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Sofrevi_ECHB_oscuro19016027133878932.json",
+      "reportVersionAtImport": {
+        "visual": "2.14.0",
+        "report": "3.4.0",
+        "page": "2.3.1"
+      },
+      "type": "RegisteredResources"
     }
   },
   "objects": {
@@ -56,8 +65,13 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "Sofrevi_claro_00_Portada2998343850740547.png",
-          "path": "Sofrevi_claro_00_Portada2998343850740547.png",
+          "name": "Sofrevi_ECHB_oscuro19016027133878932.json",
+          "path": "Sofrevi_ECHB_oscuro19016027133878932.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "Sofrevi_oscuro_00_Portada2400078239581901.png",
+          "path": "Sofrevi_oscuro_00_Portada2400078239581901.png",
           "type": "Image"
         },
         {

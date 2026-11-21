@@ -11,7 +11,8 @@
     "Consulta 2",
     "Consulta 3",
     "Consulta 4",
-    "Consulta 5"
+    "Consulta 5",
+    "QA_Carpetas_Medidas"
   ],
-  "defaultTab": "Consulta 5"
+  "defaultTab": "QA_Carpetas_Medidas"
 }

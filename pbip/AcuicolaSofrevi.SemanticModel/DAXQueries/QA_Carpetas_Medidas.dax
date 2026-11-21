@@ -1,0 +1,33 @@
+DEFINE
+    MEASURE 'Medidas DAX'[Precio Base 2022 (USD/lb)] =
+        CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 )
+    MEASURE 'Medidas DAX'[Precio Solo Mercado (USD/lb)] =
+        VAR Combos = SUMMARIZE ( ALL ( fact_Liquidaciones ), fact_Liquidaciones[Clase], fact_Liquidaciones[Talla] )
+        VAR X = ADDCOLUMNS ( Combos,
+            "S", CALCULATE ( [Libras Vendidas], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ),
+            "P", [Precio Promedio (USD/lb)] )
+        VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+        RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) )
+    MEASURE 'Medidas DAX'[Precio Solo Mezcla (USD/lb)] =
+        VAR Combos = SUMMARIZE ( ALL ( fact_Liquidaciones ), fact_Liquidaciones[Clase], fact_Liquidaciones[Talla] )
+        VAR X = ADDCOLUMNS ( Combos,
+            "S", [Libras Vendidas],
+            "P", CALCULATE ( [Precio Promedio (USD/lb)], REMOVEFILTERS ( Dim_Calendario ), Dim_Calendario[Año] = 2022 ) )
+        VAR Y = FILTER ( X, NOT ISBLANK ( [P] ) && [S] > 0 )
+        RETURN DIVIDE ( SUMX ( Y, [S] * [P] ), SUMX ( Y, [S] ) )
+    MEASURE 'Medidas DAX'[Efecto Mezcla (USD/lb)] =
+        VAR Mezcla = [Precio Solo Mezcla (USD/lb)]
+        RETURN IF ( NOT ISBLANK ( Mezcla ), Mezcla - [Precio Base 2022 (USD/lb)] )
+    MEASURE 'Medidas DAX'[Efecto Mezcla (USD)] =
+        SUMX ( VALUES ( Dim_Calendario[Año] ), [Efecto Mezcla (USD/lb)] * [Libras Vendidas] )
+
+EVALUATE
+SUMMARIZECOLUMNS (
+    ROLLUPADDISSUBTOTAL ( Dim_Calendario[Año], "Es total" ),
+    "Precio real", [Precio Promedio (USD/lb)],
+    "Solo mercado", [Precio Solo Mercado (USD/lb)],
+    "Solo mezcla", [Precio Solo Mezcla (USD/lb)],
+    "Efecto mezcla USD/lb", [Efecto Mezcla (USD/lb)],
+    "Efecto mezcla USD", [Efecto Mezcla (USD)]
+)
+ORDER BY [Es total], Dim_Calendario[Año]
