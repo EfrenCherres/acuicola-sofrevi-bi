@@ -7,7 +7,7 @@ Dashboard en Power BI con tema oscuro, 8 páginas y navegación lateral entre p�
 | 00 | Portada | ¿De qué trata el caso? | ✅ |
 | 01 | Resumen | ¿La camaronera es rentable y dónde se pierde dinero? | ✅ |
 | 02 | Producción | ¿Cómo rinden las piscinas y los sectores? | ✅ |
-| 03 | Alimentación | ¿Qué tan eficiente es el alimento? | ⬜ |
+| 03 | Alimentación | ¿Qué tan eficiente es el alimento? | ✅ |
 | 04 | Agua | ¿La calidad del agua afecta el resultado? | ⬜ |
 | 05 | Ventas | ¿Qué pasa con el precio y las tallas? | ⬜ |
 | 06 | Costos | ¿Cuánto cuesta producir una libra? | ⬜ |
@@ -120,6 +120,37 @@ Dashboard en Power BI con tema oscuro, 8 páginas y navegación lateral entre p�
 - El eje del gráfico 2 empieza en 20 g para que se vea la diferencia; las etiquetas muestran el valor real.
 - La tabla no incluye FCA a propósito: el FCA del Sector C sale mejor por una falla de registro del alimento, y eso se explica en la página Alimentación.
 - 2026 es un año en curso, por eso su biomasa es menor.
+
+---
+
+## 03 · Alimentación y conversión
+
+![Alimentación y conversión](capturas/03_Alimentacion.png)
+
+### Qué contiene
+
+**Tarjetas KPI:** FCA registrado (1,37) · FCA con despacho (1,40) · Costo de alimento por kg de camarón ($1,51) · % diferencia bodega vs piscina (1,85 %)
+
+| # | Título (conclusión) | Tipo | Campos |
+|---|---|---|---|
+| 1 | El Sector C no es más eficiente: su FCA sube de 1,30 a 1,38 con el alimento despachado | Columnas agrupadas | Sector · FCA, FCA con Despacho |
+| 2 | Desde 2024 Aquafeed es el principal proveedor: 47 % → 69 % del alimento | Columnas 100 % apiladas | Año · Alimento Aplicado (kg) · Proveedor |
+| 3 | Aquafeed es 16 % más barato, pero el camarón cuesta 5 % más en alimento | Columnas agrupadas | Grupo Alimento · Precio Alimento por Grupo, Costo Alimento por kg Camarón |
+| 4 | Desde 2024 el Sector C registra 6–12 % menos alimento del que sale de bodega | Matriz con escala de color | Sector × Año · % Diferencia Bodega vs Piscina |
+
+### Qué se encontró
+
+1. **El FCA "bueno" del Sector C es un problema de registro.** Con el alimento anotado en piscina, C tiene FCA 1,30 y parece el sector más eficiente. Con el alimento que salió de bodega sube a 1,38, igual que A, B y D (1,40–1,41).
+2. **La brecha del Sector C empezó en 2024.** De 2021 a 2023 su diferencia entre bodega y piscina era de 0,3–0,6 %, como los demás sectores. En 2024 sube a 5,6 %, y en 2025–2026 a 11,9–12,4 %. Los otros sectores se mantienen por debajo de 1 %. Algo cambió ese año en la forma de registrar en C; la pregunta quedó en el Log para el cliente.
+3. **Aquafeed pasó a ser el principal proveedor.** No aparece hasta 2023; en 2024 cubre el 47 % del alimento aplicado, en 2025 el 69 % y en 2026 el 64 %.
+4. **El alimento barato no ahorró dinero.** En 2024–2026, Aquafeed costó $0,97 por kg frente a $1,16 de los otros proveedores (16 % menos). Pero como convierte peor, cada kg de camarón necesitó $1,56 de alimento frente a $1,49 (5 % más).
+
+### Decisiones y advertencias
+
+- **Medida nueva `Precio Alimento por Grupo (USD/kg)`.** Las compras no están relacionadas con los ciclos, así que la medida original daba el mismo precio a los dos grupos. La nueva toma el precio de compra de Aquafeed o del resto de proveedores, según el grupo que muestra el gráfico.
+- **Eje desde 1,0 en el gráfico de FCA.** Las diferencias son de décimas; las etiquetas muestran el valor real.
+- **El gráfico de proveedores dibuja proporciones con los kg,** pero la etiqueta muestra `% Alimento por Proveedor`.
+- **"Apunta a una falla de registro", no "es".** Los datos no permiten descartar otra causa; se pidió confirmación al cliente.
 
 ---
 
