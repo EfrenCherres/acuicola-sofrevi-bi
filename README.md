@@ -18,14 +18,15 @@
 | 3. Limpieza (staging) | ✅ Terminada: 13 tablas limpias y validadas, 40 novedades en el Log | [Log de calidad](bitacora/Log_Calidad.xlsx) · [Bitácora de calidad](bitacora/bitacora_calidad.md) · [Diario](bitacora/diario_avance.md) · [Bitácora PDF](bitacora/Bitacora_Acuicola_Sofrevi.pdf) |
 | 4. Modelo y relaciones | ✅ Terminada: modelo en estrella con 7 dimensiones, 7 tablas de hechos y 26 relaciones validadas con consultas DAX (0 filas huérfanas) | [Relaciones y decisiones](modelo/relaciones.md) · [Diagrama](modelo/diagrama_modelo.png) |
 | 5. Medidas DAX | ✅ Terminada: 50 medidas en 8 carpetas, validadas contra los totales del ETL | [Medidas y hallazgos](modelo/medidas_dax.md) |
-| 6. Dashboard | 🔄 En curso: página Resumen terminada (1 de 8) | [Dashboard y hallazgos](dashboard/README.md) |(dashboard/capturas/01_Resumen.png) |
+| 6. Dashboard | 🔄 En curso: páginas Resumen y Producción terminadas (2 de 8) | [Dashboard y hallazgos](dashboard/README.md) |
 | 7. Insights | ⬜ Pendiente | |
 ---
 
 ### Vista previa del dashboard
 
-![Resumen ejecutivo del dashboard de Acuícola Sofrevi](dashboard/capturas/01_Resumen.png)
+![Resumen ejecutivo](dashboard/capturas/01_Resumen.png)
 
+![Producción y ciclos](dashboard/capturas/02_Produccion.png)
 
 #### 1. El problema del negocio
 
